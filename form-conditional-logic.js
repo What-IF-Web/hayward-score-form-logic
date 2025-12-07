@@ -1,104 +1,74 @@
+//Active military housing logic
 document.addEventListener("DOMContentLoaded", function () {
-  console.log(
-    "%c=== DEBUG START ===",
-    "color: #ff6b6b; font-size: 16px; font-weight: bold"
-  );
+  // The two wrappers you want to show/hide
+  const rentOrOwnWrapper = document.getElementById("rent-or-own");
+  const militaryHousingWrapper = document.getElementById("military-housing");
 
-  // 1. Find the wrappers
-  const rentOrOwn = document.getElementById("rent-or-own");
-  const militaryHousing = document.getElementById("military-housing");
-
-  console.log('Wrapper "rent-or-own":', rentOrOwn);
-  console.log('Wrapper "military-housing":', militaryHousing);
-
-  // Hide both by default
-  if (rentOrOwn) rentOrOwn.style.display = "none";
-  if (militaryHousing) militaryHousing.style.display = "none";
-
-  // 2. Find the actual <input> radios
-  const inputNo = document.getElementById("Occupants----active-military---no");
-  const inputYes = document.getElementById(
+  // Your two radio buttons
+  const radioNo = document.getElementById("Occupants----active-military---no");
+  const radioYes = document.getElementById(
     "Occupants----active-military---yes"
   );
 
-  console.log("Radio NO input:", inputNo);
-  console.log("Radio YES input:", inputYes);
-  if (inputNo) console.log("NO currently checked?", inputNo.checked);
-  if (inputYes) console.log("YES currently checked?", inputYes.checked);
+  // Find the wrapper elements for styling
+  const radioNoWrapper = radioNo
+    ? radioNo.closest(".score-form_radio-wrapper-new")
+    : null;
+  const radioYesWrapper = radioYes
+    ? radioYes.closest(".score-form_radio-wrapper-new")
+    : null;
 
-  // Main function that shows/hides
-  function updateFields() {
-    const noChecked = inputNo ? inputNo.checked : false;
-    const yesChecked = inputYes ? inputYes.checked : false;
+  // Hide both wrappers by default
+  if (rentOrOwnWrapper) rentOrOwnWrapper.style.display = "none";
+  if (militaryHousingWrapper) militaryHousingWrapper.style.display = "none";
 
-    console.log(
-      "%c→ updateFields() called",
-      "color: #4ecdc4; font-weight: bold"
-    );
-    console.log("   • No checked  →", noChecked);
-    console.log("   • Yes checked →", yesChecked);
-
-    if (rentOrOwn) {
-      rentOrOwn.style.display = noChecked ? "block" : "none";
-      console.log("   → rent-or-own display set to:", rentOrOwn.style.display);
+  // Function to update radio wrapper styling
+  function updateRadioStyling() {
+    // Update radioNo wrapper
+    if (radioNoWrapper) {
+      if (radioNo && radioNo.checked) {
+        radioNoWrapper.style.backgroundColor =
+          "var(--qeesi-medium-underline-color)";
+        radioNoWrapper.style.color = "var(--secondary)";
+      } else {
+        radioNoWrapper.style.backgroundColor = "";
+        radioNoWrapper.style.color = "";
+      }
     }
-    if (militaryHousing) {
-      militaryHousing.style.display = yesChecked ? "block" : "none";
-      console.log(
-        "   → military-housing display set to:",
-        militaryHousing.style.display
-      );
+
+    // Update radioYes wrapper
+    if (radioYesWrapper) {
+      if (radioYes && radioYes.checked) {
+        radioYesWrapper.style.backgroundColor =
+          "var(--qeesi-medium-underline-color)";
+        radioYesWrapper.style.color = "var(--secondary)";
+      } else {
+        radioYesWrapper.style.backgroundColor = "";
+        radioYesWrapper.style.color = "";
+      }
     }
   }
 
-  // 3. MutationObserver – this is what finally catches Webflow's weird timing
-  const observer = new MutationObserver(function (mutations) {
-    console.log(
-      "%cMutationMutationObserver triggered!",
-      "color: #f39c12; font-size: 14px; font-weight: bold",
-      mutations
-    );
-    updateFields();
-  });
+  // Main function that shows the correct field
+  function updateHousingVisibility() {
+    const noChecked = radioNo && radioNo.checked;
+    const yesChecked = radioYes && radioYes.checked;
 
-  if (inputNo) {
-    observer.observe(inputNo, {
-      attributes: true,
-      attributeFilter: ["checked"],
-    });
-    console.log("Observer attached to NO radio");
-  }
-  if (inputYes) {
-    observer.observe(inputYes, {
-      attributes: true,
-      attributeFilter: ["checked"],
-    });
-    console.log("Observer attached to YES radio");
-  }
-
-  // 4. Fallback click listener (in case observer misses the very first click)
-  document.addEventListener("click", function (e) {
-    console.log(
-      "%cDocument clicked – checking if it was one of our radios",
-      "color: #95a5a6"
-    );
-    if (
-      e.target.closest("#Occupants----active-military---no") ||
-      e.target.closest("#Occupants----active-military---yes")
-    ) {
-      console.log(
-        "→ Click was on one of the military radios – forcing update in 50ms"
-      );
-      setTimeout(updateFields, 50);
+    if (rentOrOwnWrapper) {
+      rentOrOwnWrapper.style.display = noChecked ? "block" : "none";
     }
-  });
+    if (militaryHousingWrapper) {
+      militaryHousingWrapper.style.display = yesChecked ? "block" : "none";
+    }
 
-  // 5. Initial check
-  console.log("Running first updateFields() in 200ms...");
-  setTimeout(updateFields, 200);
+    // Update radio styling
+    updateRadioStyling();
+  }
 
-  console.log(
-    "%c=== DEBUG READY – NOW CLICK YOUR RADIOS ===",
-    "color: #ff6b6b; font-size: 16px; font-weight: bold"
-  );
+  // Listen for clicks/changes on both radios
+  if (radioNo) radioNo.addEventListener("click", updateHousingVisibility);
+  if (radioYes) radioYes.addEventListener("click", updateHousingVisibility);
+
+  // Run once immediately (in case one was pre-selected on page load)
+  updateHousingVisibility();
 });
