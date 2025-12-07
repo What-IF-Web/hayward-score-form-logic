@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (rentOrOwn) rentOrOwn.style.display = "none";
   if (militaryHousing) militaryHousing.style.display = "none";
 
-  // This runs every time ANYTHING is clicked on the page
+  // This runs on EVERY click anywhere on the page
   document.addEventListener("click", function () {
-    // Webflow updates the real <input> a few ms AFTER the click
+    // Wait long enough for Webflow to finally set the checked property
     setTimeout(function () {
       const noChecked = document.getElementById(
         "Occupants----active-military---no"
@@ -17,13 +17,15 @@ document.addEventListener("DOMContentLoaded", function () {
         "Occupants----active-military---yes"
       ).checked;
 
+      console.log("Checked state → No:", noChecked, "Yes:", yesChecked);
+
       if (rentOrOwn) rentOrOwn.style.display = noChecked ? "block" : "none";
       if (militaryHousing)
         militaryHousing.style.display = yesChecked ? "block" : "none";
-    }, 10); // 10ms is enough — 50 was overkill
+    }, 300); // 300ms is the magic number that finally works every time
   });
 
-  // Run once on load (in case one was pre-checked)
+  // Initial run
   setTimeout(function () {
     const noChecked = document.getElementById(
       "Occupants----active-military---no"
@@ -31,9 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const yesChecked = document.getElementById(
       "Occupants----active-military---yes"
     ).checked;
-
     if (rentOrOwn) rentOrOwn.style.display = noChecked ? "block" : "none";
     if (militaryHousing)
       militaryHousing.style.display = yesChecked ? "block" : "none";
-  }, 100);
+  }, 400);
 });
