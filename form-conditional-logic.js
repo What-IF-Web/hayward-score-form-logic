@@ -1,43 +1,48 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // The two wrappers you want to show/hide
-  const rentOrOwnWrapper = document.getElementById("rent-or-own");
-  const militaryHousingWrapper = document.getElementById("military-housing");
+  const rentOrOwn = document.getElementById("rent-or-own");
+  const militaryHousing = document.getElementById("military-housing");
 
-  // Hide both by default
-  if (rentOrOwnWrapper) rentOrOwnWrapper.classList.add("hide-field");
-  if (militaryHousingWrapper)
-    militaryHousingWrapper.classList.add("hide-field");
+  // Hide both wrappers by default
+  if (rentOrOwn) rentOrOwn.style.display = "none";
+  if (militaryHousing) militaryHousing.style.display = "none";
 
-  // This function runs every time either radio is clicked
-  function updateHousingFields() {
-    // Webflow custom radios: the actual <input> is inside the label
-    const noChecked =
-      document.querySelector("#Occupants----active-military---no:checked") !==
-      null;
-    const yesChecked =
-      document.querySelector("#Occupants----active-military---yes:checked") !==
-      null;
+  function updateFields() {
+    const noChecked = document.getElementById(
+      "Occupants----active-military---no"
+    ).checked;
+    const yesChecked = document.getElementById(
+      "Occupants----active-military---yes"
+    ).checked;
 
-    if (rentOrOwnWrapper) {
-      rentOrOwnWrapper.classList.toggle("hide-field", !noChecked);
-    }
-    if (militaryHousingWrapper) {
-      militaryHousingWrapper.classList.toggle("hide-field", !yesChecked);
-    }
+    if (rentOrOwn) rentOrOwn.style.display = noChecked ? "block" : "none";
+    if (militaryHousing)
+      militaryHousing.style.display = yesChecked ? "block" : "none";
   }
 
-  // Listen to clicks on the entire document – works reliably with Webflow custom radios
-  document.addEventListener("click", function (e) {
-    // Only react if the click was on one of our two radio labels/inputs
-    if (
-      e.target.closest("#Occupants----active-military---no") ||
-      e.target.closest("#Occupants----active-military---yes")
-    ) {
-      // Tiny delay because Webflow updates the :checked state after the click handler
-      setTimeout(updateHousingFields, 50);
-    }
+  // This is the trick that makes it work reliably with Webflow’s custom radios
+  const observer = new MutationObserver(updateFields);
+
+  const inputNo = document.getElementById("Occupants----active-military---no");
+  const inputYes = document.getElementById(
+    "Occupants----active-military---yes"
+  );
+
+  if (inputNo)
+    observer.observe(inputNo, {
+      attributes: true,
+      attributeFilter: ["checked"],
+    });
+  if (inputYes)
+    observer.observe(inputYes, {
+      attributes: true,
+      attributeFilter: ["checked"],
+    });
+
+  // Fallback click listener (covers the very first click before MutationObserver kicks in)
+  document.body.addEventListener("click", function checkNow() {
+    setTimeout(updateFields, 10);
   });
 
-  // Run once on page load (in case something was pre-selected)
-  setTimeout(updateHousingFields, 100);
+  // Initial check in case something is pre-selected
+  setTimeout(updateFields, 150);
 });
