@@ -1,168 +1,40 @@
+// Run when the page loads
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("[debug] DOMContentLoaded");
+  // Get the elements
+  const wrapperRentOrOwn = document.getElementById("rent-or-own");
+  const wrapperMilitaryHousing = document.getElementById("military-housing");
 
-  // Targets to show/hide
-  const rentOrOwn = document.getElementById("rent-or-own");
-  const militaryHousing = document.getElementById("military-housing");
-  console.log("[debug] rent-or-own element:", rentOrOwn);
-  console.log("[debug] military-housing element:", militaryHousing);
-
-  // Try to find checkboxes by the IDs you gave.
-  let checkboxNo = document.getElementById("Occupants----active-military---no");
-  let checkboxYes = document.getElementById(
+  const checkboxNo = document.getElementById(
+    "Occupants----active-military---no"
+  );
+  const checkboxYes = document.getElementById(
     "Occupants----active-military---yes"
   );
 
-  // If not found, try some fallbacks (name or partial id match)
-  if (!checkboxNo || !checkboxYes) {
-    console.log(
-      "[debug] One or both checkboxes not found by ID — attempting fallbacks"
-    );
+  // Initially hide both wrappers
+  if (wrapperRentOrOwn) wrapperRentOrOwn.style.display = "none";
+  if (wrapperMilitaryHousing) wrapperMilitaryHousing.style.display = "none";
 
-    // fallback by name containing "active-military" (common pattern)
-    const byName = document.querySelectorAll('input[type="checkbox"][name]');
-    const matched = Array.from(byName).filter(
-      (c) =>
-        (c.id && c.id.includes("active-military")) ||
-        (c.name && c.name.includes("active-military"))
-    );
+  // Function to update visibility
+  function updateHousingFields() {
+    if (!checkboxNo || !checkboxYes) return;
 
-    console.log("[debug] checkboxes matched by fallback:", matched);
+    const isYesChecked = checkboxYes.checked;
+    const isNoChecked = checkboxNo.checked;
 
-    if (matched.length >= 2) {
-      // Heuristic: choose first as "no" and second as "yes" if IDs missing
-      checkboxNo = checkboxNo || matched[0];
-      checkboxYes = checkboxYes || matched[1];
+    // Show/hide based on which radio is selected
+    if (wrapperRentOrOwn) {
+      wrapperRentOrOwn.style.display = isNoChecked ? "block" : "none"; // or 'flex', 'grid', etc. depending on your layout
+    }
+    if (wrapperMilitaryHousing) {
+      wrapperMilitaryHousing.style.display = isYesChecked ? "block" : "none";
     }
   }
 
-  console.log("[debug] checkboxNo:", checkboxNo);
-  console.log("[debug] checkboxYes:", checkboxYes);
+  // Listen to changes on both checkboxes (in case they are radio buttons or actual checkboxes)
+  if (checkboxNo) checkboxNo.addEventListener("change", updateHousingFields);
+  if (checkboxYes) checkboxYes.addEventListener("change", updateHousingFields);
 
-  // If the show/hide targets are missing, warn and stop
-  if (!rentOrOwn || !militaryHousing) {
-    console.warn(
-      "[debug] Missing one of the target elements (#rent-or-own or #military-housing). Aborting UI toggles."
-    );
-    return;
-  }
-
-  // Ensure checkboxes exist before binding
-  if (!checkboxNo || !checkboxYes) {
-    console.warn(
-      "[debug] Checkboxes not found. Make sure IDs are correct or that they are present in the DOM."
-    );
-    return;
-  }
-
-  // Hide both by default (use style.display so Webflow doesn't fight it)
-  rentOrOwn.style.display = "none";
-  militaryHousing.style.display = "none";
-  console.log("[debug] Both sections hidden by default");
-
-  function updateVisibility(trigger) {
-    console.log(
-      "[debug] updateVisibility fired. trigger:",
-      trigger && (trigger.id || trigger.name)
-    );
-    console.log(
-      "[debug] checkboxNo.checked:",
-      checkboxNo.checked,
-      "checkboxYes.checked:",
-      checkboxYes.checked
-    );
-
-    // Checkboxes are independent - each controls its own section
-    if (checkboxNo.checked) {
-      console.log("[debug] Showing rent-or-own");
-      rentOrOwn.style.display = "block";
-      rentOrOwn.style.visibility = "visible";
-      rentOrOwn.style.opacity = "1";
-    } else {
-      console.log("[debug] Hiding rent-or-own");
-      rentOrOwn.style.display = "none";
-      rentOrOwn.style.visibility = "hidden";
-      rentOrOwn.style.opacity = "0";
-    }
-
-    if (checkboxYes.checked) {
-      console.log("[debug] Showing military-housing");
-      militaryHousing.style.display = "block";
-      militaryHousing.style.visibility = "visible";
-      militaryHousing.style.opacity = "1";
-    } else {
-      console.log("[debug] Hiding military-housing");
-      militaryHousing.style.display = "none";
-      militaryHousing.style.visibility = "hidden";
-      militaryHousing.style.opacity = "0";
-    }
-
-    console.log(
-      "[debug] rentOrOwn computed display:",
-      window.getComputedStyle(rentOrOwn).display
-    );
-    console.log(
-      "[debug] militaryHousing computed display:",
-      window.getComputedStyle(militaryHousing).display
-    );
-  }
-
-  // Bind listeners. Also bind to the parent container in case checkboxes are dynamically inserted later.
-  checkboxNo.addEventListener("change", function (e) {
-    console.log("[debug] checkboxNo change event", e);
-    updateVisibility(e.target);
-  });
-
-  checkboxYes.addEventListener("change", function (e) {
-    console.log("[debug] checkboxYes change event", e);
-    updateVisibility(e.target);
-  });
-
-  // Initial run in case one is preselected
-  console.log("[debug] Running initial updateVisibility check");
-  updateVisibility();
-
-  // Extra: monitor clicks (sometimes Webflow wires custom widgets)
-  checkboxNo.addEventListener("click", function (e) {
-    console.log("[debug] checkboxNo clicked");
-    // Use setTimeout to ensure checked state is updated after click
-    setTimeout(() => {
-      console.log(
-        "[debug] In setTimeout: checkboxNo.checked =",
-        checkboxNo.checked
-      );
-      updateVisibility(e.target);
-      console.log(
-        "[debug] rentOrOwn.style.display after update:",
-        rentOrOwn.style.display
-      );
-      console.log(
-        "[debug] militaryHousing.style.display after update:",
-        militaryHousing.style.display
-      );
-    }, 10);
-  });
-  checkboxYes.addEventListener("click", function (e) {
-    console.log("[debug] checkboxYes clicked");
-    // Use setTimeout to ensure checked state is updated after click
-    setTimeout(() => {
-      console.log(
-        "[debug] In setTimeout: checkboxYes.checked =",
-        checkboxYes.checked
-      );
-      updateVisibility(e.target);
-      console.log(
-        "[debug] rentOrOwn.style.display after update:",
-        rentOrOwn.style.display
-      );
-      console.log(
-        "[debug] militaryHousing.style.display after update:",
-        militaryHousing.style.display
-      );
-    }, 10);
-  });
-
-  // If you want to inspect the whole form area quickly:
-  const formContent = document.querySelector(".score-form_form-content");
-  console.log("[debug] .score-form_form-content element:", formContent);
+  // Run once on load in case one is pre-checked (e.g. from a previous form submission)
+  updateHousingFields();
 });
