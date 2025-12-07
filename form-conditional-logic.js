@@ -73,14 +73,38 @@ document.addEventListener("DOMContentLoaded", function () {
     if (radioNo.checked) {
       console.log("[debug] Showing rent-or-own, hiding military-housing");
       rentOrOwn.style.display = "block";
+      rentOrOwn.style.visibility = "visible";
+      rentOrOwn.style.opacity = "1";
       militaryHousing.style.display = "none";
+      militaryHousing.style.visibility = "hidden";
+      militaryHousing.style.opacity = "0";
+      console.log(
+        "[debug] rentOrOwn computed display:",
+        window.getComputedStyle(rentOrOwn).display
+      );
+      console.log(
+        "[debug] militaryHousing computed display:",
+        window.getComputedStyle(militaryHousing).display
+      );
       return;
     }
 
     if (radioYes.checked) {
       console.log("[debug] Showing military-housing, hiding rent-or-own");
       militaryHousing.style.display = "block";
+      militaryHousing.style.visibility = "visible";
+      militaryHousing.style.opacity = "1";
       rentOrOwn.style.display = "none";
+      rentOrOwn.style.visibility = "hidden";
+      rentOrOwn.style.opacity = "0";
+      console.log(
+        "[debug] rentOrOwn computed display:",
+        window.getComputedStyle(rentOrOwn).display
+      );
+      console.log(
+        "[debug] militaryHousing computed display:",
+        window.getComputedStyle(militaryHousing).display
+      );
       return;
     }
 
@@ -109,21 +133,56 @@ document.addEventListener("DOMContentLoaded", function () {
   // Since radios have different names, manually ensure mutual exclusivity
   radioNo.addEventListener("click", function (e) {
     console.log("[debug] radioNo clicked");
-    // Uncheck the other radio since they're not in the same group
-    if (radioYes.checked) {
-      radioYes.checked = false;
-    }
+    // Explicitly check this radio and uncheck the other
+    radioNo.checked = true;
+    radioYes.checked = false;
+    console.log(
+      "[debug] After setting: radioNo.checked =",
+      radioNo.checked,
+      "radioYes.checked =",
+      radioYes.checked
+    );
     // Use setTimeout to ensure checked state is updated after click
-    setTimeout(() => updateVisibility(e.target), 0);
+    setTimeout(() => {
+      console.log("[debug] In setTimeout: radioNo.checked =", radioNo.checked);
+      updateVisibility(e.target);
+      console.log(
+        "[debug] rentOrOwn.style.display after update:",
+        rentOrOwn.style.display
+      );
+      console.log(
+        "[debug] militaryHousing.style.display after update:",
+        militaryHousing.style.display
+      );
+    }, 10);
   });
   radioYes.addEventListener("click", function (e) {
     console.log("[debug] radioYes clicked");
-    // Uncheck the other radio since they're not in the same group
-    if (radioNo.checked) {
-      radioNo.checked = false;
-    }
+    // Explicitly check this radio and uncheck the other
+    radioYes.checked = true;
+    radioNo.checked = false;
+    console.log(
+      "[debug] After setting: radioNo.checked =",
+      radioNo.checked,
+      "radioYes.checked =",
+      radioYes.checked
+    );
     // Use setTimeout to ensure checked state is updated after click
-    setTimeout(() => updateVisibility(e.target), 0);
+    setTimeout(() => {
+      console.log(
+        "[debug] In setTimeout: radioYes.checked =",
+        radioYes.checked
+      );
+      updateVisibility(e.target);
+      console.log(
+        "[debug] rentOrOwn.style.display after update:",
+        rentOrOwn.style.display
+      );
+      console.log(
+        "[debug] militaryHousing.style.display after update:",
+        militaryHousing.style.display
+      );
+    }, 10);
   });
 
   // If you want to inspect the whole form area quickly:
