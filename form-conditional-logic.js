@@ -66,64 +66,55 @@ document.addEventListener("DOMContentLoaded", function () {
       trigger && (trigger.id || trigger.name)
     );
     console.log(
-      "[debug] radioNo.checked:",
-      radioNo.checked,
-      "radioYes.checked:",
-      radioYes.checked
+      "[debug] checkboxNo.checked:",
+      checkboxNo.checked,
+      "checkboxYes.checked:",
+      checkboxYes.checked
     );
 
-    if (radioNo.checked) {
-      console.log("[debug] Showing rent-or-own, hiding military-housing");
+    // Checkboxes are independent - each controls its own section
+    if (checkboxNo.checked) {
+      console.log("[debug] Showing rent-or-own");
       rentOrOwn.style.display = "block";
       rentOrOwn.style.visibility = "visible";
       rentOrOwn.style.opacity = "1";
-      militaryHousing.style.display = "none";
-      militaryHousing.style.visibility = "hidden";
-      militaryHousing.style.opacity = "0";
-      console.log(
-        "[debug] rentOrOwn computed display:",
-        window.getComputedStyle(rentOrOwn).display
-      );
-      console.log(
-        "[debug] militaryHousing computed display:",
-        window.getComputedStyle(militaryHousing).display
-      );
-      return;
-    }
-
-    if (radioYes.checked) {
-      console.log("[debug] Showing military-housing, hiding rent-or-own");
-      militaryHousing.style.display = "block";
-      militaryHousing.style.visibility = "visible";
-      militaryHousing.style.opacity = "1";
+    } else {
+      console.log("[debug] Hiding rent-or-own");
       rentOrOwn.style.display = "none";
       rentOrOwn.style.visibility = "hidden";
       rentOrOwn.style.opacity = "0";
-      console.log(
-        "[debug] rentOrOwn computed display:",
-        window.getComputedStyle(rentOrOwn).display
-      );
-      console.log(
-        "[debug] militaryHousing computed display:",
-        window.getComputedStyle(militaryHousing).display
-      );
-      return;
     }
 
-    // Neither checked (shouldn't happen with radios, but defensive)
-    console.log("[debug] Neither radio checked — hiding both");
-    rentOrOwn.style.display = "none";
-    militaryHousing.style.display = "none";
+    if (checkboxYes.checked) {
+      console.log("[debug] Showing military-housing");
+      militaryHousing.style.display = "block";
+      militaryHousing.style.visibility = "visible";
+      militaryHousing.style.opacity = "1";
+    } else {
+      console.log("[debug] Hiding military-housing");
+      militaryHousing.style.display = "none";
+      militaryHousing.style.visibility = "hidden";
+      militaryHousing.style.opacity = "0";
+    }
+
+    console.log(
+      "[debug] rentOrOwn computed display:",
+      window.getComputedStyle(rentOrOwn).display
+    );
+    console.log(
+      "[debug] militaryHousing computed display:",
+      window.getComputedStyle(militaryHousing).display
+    );
   }
 
-  // Bind listeners. Also bind to the parent container in case radios are dynamically inserted later.
-  radioNo.addEventListener("change", function (e) {
-    console.log("[debug] radioNo change event", e);
+  // Bind listeners. Also bind to the parent container in case checkboxes are dynamically inserted later.
+  checkboxNo.addEventListener("change", function (e) {
+    console.log("[debug] checkboxNo change event", e);
     updateVisibility(e.target);
   });
 
-  radioYes.addEventListener("change", function (e) {
-    console.log("[debug] radioYes change event", e);
+  checkboxYes.addEventListener("change", function (e) {
+    console.log("[debug] checkboxYes change event", e);
     updateVisibility(e.target);
   });
 
@@ -132,21 +123,14 @@ document.addEventListener("DOMContentLoaded", function () {
   updateVisibility();
 
   // Extra: monitor clicks (sometimes Webflow wires custom widgets)
-  // Since radios have different names, manually ensure mutual exclusivity
-  radioNo.addEventListener("click", function (e) {
-    console.log("[debug] radioNo clicked");
-    // Explicitly check this radio and uncheck the other
-    radioNo.checked = true;
-    radioYes.checked = false;
-    console.log(
-      "[debug] After setting: radioNo.checked =",
-      radioNo.checked,
-      "radioYes.checked =",
-      radioYes.checked
-    );
+  checkboxNo.addEventListener("click", function (e) {
+    console.log("[debug] checkboxNo clicked");
     // Use setTimeout to ensure checked state is updated after click
     setTimeout(() => {
-      console.log("[debug] In setTimeout: radioNo.checked =", radioNo.checked);
+      console.log(
+        "[debug] In setTimeout: checkboxNo.checked =",
+        checkboxNo.checked
+      );
       updateVisibility(e.target);
       console.log(
         "[debug] rentOrOwn.style.display after update:",
@@ -158,22 +142,13 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     }, 10);
   });
-  radioYes.addEventListener("click", function (e) {
-    console.log("[debug] radioYes clicked");
-    // Explicitly check this radio and uncheck the other
-    radioYes.checked = true;
-    radioNo.checked = false;
-    console.log(
-      "[debug] After setting: radioNo.checked =",
-      radioNo.checked,
-      "radioYes.checked =",
-      radioYes.checked
-    );
+  checkboxYes.addEventListener("click", function (e) {
+    console.log("[debug] checkboxYes clicked");
     // Use setTimeout to ensure checked state is updated after click
     setTimeout(() => {
       console.log(
-        "[debug] In setTimeout: radioYes.checked =",
-        radioYes.checked
+        "[debug] In setTimeout: checkboxYes.checked =",
+        checkboxYes.checked
       );
       updateVisibility(e.target);
       console.log(
