@@ -1,40 +1,35 @@
-// Run when the page loads
 document.addEventListener("DOMContentLoaded", function () {
-  // Get the elements
-  const wrapperRentOrOwn = document.getElementById("rent-or-own");
-  const wrapperMilitaryHousing = document.getElementById("military-housing");
+  // The two wrappers you want to show/hide
+  const rentOrOwnWrapper = document.getElementById("rent-or-own");
+  const militaryHousingWrapper = document.getElementById("military-housing");
 
-  const checkboxNo = document.getElementById(
-    "Occupants----active-military---no"
-  );
-  const checkboxYes = document.getElementById(
+  // Your two radio buttons
+  const radioNo = document.getElementById("Occupants----active-military---no");
+  const radioYes = document.getElementById(
     "Occupants----active-military---yes"
   );
 
-  // Initially hide both wrappers
-  if (wrapperRentOrOwn) wrapperRentOrOwn.style.display = "none";
-  if (wrapperMilitaryHousing) wrapperMilitaryHousing.style.display = "none";
+  // Hide both wrappers by default
+  if (rentOrOwnWrapper) rentOrOwnWrapper.style.display = "none";
+  if (militaryHousingWrapper) militaryHousingWrapper.style.display = "none";
 
-  // Function to update visibility
-  function updateHousingFields() {
-    if (!checkboxNo || !checkboxYes) return;
+  // Main function that shows the correct field
+  function updateHousingVisibility() {
+    const noChecked = radioNo && radioNo.checked;
+    const yesChecked = radioYes && radioYes.checked;
 
-    const isYesChecked = checkboxYes.checked;
-    const isNoChecked = checkboxNo.checked;
-
-    // Show/hide based on which radio is selected
-    if (wrapperRentOrOwn) {
-      wrapperRentOrOwn.style.display = isNoChecked ? "block" : "none"; // or 'flex', 'grid', etc. depending on your layout
+    if (rentOrOwnWrapper) {
+      rentOrOwnWrapper.style.display = noChecked ? "block" : "none";
     }
-    if (wrapperMilitaryHousing) {
-      wrapperMilitaryHousing.style.display = isYesChecked ? "block" : "none";
+    if (militaryHousingWrapper) {
+      militaryHousingWrapper.style.display = yesChecked ? "block" : "none";
     }
   }
 
-  // Listen to changes on both checkboxes (in case they are radio buttons or actual checkboxes)
-  if (checkboxNo) checkboxNo.addEventListener("change", updateHousingFields);
-  if (checkboxYes) checkboxYes.addEventListener("change", updateHousingFields);
+  // Listen for clicks/changes on both radios
+  if (radioNo) radioNo.addEventListener("click", updateHousingVisibility);
+  if (radioYes) radioYes.addEventListener("click", updateHousingVisibility);
 
-  // Run once on load in case one is pre-checked (e.g. from a previous form submission)
-  updateHousingFields();
+  // Run once immediately (in case one was pre-selected on page load)
+  updateHousingVisibility();
 });
