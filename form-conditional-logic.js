@@ -1,38 +1,39 @@
 document.addEventListener("DOMContentLoaded", function () {
   const rentOrOwn = document.getElementById("rent-or-own");
   const militaryHousing = document.getElementById("military-housing");
-  const radioNo = document.getElementById("Occupants----active-military---no");
-  const radioYes = document.getElementById(
-    "Occupants----active-military---yes"
-  );
 
-  // Hide both by default
+  // Hide both at start
   if (rentOrOwn) rentOrOwn.style.display = "none";
   if (militaryHousing) militaryHousing.style.display = "none";
 
-  // This single function does everything
-  function checkMilitaryStatus() {
-    const showRentOrOwn = radioNo && radioNo.checked;
-    const showMilitary = radioYes && radioYes.checked;
-
-    console.log(
-      "checkMilitaryStatus → No:",
-      showRentOrOwn,
-      "Yes:",
-      showMilitary
-    );
-
-    if (rentOrOwn) rentOrOwn.style.display = showRentOrOwn ? "block" : "none";
-    if (militaryHousing)
-      militaryHousing.style.display = showMilitary ? "block" : "none";
-  }
-
-  // THE ONLY THING THAT RELIABLY WORKS with Webflow custom radios:
-  // Listen for clicks on the entire document and check 50ms later
+  // This runs every time ANYTHING is clicked on the page
   document.addEventListener("click", function () {
-    setTimeout(checkMilitaryStatus, 50);
+    // Webflow updates the real <input> a few ms AFTER the click
+    setTimeout(function () {
+      const noChecked = document.getElementById(
+        "Occupants----active-military---no"
+      ).checked;
+      const yesChecked = document.getElementById(
+        "Occupants----active-military---yes"
+      ).checked;
+
+      if (rentOrOwn) rentOrOwn.style.display = noChecked ? "block" : "none";
+      if (militaryHousing)
+        militaryHousing.style.display = yesChecked ? "block" : "none";
+    }, 10); // 10ms is enough — 50 was overkill
   });
 
-  // Also run on page load (in case one is pre-selected)
-  setTimeout(checkMilitaryStatus, 100);
+  // Run once on load (in case one was pre-checked)
+  setTimeout(function () {
+    const noChecked = document.getElementById(
+      "Occupants----active-military---no"
+    ).checked;
+    const yesChecked = document.getElementById(
+      "Occupants----active-military---yes"
+    ).checked;
+
+    if (rentOrOwn) rentOrOwn.style.display = noChecked ? "block" : "none";
+    if (militaryHousing)
+      militaryHousing.style.display = yesChecked ? "block" : "none";
+  }, 100);
 });
