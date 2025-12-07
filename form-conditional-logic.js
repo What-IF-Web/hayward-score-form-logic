@@ -106,12 +106,25 @@ document.addEventListener("DOMContentLoaded", function () {
   updateVisibility();
 
   // Extra: monitor clicks (sometimes Webflow wires custom widgets)
-  radioNo.addEventListener("click", () =>
-    console.log("[debug] radioNo clicked")
-  );
-  radioYes.addEventListener("click", () =>
-    console.log("[debug] radioYes clicked")
-  );
+  // Since radios have different names, manually ensure mutual exclusivity
+  radioNo.addEventListener("click", function (e) {
+    console.log("[debug] radioNo clicked");
+    // Uncheck the other radio since they're not in the same group
+    if (radioYes.checked) {
+      radioYes.checked = false;
+    }
+    // Use setTimeout to ensure checked state is updated after click
+    setTimeout(() => updateVisibility(e.target), 0);
+  });
+  radioYes.addEventListener("click", function (e) {
+    console.log("[debug] radioYes clicked");
+    // Uncheck the other radio since they're not in the same group
+    if (radioNo.checked) {
+      radioNo.checked = false;
+    }
+    // Use setTimeout to ensure checked state is updated after click
+    setTimeout(() => updateVisibility(e.target), 0);
+  });
 
   // If you want to inspect the whole form area quickly:
   const formContent = document.querySelector(".score-form_form-content");
