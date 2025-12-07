@@ -6,36 +6,18 @@ document.addEventListener("DOMContentLoaded", function () {
   if (rentOrOwn) rentOrOwn.style.display = "none";
   if (militaryHousing) militaryHousing.style.display = "none";
 
-  // This is the nuclear-proof version
-  document.addEventListener("click", function () {
-    setTimeout(function () {
-      requestAnimationFrame(function () {
-        const noChecked = document.getElementById(
-          "Occupants----active-military---no"
-        ).checked;
-        const yesChecked = document.getElementById(
-          "Occupants----active-military---yes"
-        ).checked;
+  function update() {
+    const checkedValue = document.querySelector(
+      'input[name="active-military"]:checked'
+    )?.value;
 
-        if (rentOrOwn) rentOrOwn.style.display = noChecked ? "block" : "none";
-        if (militaryHousing)
-          militaryHousing.style.display = yesChecked ? "block" : "none";
-      });
-    }, 20);
-  });
+    if (rentOrOwn)
+      rentOrOwn.style.display = checkedValue === "no" ? "block" : "none";
+    if (militaryHousing)
+      militaryHousing.style.display = checkedValue === "yes" ? "block" : "none";
+  }
 
-  // Initial run
-  setTimeout(function () {
-    requestAnimationFrame(function () {
-      const noChecked = document.getElementById(
-        "Occupants----active-military---no"
-      ).checked;
-      const yesChecked = document.getElementById(
-        "Occupants----active-military---yes"
-      ).checked;
-      if (rentOrOwn) rentOrOwn.style.display = noChecked ? "block" : "none";
-      if (militaryHousing)
-        militaryHousing.style.display = yesChecked ? "block" : "none";
-    });
-  }, 100);
+  // Normal change event works perfectly now
+  document.addEventListener("change", update);
+  update(); // run once on load
 });
