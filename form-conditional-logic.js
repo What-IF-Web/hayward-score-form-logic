@@ -7,35 +7,37 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("[debug] rent-or-own element:", rentOrOwn);
   console.log("[debug] military-housing element:", militaryHousing);
 
-  // Try to find radios by the IDs you gave.
-  let radioNo = document.getElementById("Occupants----active-military---no");
-  let radioYes = document.getElementById("Occupants----active-military---yes");
+  // Try to find checkboxes by the IDs you gave.
+  let checkboxNo = document.getElementById("Occupants----active-military---no");
+  let checkboxYes = document.getElementById(
+    "Occupants----active-military---yes"
+  );
 
   // If not found, try some fallbacks (name or partial id match)
-  if (!radioNo || !radioYes) {
+  if (!checkboxNo || !checkboxYes) {
     console.log(
-      "[debug] One or both radios not found by ID — attempting fallbacks"
+      "[debug] One or both checkboxes not found by ID — attempting fallbacks"
     );
 
     // fallback by name containing "active-military" (common pattern)
-    const byName = document.querySelectorAll('input[type="radio"][name]');
+    const byName = document.querySelectorAll('input[type="checkbox"][name]');
     const matched = Array.from(byName).filter(
-      (r) =>
-        (r.id && r.id.includes("active-military")) ||
-        (r.name && r.name.includes("active-military"))
+      (c) =>
+        (c.id && c.id.includes("active-military")) ||
+        (c.name && c.name.includes("active-military"))
     );
 
-    console.log("[debug] radios matched by fallback:", matched);
+    console.log("[debug] checkboxes matched by fallback:", matched);
 
     if (matched.length >= 2) {
       // Heuristic: choose first as "no" and second as "yes" if IDs missing
-      radioNo = radioNo || matched[0];
-      radioYes = radioYes || matched[1];
+      checkboxNo = checkboxNo || matched[0];
+      checkboxYes = checkboxYes || matched[1];
     }
   }
 
-  console.log("[debug] radioNo:", radioNo);
-  console.log("[debug] radioYes:", radioYes);
+  console.log("[debug] checkboxNo:", checkboxNo);
+  console.log("[debug] checkboxYes:", checkboxYes);
 
   // If the show/hide targets are missing, warn and stop
   if (!rentOrOwn || !militaryHousing) {
@@ -45,10 +47,10 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Ensure radios exist before binding
-  if (!radioNo || !radioYes) {
+  // Ensure checkboxes exist before binding
+  if (!checkboxNo || !checkboxYes) {
     console.warn(
-      "[debug] Radio buttons not found. Make sure IDs are correct or that they are present in the DOM."
+      "[debug] Checkboxes not found. Make sure IDs are correct or that they are present in the DOM."
     );
     return;
   }
