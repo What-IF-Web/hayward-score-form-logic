@@ -233,4 +233,218 @@ document.addEventListener("DOMContentLoaded", function () {
     // Run once immediately (in case it was pre-selected on page load)
     updateFeaturesGreyState();
   })();
+
+  // ============================================
+  // Mold Logic
+  // ============================================
+  (function initMoldLogic() {
+    console.log("Mold logic started – looking for elements...");
+
+    const moldDropdown = document.getElementById("mold-dropdown");
+    const radioNo = document.getElementById(
+      "Indoor-Conditions----Any-visible-mold-on-walls-and-or-ceilings-no"
+    );
+    const radioYes = document.getElementById(
+      "Indoor-Conditions----Any-visible-mold-on-walls-and-or-ceilings-yes"
+    );
+
+    console.log("mold-dropdown:", moldDropdown);
+    console.log("mold---no radio:", radioNo);
+    console.log("mold---yes radio:", radioYes);
+
+    // Hide dropdown by default
+    if (moldDropdown) moldDropdown.style.display = "none";
+
+    function updateMoldVisibility() {
+      const noChecked = radioNo && radioNo.checked;
+      const yesChecked = radioYes && radioYes.checked;
+
+      console.log(
+        "Updating mold visibility – no:",
+        noChecked,
+        "yes:",
+        yesChecked
+      );
+
+      if (moldDropdown) {
+        moldDropdown.style.display = yesChecked ? "block" : "none";
+        console.log(`mold-dropdown display: ${moldDropdown.style.display}`);
+      }
+    }
+
+    // Listen for clicks/changes on both radios
+    if (radioNo) radioNo.addEventListener("click", updateMoldVisibility);
+    if (radioYes) radioYes.addEventListener("click", updateMoldVisibility);
+
+    // Run once immediately (in case one was pre-selected on page load)
+    updateMoldVisibility();
+
+    console.log("Mold logic fully loaded and listening!");
+  })();
+
+  // ============================================
+  // Renovation Logic
+  // ============================================
+  (function initRenovationLogic() {
+    console.log("Renovation logic started – looking for elements...");
+
+    const lastRemodelRenovationOne = document.getElementById(
+      "last-remodel-renovation-one"
+    );
+    const radioOne = document.getElementById("yes-major-renovation-one");
+    const radioTwo = document.getElementById("yes-major-renovation-two");
+
+    console.log("last-remodel-renovation-one:", lastRemodelRenovationOne);
+    console.log("yes-major-renovation-one radio:", radioOne);
+    console.log("yes-major-renovation-two radio:", radioTwo);
+
+    // Hide element by default
+    if (lastRemodelRenovationOne)
+      lastRemodelRenovationOne.style.display = "none";
+
+    function updateRenovationVisibility() {
+      const oneChecked = radioOne && radioOne.checked;
+      const twoChecked = radioTwo && radioTwo.checked;
+
+      console.log(
+        "Updating renovation visibility – one:",
+        oneChecked,
+        "two:",
+        twoChecked
+      );
+
+      if (lastRemodelRenovationOne) {
+        lastRemodelRenovationOne.style.display =
+          oneChecked || twoChecked ? "block" : "none";
+        console.log(
+          `last-remodel-renovation-one display: ${lastRemodelRenovationOne.style.display}`
+        );
+      }
+    }
+
+    // Listen for clicks/changes on both radios
+    if (radioOne)
+      radioOne.addEventListener("click", updateRenovationVisibility);
+    if (radioTwo)
+      radioTwo.addEventListener("click", updateRenovationVisibility);
+
+    // Run once immediately (in case one was pre-selected on page load)
+    updateRenovationVisibility();
+
+    console.log("Renovation logic fully loaded and listening!");
+  })();
+
+  // ============================================
+  // Pests Logic
+  // ============================================
+  (function initPestsLogic() {
+    console.log("Pests logic started – looking for elements...");
+
+    const fleasField = document.getElementById("fleas-field");
+    const scoreFormButton = document.querySelector(".score-form_button");
+    const radioNo = document.getElementById(
+      "Pests----Do-you-treat-for-fleas-no"
+    );
+    const radioYes = document.getElementById(
+      "Pests----Do-you-treat-for-fleas-yes"
+    );
+
+    console.log("fleas-field:", fleasField);
+    console.log("score-form_button:", scoreFormButton);
+    console.log("fleas---no radio:", radioNo);
+    console.log("fleas---yes radio:", radioYes);
+
+    // Hide fleas-field by default
+    if (fleasField) fleasField.style.display = "none";
+
+    function validateFleasField() {
+      if (!fleasField) return true;
+
+      // Find all required fields within fleas-field
+      const requiredFields = fleasField.querySelectorAll(
+        "input[required], select[required], textarea[required]"
+      );
+
+      // Check if all required fields are filled
+      let allFilled = true;
+      requiredFields.forEach((field) => {
+        if (field.type === "checkbox" || field.type === "radio") {
+          // For checkboxes/radios, check if at least one in the group is checked
+          const name = field.name;
+          if (name) {
+            const groupChecked = document.querySelector(
+              `input[name="${name}"]:checked`
+            );
+            if (!groupChecked) allFilled = false;
+          } else if (!field.checked) {
+            allFilled = false;
+          }
+        } else {
+          // For text inputs, selects, textareas
+          if (!field.value || field.value.trim() === "") {
+            allFilled = false;
+          }
+        }
+      });
+
+      return allFilled;
+    }
+
+    function updatePestsVisibility() {
+      const noChecked = radioNo && radioNo.checked;
+      const yesChecked = radioYes && radioYes.checked;
+
+      console.log(
+        "Updating pests visibility – no:",
+        noChecked,
+        "yes:",
+        yesChecked
+      );
+
+      if (fleasField) {
+        fleasField.style.display = yesChecked ? "block" : "none";
+        console.log(`fleas-field display: ${fleasField.style.display}`);
+      }
+
+      // Update button state
+      if (scoreFormButton) {
+        if (noChecked) {
+          // "No" selected: enable button
+          scoreFormButton.disabled = false;
+          scoreFormButton.style.pointerEvents = "";
+          console.log("Button enabled (no fleas treatment)");
+        } else if (yesChecked) {
+          // "Yes" selected: check if required fields are filled
+          const isValid = validateFleasField();
+          scoreFormButton.disabled = !isValid;
+          scoreFormButton.style.pointerEvents = isValid ? "" : "none";
+          console.log(
+            `Button ${isValid ? "enabled" : "disabled"} (fleas treatment: ${
+              isValid ? "valid" : "invalid"
+            })`
+          );
+        } else {
+          // Neither selected: disable button
+          scoreFormButton.disabled = true;
+          scoreFormButton.style.pointerEvents = "none";
+          console.log("Button disabled (no selection)");
+        }
+      }
+    }
+
+    // Listen for clicks/changes on both radios
+    if (radioNo) radioNo.addEventListener("click", updatePestsVisibility);
+    if (radioYes) radioYes.addEventListener("click", updatePestsVisibility);
+
+    // Listen for changes in fleas-field to validate in real-time
+    if (fleasField) {
+      fleasField.addEventListener("input", updatePestsVisibility);
+      fleasField.addEventListener("change", updatePestsVisibility);
+    }
+
+    // Run once immediately (in case one was pre-selected on page load)
+    updatePestsVisibility();
+
+    console.log("Pests logic fully loaded and listening!");
+  })();
 });
