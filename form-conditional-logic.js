@@ -52,8 +52,19 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Both dropdowns found!");
 
     function restrictStories() {
-      const type = homeType.value ? homeType.value.trim() : "";
+      // Try multiple ways to get the value
+      let type = "";
+      if (homeType.value) {
+        type = homeType.value.trim();
+      } else if (homeType.selectedOptions && homeType.selectedOptions[0]) {
+        type = homeType.selectedOptions[0].textContent.trim();
+      } else if (homeType.options && homeType.selectedIndex >= 0) {
+        type = homeType.options[homeType.selectedIndex].textContent.trim();
+      }
+
       console.log("Home type selected:", type);
+      console.log("Home type value:", homeType.value);
+      console.log("Home type element:", homeType);
 
       // Step 1: Show & enable ALL options first
       stories.querySelectorAll("option").forEach((opt) => {
@@ -62,8 +73,11 @@ document.addEventListener("DOMContentLoaded", function () {
         opt.removeAttribute("hidden");
       });
 
-      // Step 2: Decide what to hide
-      if (type === "low-rise") {
+      // Step 2: Decide what to hide (check if value contains "low-rise" or "high-rise")
+      const isLowRise = type.toLowerCase().includes("low-rise");
+      const isHighRise = type.toLowerCase().includes("high-rise");
+
+      if (isLowRise) {
         console.log("→ LOW-RISE selected: hiding stories 4 to 9");
         for (let i = 4; i <= 9; i++) {
           const option =
@@ -86,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
           console.log("Clearing invalid selection:", current);
           stories.value = "";
         }
-      } else if (type === "high-rise") {
+      } else if (isHighRise) {
         console.log("→ HIGH-RISE selected: hiding stories 1 to 3");
         for (let i = 1; i <= 3; i++) {
           const option =
