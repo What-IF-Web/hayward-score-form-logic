@@ -50,11 +50,53 @@ document.addEventListener("DOMContentLoaded", function () {
     const radioNo = document.getElementById("General-home----basement---no");
     const radioYes = document.getElementById("General-home----basement---yes");
 
+    // Make the basement radio buttons required (set on one, applies to the group)
+    if (radioNo) radioNo.setAttribute("required", "required");
+    if (radioYes) radioYes.setAttribute("required", "required");
+
     // Hide both wrappers by default
     if (basementLooksLikeWrapper)
       basementLooksLikeWrapper.style.display = "none";
     if (basementWetDampDryWrapper)
       basementWetDampDryWrapper.style.display = "none";
+
+    // Helper function to validate basement fields when "yes" is selected
+    function validateBasementFields() {
+      if (!basementLooksLikeWrapper || !basementWetDampDryWrapper) return true;
+
+      const requiredFields = [
+        ...basementLooksLikeWrapper.querySelectorAll(
+          "input[required], select[required], textarea[required]"
+        ),
+        ...basementWetDampDryWrapper.querySelectorAll(
+          "input[required], select[required], textarea[required]"
+        ),
+      ];
+
+      // Check if all required fields are filled
+      let allFilled = true;
+      requiredFields.forEach((field) => {
+        if (field.type === "checkbox" || field.type === "radio") {
+          // For checkboxes/radios, check if at least one in the group is checked
+          const name = field.name;
+          if (name) {
+            const groupChecked = document.querySelector(
+              `input[name="${name}"]:checked`
+            );
+            if (!groupChecked) allFilled = false;
+          } else if (!field.checked) {
+            allFilled = false;
+          }
+        } else {
+          // For text inputs, selects, textareas
+          if (!field.value || field.value.trim() === "") {
+            allFilled = false;
+          }
+        }
+      });
+
+      return allFilled;
+    }
 
     function updateBasementVisibility() {
       const noChecked = radioNo && radioNo.checked;
@@ -109,6 +151,32 @@ document.addEventListener("DOMContentLoaded", function () {
     // Listen for clicks/changes on both radios
     if (radioNo) radioNo.addEventListener("click", updateBasementVisibility);
     if (radioYes) radioYes.addEventListener("click", updateBasementVisibility);
+
+    // Listen for changes in basement fields to validate in real-time when "yes" is selected
+    if (basementLooksLikeWrapper) {
+      basementLooksLikeWrapper.addEventListener("input", function () {
+        if (radioYes && radioYes.checked) {
+          validateBasementFields();
+        }
+      });
+      basementLooksLikeWrapper.addEventListener("change", function () {
+        if (radioYes && radioYes.checked) {
+          validateBasementFields();
+        }
+      });
+    }
+    if (basementWetDampDryWrapper) {
+      basementWetDampDryWrapper.addEventListener("input", function () {
+        if (radioYes && radioYes.checked) {
+          validateBasementFields();
+        }
+      });
+      basementWetDampDryWrapper.addEventListener("change", function () {
+        if (radioYes && radioYes.checked) {
+          validateBasementFields();
+        }
+      });
+    }
 
     // Run once immediately (in case one was pre-selected on page load)
     updateBasementVisibility();
