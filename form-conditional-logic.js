@@ -37,37 +37,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //house stories logic
 document.addEventListener("DOMContentLoaded", function () {
-  const homeTypeSelect = document.getElementById("home-type");
-  const storiesSelect = document.getElementById("house-stories");
+  const homeType = document.getElementById("home-type");
+  const stories = document.getElementById("house-stories");
 
   function updateStoriesOptions() {
-    const selectedValue = homeTypeSelect.value;
-    const isLowRise = selectedValue === "multi-low"; // adjust this value if needed
+    const selected = homeType.value;
 
-    // Loop through all options in house-stories
-    Array.from(storiesSelect.options).forEach((option) => {
-      if (option.value === "" || !option.value) return; // keep the placeholder
-
-      const stories = parseInt(option.value, 10);
-
-      if (isLowRise && stories > 3) {
-        option.disabled = true;
-        option.style.display = "none"; // hide completely (optional)
-
-        // If the currently selected value is now invalid, reset it
-        if (storiesSelect.value === option.value) {
-          storiesSelect.value = "";
-        }
-      } else {
-        option.disabled = false;
-        option.style.display = ""; // show again
-      }
+    // Enable all options first
+    stories.querySelectorAll("option").forEach((opt) => {
+      opt.disabled = false;
+      opt.style.display = "";
     });
+
+    // If "low-rise" is selected → hide/disable 4+
+    if (selected === "low-rise") {
+      stories.querySelectorAll("option").forEach((opt) => {
+        const value = parseInt(opt.value, 10);
+        if (value > 3) {
+          opt.disabled = true;
+          opt.style.display = "none"; // completely hides from dropdown
+        }
+      });
+
+      // If current selection is now invalid, clear it
+      if (stories.value && parseInt(stories.value, 10) > 3) {
+        stories.value = "";
+      }
+    }
+    // If "high-rise" is selected → hide/disable 1–3? (optional)
+    else if (selected === "high-rise") {
+      stories.querySelectorAll("option").forEach((opt) => {
+        const value = parseInt(opt.value, 10);
+        if (value > 0 && value <= 3) {
+          opt.disabled = true;
+          opt.style.display = "none";
+        }
+      });
+
+      if (stories.value && parseInt(stories.value, 10) <= 3) {
+        stories.value = "";
+      }
+    }
   }
 
-  // Run on page load (in case a value is pre-selected)
-  updateStoriesOptions();
-
-  // Run every time the home-type changes
-  homeTypeSelect.addEventListener("change", updateStoriesOptions);
+  // Run on change and on page load
+  homeType.addEventListener("change", updateStoriesOptions);
+  updateStoriesOptions(); // in case of pre-filled values
 });
