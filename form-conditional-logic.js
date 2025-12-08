@@ -104,96 +104,115 @@ document.addEventListener("DOMContentLoaded", function () {
   (function initHouseStoriesLogic() {
     console.log("Script started – looking for elements...");
 
-    const homeType = document.getElementById("home-type");
     const stories = document.getElementById("house-stories");
+    const lowRiseOption = document.getElementById(
+      "Multi-unit-low-rise-3-stories-or-more"
+    );
+    const highRiseOption = document.getElementById(
+      "Multi-unit-high-rise-4-stories-or-more"
+    );
 
-    if (!homeType) return console.error("home-type select NOT found!");
     if (!stories) return console.error("house-stories select NOT found!");
 
-    console.log("Both dropdowns found!");
+    console.log("Stories dropdown found!");
 
-    function restrictStories() {
-      // Try multiple ways to get the value
-      let type = "";
-      if (homeType.value) {
-        type = homeType.value.trim();
-      } else if (homeType.selectedOptions && homeType.selectedOptions[0]) {
-        type = homeType.selectedOptions[0].textContent.trim();
-      } else if (homeType.options && homeType.selectedIndex >= 0) {
-        type = homeType.options[homeType.selectedIndex].textContent.trim();
-      }
-
-      console.log("Home type selected:", type);
-      console.log("Home type value:", homeType.value);
-      console.log("Home type element:", homeType);
-
-      // Step 1: Show & enable ALL options first
+    function showAllStories() {
+      // Show & enable ALL options
       stories.querySelectorAll("option").forEach((opt) => {
         opt.disabled = false;
         opt.style.display = "";
         opt.removeAttribute("hidden");
       });
+    }
 
-      // Step 2: Decide what to hide (check if value contains "low-rise" or "high-rise")
-      const isLowRise = type.toLowerCase().includes("low-rise");
-      const isHighRise = type.toLowerCase().includes("high-rise");
+    function restrictToLowRise() {
+      console.log("→ LOW-RISE selected: showing only stories 1 to 3");
+      showAllStories();
 
-      if (isLowRise) {
-        console.log("→ LOW-RISE selected: hiding stories 4 to 9");
-        for (let i = 4; i <= 9; i++) {
-          const option =
-            document.getElementById(`${i}-3`) ||
-            document.getElementById(`${i}-2`);
-          if (option) {
-            option.disabled = true;
-            option.style.display = "none";
-            console.log(
-              `   Hidden & disabled: #${
-                option.id
-              } (${option.textContent.trim()})`
-            );
-          }
+      // Hide stories 4 to 9
+      for (let i = 4; i <= 9; i++) {
+        const option =
+          document.getElementById(`${i}-3`) ||
+          document.getElementById(`${i}-2`);
+        if (option) {
+          option.disabled = true;
+          option.style.display = "none";
+          console.log(
+            `   Hidden & disabled: #${option.id} (${option.textContent.trim()})`
+          );
         }
+      }
 
-        // Clear selection if it was 4–9
-        const current = stories.value;
-        if (current && parseInt(current, 10) >= 4) {
-          console.log("Clearing invalid selection:", current);
-          stories.value = "";
-        }
-      } else if (isHighRise) {
-        console.log("→ HIGH-RISE selected: hiding stories 1 to 3");
-        for (let i = 1; i <= 3; i++) {
-          const option =
-            document.getElementById(`${i}-2`) ||
-            document.getElementById(`${i}-3`);
-          if (option) {
-            option.disabled = true;
-            option.style.display = "none";
-            console.log(
-              `   Hidden & disabled: #${
-                option.id
-              } (${option.textContent.trim()})`
-            );
-          }
-        }
-
-        // Clear selection if it was 1–3
-        const current = stories.value;
-        if (current && parseInt(current, 10) <= 3) {
-          console.log("Clearing invalid selection:", current);
-          stories.value = "";
-        }
-      } else {
-        console.log("→ Other type or empty – showing all 1–9");
+      // Clear selection if it was 4–9
+      const current = stories.value;
+      if (current && parseInt(current, 10) >= 4) {
+        console.log("Clearing invalid selection:", current);
+        stories.value = "";
       }
     }
 
-    // Run when home-type changes
-    homeType.addEventListener("change", restrictStories);
+    function restrictToHighRise() {
+      console.log("→ HIGH-RISE selected: showing only stories 4 to 9");
+      showAllStories();
 
-    // Run once on page load
-    restrictStories();
+      // Hide stories 1 to 3
+      for (let i = 1; i <= 3; i++) {
+        const option =
+          document.getElementById(`${i}-2`) ||
+          document.getElementById(`${i}-3`);
+        if (option) {
+          option.disabled = true;
+          option.style.display = "none";
+          console.log(
+            `   Hidden & disabled: #${option.id} (${option.textContent.trim()})`
+          );
+        }
+      }
+
+      // Clear selection if it was 1–3
+      const current = stories.value;
+      if (current && parseInt(current, 10) <= 3) {
+        console.log("Clearing invalid selection:", current);
+        stories.value = "";
+      }
+    }
+
+    function handleLowRiseClick() {
+      if (lowRiseOption && lowRiseOption.checked) {
+        restrictToLowRise();
+      } else {
+        showAllStories();
+      }
+    }
+
+    function handleHighRiseClick() {
+      if (highRiseOption && highRiseOption.checked) {
+        restrictToHighRise();
+      } else {
+        showAllStories();
+      }
+    }
+
+    // Listen for clicks on the low-rise option
+    if (lowRiseOption) {
+      lowRiseOption.addEventListener("click", handleLowRiseClick);
+      lowRiseOption.addEventListener("change", handleLowRiseClick);
+    }
+
+    // Listen for clicks on the high-rise option
+    if (highRiseOption) {
+      highRiseOption.addEventListener("click", handleHighRiseClick);
+      highRiseOption.addEventListener("change", handleHighRiseClick);
+    }
+
+    // Run once on page load to set initial state
+    if (lowRiseOption && lowRiseOption.checked) {
+      restrictToLowRise();
+    } else if (highRiseOption && highRiseOption.checked) {
+      restrictToHighRise();
+    } else {
+      showAllStories();
+    }
 
     console.log("Script fully loaded and listening!");
   })();
