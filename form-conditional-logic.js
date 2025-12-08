@@ -123,13 +123,36 @@ document.addEventListener("DOMContentLoaded", function () {
       for (let i = 1; i <= 9; i++) {
         const option = document.getElementById(`story-${i}`);
         if (option) {
+          const wasDisabled = option.disabled;
+          const wasHidden = option.style.display === "none";
           option.disabled = false;
           option.style.display = "";
           option.removeAttribute("hidden");
           enabledCount++;
+          if (wasDisabled || wasHidden) {
+            console.log(
+              `   Enabled story-${i}: wasDisabled=${wasDisabled}, wasHidden=${wasHidden}`
+            );
+          }
+        } else {
+          console.warn(`   Could not find story-${i}`);
         }
       }
       console.log(`Enabled ${enabledCount} options (should be 9: stories 1-9)`);
+
+      // Verify all options are visible
+      const visibleOptions = [];
+      for (let i = 1; i <= 9; i++) {
+        const option = document.getElementById(`story-${i}`);
+        if (option && !option.disabled && option.style.display !== "none") {
+          visibleOptions.push(i);
+        }
+      }
+      console.log(
+        `Visible options after showAllStories: ${visibleOptions.join(
+          ", "
+        )} (should be 1-9)`
+      );
     }
 
     function restrictToLowRise() {
@@ -245,36 +268,61 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    function updateStoriesBasedOnSelection() {
+    function updateStoriesBasedOnSelection(event) {
       // Check which option is currently selected
       const lowRiseChecked = lowRiseOption && lowRiseOption.checked;
       const highRiseChecked = highRiseOption && highRiseOption.checked;
 
-      console.log(
-        `updateStoriesBasedOnSelection: lowRise=${lowRiseChecked}, highRise=${highRiseChecked}`
-      );
+      // If this was triggered by a click event, use setTimeout to ensure state is updated
+      const isClickEvent = event && event.type === "click";
+      const checkState = () => {
+        const lowChecked = lowRiseOption && lowRiseOption.checked;
+        const highChecked = highRiseOption && highRiseOption.checked;
 
-      if (lowRiseChecked) {
-        restrictToLowRise();
-      } else if (highRiseChecked) {
-        restrictToHighRise();
+        console.log(
+          `updateStoriesBasedOnSelection: lowRise=${lowChecked}, highRise=${highChecked}`
+        );
+
+        if (lowChecked) {
+          restrictToLowRise();
+        } else if (highChecked) {
+          restrictToHighRise();
+        } else {
+          // Neither is selected, show all stories
+          console.log(
+            "→ Neither low-rise nor high-rise selected, showing all stories"
+          );
+          showAllStories();
+        }
+      };
+
+      if (isClickEvent) {
+        // For click events, wait a bit for the checked state to update
+        setTimeout(checkState, 0);
       } else {
-        // Neither is selected, show all stories
-        console.log("→ Neither low-rise nor high-rise selected, showing all stories");
-        showAllStories();
+        // For change events, the state should already be updated
+        checkState();
       }
     }
 
     // Listen for clicks/changes on the low-rise option
     if (lowRiseOption) {
-      lowRiseOption.addEventListener("click", updateStoriesBasedOnSelection);
-      lowRiseOption.addEventListener("change", updateStoriesBasedOnSelection);
+      lowRiseOption.addEventListener("click", (e) =>
+        updateStoriesBasedOnSelection(e)
+      );
+      lowRiseOption.addEventListener("change", (e) =>
+        updateStoriesBasedOnSelection(e)
+      );
     }
 
     // Listen for clicks/changes on the high-rise option
     if (highRiseOption) {
-      highRiseOption.addEventListener("click", updateStoriesBasedOnSelection);
-      highRiseOption.addEventListener("change", updateStoriesBasedOnSelection);
+      highRiseOption.addEventListener("click", (e) =>
+        updateStoriesBasedOnSelection(e)
+      );
+      highRiseOption.addEventListener("change", (e) =>
+        updateStoriesBasedOnSelection(e)
+      );
     }
 
     // Find the parent container or all related home type options
@@ -293,14 +341,13 @@ document.addEventListener("DOMContentLoaded", function () {
       homeTypeContainer.addEventListener("change", function (event) {
         // Only react to radio/checkbox changes
         if (event.target.type === "radio" || event.target.type === "checkbox") {
-          updateStoriesBasedOnSelection();
+          updateStoriesBasedOnSelection(event);
         }
       });
       homeTypeContainer.addEventListener("click", function (event) {
         // Only react to radio/checkbox clicks
         if (event.target.type === "radio" || event.target.type === "checkbox") {
-          // Use setTimeout to ensure checked state is updated
-          setTimeout(updateStoriesBasedOnSelection, 0);
+          updateStoriesBasedOnSelection(event);
         }
       });
     }
