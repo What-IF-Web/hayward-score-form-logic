@@ -117,11 +117,15 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Stories dropdown found!");
 
     function showAllStories() {
+      console.log("→ Showing all stories (1-9)");
       // Show & enable ALL options
-      stories.querySelectorAll("option").forEach((opt) => {
+      const allOptions = stories.querySelectorAll("option");
+      console.log(`Found ${allOptions.length} total options`);
+      allOptions.forEach((opt) => {
         opt.disabled = false;
         opt.style.display = "";
         opt.removeAttribute("hidden");
+        console.log(`   Enabled: value="${opt.value}" id="${opt.id || "no-id"}" text="${opt.textContent.trim()}"`);
       });
     }
 
@@ -131,13 +135,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Hide stories 4 to 9
       for (let i = 4; i <= 9; i++) {
-        const option = document.getElementById(`story-${i}`);
+        // Try to find by ID first, then by value
+        let option = document.getElementById(`story-${i}`);
+        if (!option) {
+          // Fallback: find by value attribute
+          option = stories.querySelector(`option[value="${i}"]`);
+        }
+        if (!option) {
+          // Fallback: find by value that starts with the number
+          option = Array.from(stories.options).find(
+            (opt) => opt.value && opt.value.toString().startsWith(i.toString())
+          );
+        }
         if (option) {
           option.disabled = true;
           option.style.display = "none";
           console.log(
-            `   Hidden & disabled: #${option.id} (${option.textContent.trim()})`
+            `   Hidden & disabled: #${option.id || "no-id"} value="${
+              option.value
+            }" (${option.textContent.trim()})`
           );
+        } else {
+          console.warn(`Could not find story option for ${i}`);
         }
       }
 
@@ -155,13 +174,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Hide stories 1 to 3
       for (let i = 1; i <= 3; i++) {
-        const option = document.getElementById(`story-${i}`);
+        // Try to find by ID first, then by value
+        let option = document.getElementById(`story-${i}`);
+        if (!option) {
+          // Fallback: find by value attribute
+          option = stories.querySelector(`option[value="${i}"]`);
+        }
+        if (!option) {
+          // Fallback: find by value that starts with the number
+          option = Array.from(stories.options).find(
+            (opt) => opt.value && opt.value.toString().startsWith(i.toString())
+          );
+        }
         if (option) {
           option.disabled = true;
           option.style.display = "none";
           console.log(
-            `   Hidden & disabled: #${option.id} (${option.textContent.trim()})`
+            `   Hidden & disabled: #${option.id || "no-id"} value="${
+              option.value
+            }" (${option.textContent.trim()})`
           );
+        } else {
+          console.warn(`Could not find story option for ${i}`);
         }
       }
 
