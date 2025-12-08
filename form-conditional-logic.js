@@ -269,13 +269,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateStoriesBasedOnSelection(event) {
-      // Check which option is currently selected
-      const lowRiseChecked = lowRiseOption && lowRiseOption.checked;
-      const highRiseChecked = highRiseOption && highRiseOption.checked;
-
       // If this was triggered by a click event, use setTimeout to ensure state is updated
       const isClickEvent = event && event.type === "click";
       const checkState = () => {
+        // Always check the current state of both options
         const lowChecked = lowRiseOption && lowRiseOption.checked;
         const highChecked = highRiseOption && highRiseOption.checked;
 
@@ -283,14 +280,20 @@ document.addEventListener("DOMContentLoaded", function () {
           `updateStoriesBasedOnSelection: lowRise=${lowChecked}, highRise=${highChecked}`
         );
 
+        // If low-rise is selected, restrict to 1-3
         if (lowChecked) {
+          console.log("→ Low-rise selected, restricting to stories 1-3");
           restrictToLowRise();
-        } else if (highChecked) {
+        }
+        // If high-rise is selected, restrict to 4-9
+        else if (highChecked) {
+          console.log("→ High-rise selected, restricting to stories 4-9");
           restrictToHighRise();
-        } else {
-          // Neither is selected, show all stories
+        }
+        // If neither is selected (any other option), show all stories
+        else {
           console.log(
-            "→ Neither low-rise nor high-rise selected, showing all stories"
+            "→ Neither low-rise nor high-rise selected, resetting to show all stories (1-9)"
           );
           showAllStories();
         }
@@ -298,10 +301,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (isClickEvent) {
         // For click events, wait a bit for the checked state to update
-        setTimeout(checkState, 0);
+        setTimeout(checkState, 10);
       } else {
-        // For change events, the state should already be updated
-        checkState();
+        // For change events, the state should already be updated, but use a small delay to be safe
+        setTimeout(checkState, 0);
       }
     }
 
@@ -341,12 +344,36 @@ document.addEventListener("DOMContentLoaded", function () {
       homeTypeContainer.addEventListener("change", function (event) {
         // Only react to radio/checkbox changes
         if (event.target.type === "radio" || event.target.type === "checkbox") {
+          // If a different option (not low-rise or high-rise) was selected, reset to show all
+          const isLowRise =
+            event.target.id === "Multi-unit-low-rise-3-stories-or-more";
+          const isHighRise =
+            event.target.id === "Multi-unit-high-rise-4-stories-or-more";
+
+          if (!isLowRise && !isHighRise) {
+            console.log(
+              "→ Different option selected (not low-rise or high-rise), will reset to show all stories"
+            );
+          }
+
           updateStoriesBasedOnSelection(event);
         }
       });
       homeTypeContainer.addEventListener("click", function (event) {
         // Only react to radio/checkbox clicks
         if (event.target.type === "radio" || event.target.type === "checkbox") {
+          // If a different option (not low-rise or high-rise) was clicked, reset to show all
+          const isLowRise =
+            event.target.id === "Multi-unit-low-rise-3-stories-or-more";
+          const isHighRise =
+            event.target.id === "Multi-unit-high-rise-4-stories-or-more";
+
+          if (!isLowRise && !isHighRise) {
+            console.log(
+              "→ Different option clicked, will reset to show all stories"
+            );
+          }
+
           updateStoriesBasedOnSelection(event);
         }
       });
