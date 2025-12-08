@@ -278,12 +278,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Always use a delay to ensure radio button state is fully updated
       const checkState = () => {
-        // Always check the current state of both options
+        // Check the current state of all relevant options
         const lowChecked = lowRiseOption && lowRiseOption.checked;
         const highChecked = highRiseOption && highRiseOption.checked;
+        const mobileManufacturedOption = document.getElementById(
+          "Mobile-manufactured-home"
+        );
+        const singleFamilyOption = document.getElementById(
+          "Single-family-detached"
+        );
+        const mobileChecked =
+          mobileManufacturedOption && mobileManufacturedOption.checked;
+        const singleFamilyChecked =
+          singleFamilyOption && singleFamilyOption.checked;
 
         console.log(
-          `updateStoriesBasedOnSelection: lowRise=${lowChecked}, highRise=${highChecked}`
+          `updateStoriesBasedOnSelection: lowRise=${lowChecked}, highRise=${highChecked}, mobile=${mobileChecked}, singleFamily=${singleFamilyChecked}`
         );
 
         // If low-rise is selected, restrict to 1-3
@@ -295,6 +305,16 @@ document.addEventListener("DOMContentLoaded", function () {
         else if (highChecked) {
           console.log("→ High-rise selected, restricting to stories 4-9");
           restrictToHighRise();
+        }
+        // If Mobile/manufactured home or Single family detached is selected, show all stories
+        else if (mobileChecked || singleFamilyChecked) {
+          const selectedOption = mobileChecked
+            ? "Mobile/manufactured home"
+            : "Single family detached";
+          console.log(
+            `→ ${selectedOption} selected, showing all stories (1-9)`
+          );
+          showAllStories();
         }
         // If neither is selected (any other option), show all stories
         else {
@@ -326,6 +346,32 @@ document.addEventListener("DOMContentLoaded", function () {
         updateStoriesBasedOnSelection(e)
       );
       highRiseOption.addEventListener("change", (e) =>
+        updateStoriesBasedOnSelection(e)
+      );
+    }
+
+    // Listen for clicks/changes on Mobile/manufactured home option
+    const mobileManufacturedOption = document.getElementById(
+      "Mobile-manufactured-home"
+    );
+    if (mobileManufacturedOption) {
+      mobileManufacturedOption.addEventListener("click", (e) =>
+        updateStoriesBasedOnSelection(e)
+      );
+      mobileManufacturedOption.addEventListener("change", (e) =>
+        updateStoriesBasedOnSelection(e)
+      );
+    }
+
+    // Listen for clicks/changes on Single family detached option
+    const singleFamilyOption = document.getElementById(
+      "Single-family-detached"
+    );
+    if (singleFamilyOption) {
+      singleFamilyOption.addEventListener("click", (e) =>
+        updateStoriesBasedOnSelection(e)
+      );
+      singleFamilyOption.addEventListener("change", (e) =>
         updateStoriesBasedOnSelection(e)
       );
     }
