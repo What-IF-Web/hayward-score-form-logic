@@ -197,4 +197,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Script fully loaded and listening!");
   })();
+
+  // ============================================
+  // Features N/A Logic
+  // ============================================
+  (function initFeaturesNALogic() {
+    const naCheckbox = document.getElementById(
+      "General-Home-Information----Features----N-A"
+    );
+
+    if (!naCheckbox) {
+      console.log("Features N/A checkbox not found");
+      return;
+    }
+
+    function updateFeaturesGreyState() {
+      const isChecked = naCheckbox.checked;
+      const targetDivs = document.querySelectorAll(
+        ".score-form_checkbox-group.home-features div.score-form_checkbox-wrapper.is-row"
+      );
+
+      targetDivs.forEach((div) => {
+        if (isChecked) {
+          div.classList.add("has-greyed");
+        } else {
+          div.classList.remove("has-greyed");
+        }
+      });
+    }
+
+    // Listen for clicks/changes on the checkbox
+    naCheckbox.addEventListener("click", updateFeaturesGreyState);
+    naCheckbox.addEventListener("change", updateFeaturesGreyState);
+
+    // Run once immediately (in case it was pre-selected on page load)
+    updateFeaturesGreyState();
+  })();
 });
