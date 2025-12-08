@@ -131,9 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Hide stories 4 to 9
       for (let i = 4; i <= 9; i++) {
-        const option =
-          document.getElementById(`${i}-3`) ||
-          document.getElementById(`${i}-2`);
+        const option = document.getElementById(`story-${i}`);
         if (option) {
           option.disabled = true;
           option.style.display = "none";
@@ -157,9 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Hide stories 1 to 3
       for (let i = 1; i <= 3; i++) {
-        const option =
-          document.getElementById(`${i}-2`) ||
-          document.getElementById(`${i}-3`);
+        const option = document.getElementById(`story-${i}`);
         if (option) {
           option.disabled = true;
           option.style.display = "none";
