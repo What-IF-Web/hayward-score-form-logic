@@ -118,15 +118,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showAllStories() {
       console.log("→ Showing all stories (1-9)");
-      // Show & enable ALL options
-      const allOptions = stories.querySelectorAll("option");
-      console.log(`Found ${allOptions.length} total options`);
-      allOptions.forEach((opt) => {
-        opt.disabled = false;
-        opt.style.display = "";
-        opt.removeAttribute("hidden");
-      });
-      console.log(`All ${allOptions.length} options enabled and visible`);
+      // Show & enable ALL options by finding them by ID (story-1 through story-9)
+      let enabledCount = 0;
+      for (let i = 1; i <= 9; i++) {
+        const option = document.getElementById(`story-${i}`);
+        if (option) {
+          option.disabled = false;
+          option.style.display = "";
+          option.removeAttribute("hidden");
+          enabledCount++;
+        }
+      }
+      console.log(`Enabled ${enabledCount} options (should be 9: stories 1-9)`);
     }
 
     function restrictToLowRise() {
