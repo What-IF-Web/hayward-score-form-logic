@@ -178,6 +178,138 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
+    // Add form validation to prevent submission when "yes" is selected but fields aren't filled
+    function setupFormValidation() {
+      // Find the form - try multiple approaches
+      let form = null;
+      if (radioNo) {
+        form = radioNo.closest("form");
+      }
+      if (!form && radioYes) {
+        form = radioYes.closest("form");
+      }
+      if (!form) {
+        // Try to find form by common selectors
+        form = document.querySelector("form");
+      }
+
+      if (form) {
+        form.addEventListener("submit", function (event) {
+          const yesChecked = radioYes && radioYes.checked;
+
+          if (yesChecked) {
+            const isValid = validateBasementFields();
+            if (!isValid) {
+              event.preventDefault();
+              event.stopPropagation();
+
+              // Trigger HTML5 validation on the first invalid field
+              const requiredFields = [
+                ...(basementLooksLikeWrapper
+                  ? basementLooksLikeWrapper.querySelectorAll(
+                      "input[required], select[required], textarea[required]"
+                    )
+                  : []),
+                ...(basementWetDampDryWrapper
+                  ? basementWetDampDryWrapper.querySelectorAll(
+                      "input[required], select[required], textarea[required]"
+                    )
+                  : []),
+              ];
+
+              // Find and report the first invalid field
+              for (let field of requiredFields) {
+                if (field.type === "checkbox" || field.type === "radio") {
+                  const name = field.name;
+                  if (name) {
+                    const groupChecked = document.querySelector(
+                      `input[name="${name}"]:checked`
+                    );
+                    if (!groupChecked) {
+                      field.reportValidity();
+                      break;
+                    }
+                  } else if (!field.checked) {
+                    field.reportValidity();
+                    break;
+                  }
+                } else {
+                  if (!field.value || field.value.trim() === "") {
+                    field.reportValidity();
+                    field.focus();
+                    break;
+                  }
+                }
+              }
+
+              return false;
+            }
+          }
+        });
+      }
+
+      // Also handle button clicks (in case the form uses a button instead of submit)
+      const submitButton = document.querySelector(
+        'button[type="submit"], input[type="submit"], .score-form_button'
+      );
+      if (submitButton) {
+        submitButton.addEventListener("click", function (event) {
+          const yesChecked = radioYes && radioYes.checked;
+
+          if (yesChecked) {
+            const isValid = validateBasementFields();
+            if (!isValid) {
+              event.preventDefault();
+              event.stopPropagation();
+
+              // Trigger HTML5 validation
+              const requiredFields = [
+                ...(basementLooksLikeWrapper
+                  ? basementLooksLikeWrapper.querySelectorAll(
+                      "input[required], select[required], textarea[required]"
+                    )
+                  : []),
+                ...(basementWetDampDryWrapper
+                  ? basementWetDampDryWrapper.querySelectorAll(
+                      "input[required], select[required], textarea[required]"
+                    )
+                  : []),
+              ];
+
+              for (let field of requiredFields) {
+                if (field.type === "checkbox" || field.type === "radio") {
+                  const name = field.name;
+                  if (name) {
+                    const groupChecked = document.querySelector(
+                      `input[name="${name}"]:checked`
+                    );
+                    if (!groupChecked) {
+                      field.reportValidity();
+                      break;
+                    }
+                  } else if (!field.checked) {
+                    field.reportValidity();
+                    break;
+                  }
+                } else {
+                  if (!field.value || field.value.trim() === "") {
+                    field.reportValidity();
+                    field.focus();
+                    break;
+                  }
+                }
+              }
+
+              return false;
+            }
+          }
+        });
+      }
+    }
+
+    // Setup form validation
+    setupFormValidation();
+
     // Run once immediately (in case one was pre-selected on page load)
     updateBasementVisibility();
   })();
