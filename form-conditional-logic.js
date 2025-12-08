@@ -250,12 +250,17 @@ document.addEventListener("DOMContentLoaded", function () {
       const lowRiseChecked = lowRiseOption && lowRiseOption.checked;
       const highRiseChecked = highRiseOption && highRiseOption.checked;
 
+      console.log(
+        `updateStoriesBasedOnSelection: lowRise=${lowRiseChecked}, highRise=${highRiseChecked}`
+      );
+
       if (lowRiseChecked) {
         restrictToLowRise();
       } else if (highRiseChecked) {
         restrictToHighRise();
       } else {
         // Neither is selected, show all stories
+        console.log("→ Neither low-rise nor high-rise selected, showing all stories");
         showAllStories();
       }
     }
