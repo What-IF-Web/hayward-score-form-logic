@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Basement Logic
   // ============================================
   (function initBasementLogic() {
+    console.log("Basement logic started – looking for elements...");
+
     const basementLooksLikeWrapper = document.getElementById(
       "basement-looks-like"
     );
@@ -49,6 +51,11 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     const radioNo = document.getElementById("General-home----basement---no");
     const radioYes = document.getElementById("General-home----basement---yes");
+
+    console.log("basement-looks-like wrapper:", basementLooksLikeWrapper);
+    console.log("basement-wet-damp-dry wrapper:", basementWetDampDryWrapper);
+    console.log("basement---no radio:", radioNo);
+    console.log("basement---yes radio:", radioYes);
 
     // Hide both wrappers by default
     if (basementLooksLikeWrapper)
@@ -60,11 +67,24 @@ document.addEventListener("DOMContentLoaded", function () {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
 
+      console.log(
+        "Updating basement visibility – no:",
+        noChecked,
+        "yes:",
+        yesChecked
+      );
+
       if (basementLooksLikeWrapper) {
         basementLooksLikeWrapper.style.display = noChecked ? "block" : "none";
+        console.log(
+          `basement-looks-like display: ${basementLooksLikeWrapper.style.display}`
+        );
       }
       if (basementWetDampDryWrapper) {
         basementWetDampDryWrapper.style.display = yesChecked ? "block" : "none";
+        console.log(
+          `basement-wet-damp-dry display: ${basementWetDampDryWrapper.style.display}`
+        );
       }
     }
 
@@ -74,6 +94,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Run once immediately (in case one was pre-selected on page load)
     updateBasementVisibility();
+
+    console.log("Basement logic fully loaded and listening!");
   })();
 
   // ============================================
