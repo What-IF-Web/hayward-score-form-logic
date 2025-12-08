@@ -40,47 +40,47 @@ document.addEventListener("DOMContentLoaded", function () {
   const homeType = document.getElementById("home-type");
   const stories = document.getElementById("house-stories");
 
-  function updateStoriesOptions() {
-    const selected = homeType.value;
+  function restrictStories() {
+    const type = homeType.value;
 
-    // Enable all options first
+    // First, enable and show all options
     stories.querySelectorAll("option").forEach((opt) => {
       opt.disabled = false;
       opt.style.display = "";
     });
 
-    // If "low-rise" is selected → hide/disable 4+
-    if (selected === "low-rise") {
-      stories.querySelectorAll("option").forEach((opt) => {
-        const value = parseInt(opt.value, 10);
-        if (value > 3) {
-          opt.disabled = true;
-          opt.style.display = "none"; // completely hides from dropdown
-        }
-      });
+    // Reset selection if it's about to become invalid
+    const currentValue = parseInt(stories.value, 10);
 
-      // If current selection is now invalid, clear it
-      if (stories.value && parseInt(stories.value, 10) > 3) {
-        stories.value = "";
-      }
-    }
-    // If "high-rise" is selected → hide/disable 1–3? (optional)
-    else if (selected === "high-rise") {
-      stories.querySelectorAll("option").forEach((opt) => {
-        const value = parseInt(opt.value, 10);
-        if (value > 0 && value <= 3) {
+    if (type === "low-rise") {
+      // Hide & disable 4–9
+      for (let i = 4; i <= 9; i++) {
+        const opt = stories.querySelector(`option[value="${i}"]`);
+        if (opt) {
           opt.disabled = true;
           opt.style.display = "none";
         }
-      });
-
-      if (stories.value && parseInt(stories.value, 10) <= 3) {
-        stories.value = "";
       }
+      // If user had selected 4+, clear it
+      if (currentValue > 3) stories.value = "";
+    } else if (type === "high-rise") {
+      // Hide & disable 1–3
+      for (let i = 1; i <= 3; i++) {
+        const opt = stories.querySelector(`option[value="${i}"]`);
+        if (opt) {
+          opt.disabled = true;
+          opt.style.display = "none";
+        }
+      }
+      // If user had selected 1–3, clear it
+      if (currentValue <= 3 && currentValue >= 1) stories.value = "";
     }
+    // For all other types (single-family, etc.) → show all 1–9
   }
 
-  // Run on change and on page load
-  homeType.addEventListener("change", updateStoriesOptions);
-  updateStoriesOptions(); // in case of pre-filled values
+  // Run when home type changes
+  homeType.addEventListener("change", restrictStories);
+
+  // Run on page load (in case form is pre-filled)
+  restrictStories();
 });
