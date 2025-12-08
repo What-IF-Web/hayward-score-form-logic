@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ============================================
   // Features N/A Logic
-  // ============================================
+  /*============================================
   (function initFeaturesNALogic() {
     const naCheckbox = document.getElementById(
       "General-Home-Information----Features----N-A"
@@ -233,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Run once immediately (in case it was pre-selected on page load)
     updateFeaturesGreyState();
   })();
+  */
 
   // ============================================
   // Mold Logic
