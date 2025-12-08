@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ============================================
   // Basement Logic
-  /* ============================================
+  // ============================================
   (function initBasementLogic() {
     console.log("Basement logic started – looking for elements...");
 
@@ -97,13 +97,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Basement logic fully loaded and listening!");
   })();
-  */
   // ============================================
   // House Stories Logic
   // ============================================
   (function initHouseStoriesLogic() {
-    console.log("Script started – looking for elements...");
-
     const stories = document.getElementById("house-stories");
     const lowRiseOption = document.getElementById(
       "Multi-unit-low-rise-3-stories-or-more"
@@ -112,54 +109,23 @@ document.addEventListener("DOMContentLoaded", function () {
       "Multi-unit-high-rise-4-stories-or-more"
     );
 
-    if (!stories) return console.error("house-stories select NOT found!");
-
-    console.log("Stories dropdown found!");
+    if (!stories) return;
 
     function showAllStories() {
-      console.log("→ Showing all stories (1-9)");
       // Show & enable ALL options by finding them by ID (story-1 through story-9)
-      let enabledCount = 0;
       for (let i = 1; i <= 9; i++) {
         const option = document.getElementById(`story-${i}`);
         if (option) {
-          const wasDisabled = option.disabled;
-          const wasHidden = option.style.display === "none";
           option.disabled = false;
           option.style.display = "";
           option.removeAttribute("hidden");
-          enabledCount++;
-          if (wasDisabled || wasHidden) {
-            console.log(
-              `   Enabled story-${i}: wasDisabled=${wasDisabled}, wasHidden=${wasHidden}`
-            );
-          }
-        } else {
-          console.warn(`   Could not find story-${i}`);
         }
       }
-      console.log(`Enabled ${enabledCount} options (should be 9: stories 1-9)`);
-
-      // Verify all options are visible
-      const visibleOptions = [];
-      for (let i = 1; i <= 9; i++) {
-        const option = document.getElementById(`story-${i}`);
-        if (option && !option.disabled && option.style.display !== "none") {
-          visibleOptions.push(i);
-        }
-      }
-      console.log(
-        `Visible options after showAllStories: ${visibleOptions.join(
-          ", "
-        )} (should be 1-9)`
-      );
     }
 
     function restrictToLowRise() {
-      console.log("→ LOW-RISE selected: showing only stories 1 to 3");
       showAllStories();
 
-      let hiddenCount = 0;
       // Hide stories 4 to 9
       for (let i = 4; i <= 9; i++) {
         // Try to find by ID first, then by value
@@ -183,33 +149,19 @@ document.addEventListener("DOMContentLoaded", function () {
         if (option) {
           option.disabled = true;
           option.style.display = "none";
-          hiddenCount++;
-          console.log(
-            `   Hidden & disabled: #${option.id || "no-id"} value="${
-              option.value
-            }" (${option.textContent.trim()})`
-          );
-        } else {
-          console.warn(`Could not find story option for ${i}`);
         }
       }
-      console.log(
-        `Total hidden: ${hiddenCount} options (should be 6: stories 4-9)`
-      );
 
       // Clear selection if it was 4–9
       const current = stories.value;
       if (current && parseInt(current, 10) >= 4) {
-        console.log("Clearing invalid selection:", current);
         stories.value = "";
       }
     }
 
     function restrictToHighRise() {
-      console.log("→ HIGH-RISE selected: showing only stories 4 to 9");
       showAllStories();
 
-      let hiddenCount = 0;
       // Hide stories 1 to 3
       for (let i = 1; i <= 3; i++) {
         // Try to find by ID first, then by value
@@ -233,49 +185,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (option) {
           option.disabled = true;
           option.style.display = "none";
-          hiddenCount++;
-          console.log(
-            `   Hidden & disabled: #${option.id || "no-id"} value="${
-              option.value
-            }" (${option.textContent.trim()})`
-          );
-        } else {
-          console.warn(`Could not find story option for ${i}`);
         }
-      }
-      console.log(
-        `Total hidden: ${hiddenCount} options (should be 3: stories 1-3)`
-      );
-
-      // Verify visible options
-      if (stories && stories.options) {
-        const visibleOptions = Array.from(stories.options).filter(
-          (opt) => !opt.disabled && opt.style.display !== "none"
-        );
-        console.log(
-          `Visible options after hiding: ${visibleOptions.length} (should be 6: stories 4-9)`
-        );
-        visibleOptions.forEach((opt) => {
-          console.log(
-            `   Visible: value="${opt.value}" id="${opt.id || "no-id"}"`
-          );
-        });
       }
 
       // Clear selection if it was 1–3
       const current = stories.value;
       if (current && parseInt(current, 10) <= 3) {
-        console.log("Clearing invalid selection:", current);
         stories.value = "";
       }
     }
 
     function updateStoriesBasedOnSelection(event) {
-      console.log(
-        "updateStoriesBasedOnSelection called",
-        event?.target?.id || "no target"
-      );
-
       // Always use a delay to ensure radio button state is fully updated
       const checkState = () => {
         // Check the current state of all relevant options
@@ -292,35 +212,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const singleFamilyChecked =
           singleFamilyOption && singleFamilyOption.checked;
 
-        console.log(
-          `updateStoriesBasedOnSelection: lowRise=${lowChecked}, highRise=${highChecked}, mobile=${mobileChecked}, singleFamily=${singleFamilyChecked}`
-        );
-
         // If low-rise is selected, restrict to 1-3
         if (lowChecked) {
-          console.log("→ Low-rise selected, restricting to stories 1-3");
           restrictToLowRise();
         }
         // If high-rise is selected, restrict to 4-9
         else if (highChecked) {
-          console.log("→ High-rise selected, restricting to stories 4-9");
           restrictToHighRise();
         }
         // If Mobile/manufactured home or Single family detached is selected, show all stories
         else if (mobileChecked || singleFamilyChecked) {
-          const selectedOption = mobileChecked
-            ? "Mobile/manufactured home"
-            : "Single family detached";
-          console.log(
-            `→ ${selectedOption} selected, showing all stories (1-9)`
-          );
           showAllStories();
         }
         // If neither is selected (any other option), show all stories
         else {
-          console.log(
-            "→ Neither low-rise nor high-rise selected, resetting to show all stories (1-9)"
-          );
           showAllStories();
         }
       };
@@ -389,49 +294,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Use event delegation to listen for changes on any option in the group
     if (homeTypeContainer) {
-      console.log("Home type container found:", homeTypeContainer);
       homeTypeContainer.addEventListener("change", function (event) {
         // Only react to radio/checkbox changes
         if (event.target.type === "radio" || event.target.type === "checkbox") {
-          console.log("Change event detected on:", event.target.id);
-          // If a different option (not low-rise or high-rise) was selected, reset to show all
-          const isLowRise =
-            event.target.id === "Multi-unit-low-rise-3-stories-or-more";
-          const isHighRise =
-            event.target.id === "Multi-unit-high-rise-4-stories-or-more";
-
-          if (!isLowRise && !isHighRise) {
-            console.log(
-              "→ Different option selected (not low-rise or high-rise), will reset to show all stories"
-            );
-          }
-
           updateStoriesBasedOnSelection(event);
         }
       });
       homeTypeContainer.addEventListener("click", function (event) {
         // Only react to radio/checkbox clicks
         if (event.target.type === "radio" || event.target.type === "checkbox") {
-          console.log("Click event detected on:", event.target.id);
-          // If a different option (not low-rise or high-rise) was clicked, reset to show all
-          const isLowRise =
-            event.target.id === "Multi-unit-low-rise-3-stories-or-more";
-          const isHighRise =
-            event.target.id === "Multi-unit-high-rise-4-stories-or-more";
-
-          if (!isLowRise && !isHighRise) {
-            console.log(
-              "→ Different option clicked, will reset to show all stories"
-            );
-          }
-
           updateStoriesBasedOnSelection(event);
         }
       });
-    } else {
-      console.warn(
-        "Home type container NOT found - event delegation may not work!"
-      );
     }
 
     // Run once on page load to set initial state
