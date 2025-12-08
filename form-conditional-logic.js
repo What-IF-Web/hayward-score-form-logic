@@ -125,14 +125,15 @@ document.addEventListener("DOMContentLoaded", function () {
         opt.disabled = false;
         opt.style.display = "";
         opt.removeAttribute("hidden");
-        console.log(`   Enabled: value="${opt.value}" id="${opt.id || "no-id"}" text="${opt.textContent.trim()}"`);
       });
+      console.log(`All ${allOptions.length} options enabled and visible`);
     }
 
     function restrictToLowRise() {
       console.log("→ LOW-RISE selected: showing only stories 1 to 3");
       showAllStories();
 
+      let hiddenCount = 0;
       // Hide stories 4 to 9
       for (let i = 4; i <= 9; i++) {
         // Try to find by ID first, then by value
@@ -142,14 +143,21 @@ document.addEventListener("DOMContentLoaded", function () {
           option = stories.querySelector(`option[value="${i}"]`);
         }
         if (!option) {
-          // Fallback: find by value that starts with the number
+          // Fallback: find by iterating through options and matching ID or value
           option = Array.from(stories.options).find(
-            (opt) => opt.value && opt.value.toString().startsWith(i.toString())
+            (opt) =>
+              opt.id === `story-${i}` ||
+              opt.value === i.toString() ||
+              opt.value === `story-${i}` ||
+              (opt.value &&
+                opt.value.toString().startsWith(i.toString()) &&
+                !opt.value.toString().includes("-"))
           );
         }
         if (option) {
           option.disabled = true;
           option.style.display = "none";
+          hiddenCount++;
           console.log(
             `   Hidden & disabled: #${option.id || "no-id"} value="${
               option.value
@@ -159,6 +167,9 @@ document.addEventListener("DOMContentLoaded", function () {
           console.warn(`Could not find story option for ${i}`);
         }
       }
+      console.log(
+        `Total hidden: ${hiddenCount} options (should be 6: stories 4-9)`
+      );
 
       // Clear selection if it was 4–9
       const current = stories.value;
@@ -172,6 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("→ HIGH-RISE selected: showing only stories 4 to 9");
       showAllStories();
 
+      let hiddenCount = 0;
       // Hide stories 1 to 3
       for (let i = 1; i <= 3; i++) {
         // Try to find by ID first, then by value
@@ -181,14 +193,21 @@ document.addEventListener("DOMContentLoaded", function () {
           option = stories.querySelector(`option[value="${i}"]`);
         }
         if (!option) {
-          // Fallback: find by value that starts with the number
+          // Fallback: find by iterating through options and matching ID or value
           option = Array.from(stories.options).find(
-            (opt) => opt.value && opt.value.toString().startsWith(i.toString())
+            (opt) =>
+              opt.id === `story-${i}` ||
+              opt.value === i.toString() ||
+              opt.value === `story-${i}` ||
+              (opt.value &&
+                opt.value.toString().startsWith(i.toString()) &&
+                !opt.value.toString().includes("-"))
           );
         }
         if (option) {
           option.disabled = true;
           option.style.display = "none";
+          hiddenCount++;
           console.log(
             `   Hidden & disabled: #${option.id || "no-id"} value="${
               option.value
@@ -198,6 +217,22 @@ document.addEventListener("DOMContentLoaded", function () {
           console.warn(`Could not find story option for ${i}`);
         }
       }
+      console.log(
+        `Total hidden: ${hiddenCount} options (should be 3: stories 1-3)`
+      );
+
+      // Verify visible options
+      const visibleOptions = Array.from(stories.options).filter(
+        (opt) => !opt.disabled && opt.style.display !== "none"
+      );
+      console.log(
+        `Visible options after hiding: ${visibleOptions.length} (should be 6: stories 4-9)`
+      );
+      visibleOptions.forEach((opt) => {
+        console.log(
+          `   Visible: value="${opt.value}" id="${opt.id || "no-id"}"`
+        );
+      });
 
       // Clear selection if it was 1–3
       const current = stories.value;
