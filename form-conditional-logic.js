@@ -38,6 +38,45 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
 
   // ============================================
+  // Basement Logic
+  // ============================================
+  (function initBasementLogic() {
+    const basementLooksLikeWrapper = document.getElementById(
+      "basement-looks-like"
+    );
+    const basementWetDampDryWrapper = document.getElementById(
+      "basement-wet-damp-dry"
+    );
+    const radioNo = document.getElementById("General-home----basement---no");
+    const radioYes = document.getElementById("General-home----basement---yes");
+
+    // Hide both wrappers by default
+    if (basementLooksLikeWrapper)
+      basementLooksLikeWrapper.style.display = "none";
+    if (basementWetDampDryWrapper)
+      basementWetDampDryWrapper.style.display = "none";
+
+    function updateBasementVisibility() {
+      const noChecked = radioNo && radioNo.checked;
+      const yesChecked = radioYes && radioYes.checked;
+
+      if (basementLooksLikeWrapper) {
+        basementLooksLikeWrapper.style.display = noChecked ? "block" : "none";
+      }
+      if (basementWetDampDryWrapper) {
+        basementWetDampDryWrapper.style.display = yesChecked ? "block" : "none";
+      }
+    }
+
+    // Listen for clicks/changes on both radios
+    if (radioNo) radioNo.addEventListener("click", updateBasementVisibility);
+    if (radioYes) radioYes.addEventListener("click", updateBasementVisibility);
+
+    // Run once immediately (in case one was pre-selected on page load)
+    updateBasementVisibility();
+  })();
+
+  // ============================================
   // House Stories Logic
   // ============================================
   (function initHouseStoriesLogic() {
