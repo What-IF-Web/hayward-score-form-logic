@@ -173,42 +173,63 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    function handleLowRiseClick() {
-      if (lowRiseOption && lowRiseOption.checked) {
-        restrictToLowRise();
-      } else {
-        showAllStories();
-      }
-    }
+    function updateStoriesBasedOnSelection() {
+      // Check which option is currently selected
+      const lowRiseChecked = lowRiseOption && lowRiseOption.checked;
+      const highRiseChecked = highRiseOption && highRiseOption.checked;
 
-    function handleHighRiseClick() {
-      if (highRiseOption && highRiseOption.checked) {
+      if (lowRiseChecked) {
+        restrictToLowRise();
+      } else if (highRiseChecked) {
         restrictToHighRise();
       } else {
+        // Neither is selected, show all stories
         showAllStories();
       }
     }
 
-    // Listen for clicks on the low-rise option
+    // Listen for clicks/changes on the low-rise option
     if (lowRiseOption) {
-      lowRiseOption.addEventListener("click", handleLowRiseClick);
-      lowRiseOption.addEventListener("change", handleLowRiseClick);
+      lowRiseOption.addEventListener("click", updateStoriesBasedOnSelection);
+      lowRiseOption.addEventListener("change", updateStoriesBasedOnSelection);
     }
 
-    // Listen for clicks on the high-rise option
+    // Listen for clicks/changes on the high-rise option
     if (highRiseOption) {
-      highRiseOption.addEventListener("click", handleHighRiseClick);
-      highRiseOption.addEventListener("change", handleHighRiseClick);
+      highRiseOption.addEventListener("click", updateStoriesBasedOnSelection);
+      highRiseOption.addEventListener("change", updateStoriesBasedOnSelection);
+    }
+
+    // Find the parent container or all related home type options
+    // Try to find a common parent or all radio buttons in the same group
+    let homeTypeContainer = null;
+    if (lowRiseOption) {
+      homeTypeContainer =
+        lowRiseOption.closest("fieldset") ||
+        lowRiseOption.closest(".score-form_radio-group") ||
+        lowRiseOption.closest(".score-form_checkbox-group") ||
+        lowRiseOption.parentElement;
+    }
+
+    // Use event delegation to listen for changes on any option in the group
+    if (homeTypeContainer) {
+      homeTypeContainer.addEventListener("change", function (event) {
+        // Only react to radio/checkbox changes
+        if (event.target.type === "radio" || event.target.type === "checkbox") {
+          updateStoriesBasedOnSelection();
+        }
+      });
+      homeTypeContainer.addEventListener("click", function (event) {
+        // Only react to radio/checkbox clicks
+        if (event.target.type === "radio" || event.target.type === "checkbox") {
+          // Use setTimeout to ensure checked state is updated
+          setTimeout(updateStoriesBasedOnSelection, 0);
+        }
+      });
     }
 
     // Run once on page load to set initial state
-    if (lowRiseOption && lowRiseOption.checked) {
-      restrictToLowRise();
-    } else if (highRiseOption && highRiseOption.checked) {
-      restrictToHighRise();
-    } else {
-      showAllStories();
-    }
+    updateStoriesBasedOnSelection();
 
     console.log("Script fully loaded and listening!");
   })();
