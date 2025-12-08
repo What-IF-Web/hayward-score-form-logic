@@ -37,50 +37,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //house stories logic
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("Script started – looking for elements...");
+
   const homeType = document.getElementById("home-type");
   const stories = document.getElementById("house-stories");
 
-  function restrictStories() {
-    const type = homeType.value;
+  if (!homeType) return console.error("home-type select NOT found!");
+  if (!stories) return console.error("house-stories select NOT found!");
 
-    // First, enable and show all options
+  console.log("Both dropdowns found!");
+
+  function restrictStories() {
+    const type = homeType.value.trim();
+    console.log("Home type selected:", type);
+
+    // Step 1: Show & enable ALL options first
     stories.querySelectorAll("option").forEach((opt) => {
       opt.disabled = false;
       opt.style.display = "";
+      opt.removeAttribute("hidden");
     });
 
-    // Reset selection if it's about to become invalid
-    const currentValue = parseInt(stories.value, 10);
-
+    // Step 2: Decide what to hide
     if (type === "low-rise") {
-      // Hide & disable 4–9
+      console.log("→ LOW-RISE selected: hiding stories 4 to 9");
       for (let i = 4; i <= 9; i++) {
-        const opt = stories.querySelector(`option[value="${i}"]`);
-        if (opt) {
-          opt.disabled = true;
-          opt.style.display = "none";
+        const option =
+          document.getElementById(`${i}-3`) ||
+          document.getElementById(`${i}-2`);
+        if (option) {
+          option.disabled = true;
+          option.style.display = "none";
+          console.log(
+            `   Hidden & disabled: #${option.id} (${option.textContent.trim()})`
+          );
         }
       }
-      // If user had selected 4+, clear it
-      if (currentValue > 3) stories.value = "";
+
+      // Clear selection if it was 4–9
+      const current = stories.value;
+      if (current && parseInt(current, 10) >= 4) {
+        console.log("Clearing invalid selection:", current);
+        stories.value = "";
+      }
     } else if (type === "high-rise") {
-      // Hide & disable 1–3
+      console.log("→ HIGH-RISE selected: hiding stories 1 to 3");
       for (let i = 1; i <= 3; i++) {
-        const opt = stories.querySelector(`option[value="${i}"]`);
-        if (opt) {
-          opt.disabled = true;
-          opt.style.display = "none";
+        const option =
+          document.getElementById(`${i}-2`) ||
+          document.getElementById(`${i}-3`);
+        if (option) {
+          option.disabled = true;
+          option.style.display = "none";
+          console.log(
+            `   Hidden & disabled: #${option.id} (${option.textContent.trim()})`
+          );
         }
       }
-      // If user had selected 1–3, clear it
-      if (currentValue <= 3 && currentValue >= 1) stories.value = "";
+
+      // Clear selection if it was 1–3
+      const current = stories.value;
+      if (current && parseInt(current, 10) <= 3) {
+        console.log("Clearing invalid selection:", current);
+        stories.value = "";
+      }
+    } else {
+      console.log("→ Other type or empty – showing all 1–9");
     }
-    // For all other types (single-family, etc.) → show all 1–9
   }
 
-  // Run when home type changes
+  // Run when home-type changes
   homeType.addEventListener("change", restrictStories);
 
-  // Run on page load (in case form is pre-filled)
+  // Run once on page load
   restrictStories();
+
+  console.log("Script fully loaded and listening!");
 });
