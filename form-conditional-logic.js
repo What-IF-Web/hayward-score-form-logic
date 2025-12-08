@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Both dropdowns found!");
 
     function restrictStories() {
-      const type = homeType.value.trim();
+      const type = homeType.value ? homeType.value.trim() : "";
       console.log("Home type selected:", type);
 
       // Step 1: Show & enable ALL options first
