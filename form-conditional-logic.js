@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ============================================
   // Basement Logic
-  // ============================================
+  /* ============================================
   (function initBasementLogic() {
     console.log("Basement logic started – looking for elements...");
 
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Basement logic fully loaded and listening!");
   })();
-
+  */
   // ============================================
   // House Stories Logic
   // ============================================
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ============================================
   // Mold Logic
-  // ============================================
+  /* ============================================
   (function initMoldLogic() {
     console.log("Mold logic started – looking for elements...");
 
@@ -281,11 +281,11 @@ document.addEventListener("DOMContentLoaded", function () {
     updateMoldVisibility();
 
     console.log("Mold logic fully loaded and listening!");
-  })();
+  })();*/
 
   // ============================================
   // Renovation Logic
-  // ============================================
+  /* ============================================
   (function initRenovationLogic() {
     console.log("Renovation logic started – looking for elements...");
 
@@ -333,11 +333,11 @@ document.addEventListener("DOMContentLoaded", function () {
     updateRenovationVisibility();
 
     console.log("Renovation logic fully loaded and listening!");
-  })();
+  })();*/
 
   // ============================================
   // Pests Logic
-  // ============================================
+  /* ============================================
   (function initPestsLogic() {
     console.log("Pests logic started – looking for elements...");
 
@@ -447,5 +447,5 @@ document.addEventListener("DOMContentLoaded", function () {
     updatePestsVisibility();
 
     console.log("Pests logic fully loaded and listening!");
-  })();
+  })();*/
 });
