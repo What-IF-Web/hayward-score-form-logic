@@ -248,17 +248,19 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       // Verify visible options
-      const visibleOptions = Array.from(stories.options).filter(
-        (opt) => !opt.disabled && opt.style.display !== "none"
-      );
-      console.log(
-        `Visible options after hiding: ${visibleOptions.length} (should be 6: stories 4-9)`
-      );
-      visibleOptions.forEach((opt) => {
-        console.log(
-          `   Visible: value="${opt.value}" id="${opt.id || "no-id"}"`
+      if (stories && stories.options) {
+        const visibleOptions = Array.from(stories.options).filter(
+          (opt) => !opt.disabled && opt.style.display !== "none"
         );
-      });
+        console.log(
+          `Visible options after hiding: ${visibleOptions.length} (should be 6: stories 4-9)`
+        );
+        visibleOptions.forEach((opt) => {
+          console.log(
+            `   Visible: value="${opt.value}" id="${opt.id || "no-id"}"`
+          );
+        });
+      }
 
       // Clear selection if it was 1–3
       const current = stories.value;
@@ -269,8 +271,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateStoriesBasedOnSelection(event) {
-      // If this was triggered by a click event, use setTimeout to ensure state is updated
-      const isClickEvent = event && event.type === "click";
+      console.log(
+        "updateStoriesBasedOnSelection called",
+        event?.target?.id || "no target"
+      );
+
+      // Always use a delay to ensure radio button state is fully updated
       const checkState = () => {
         // Always check the current state of both options
         const lowChecked = lowRiseOption && lowRiseOption.checked;
@@ -299,13 +305,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       };
 
-      if (isClickEvent) {
-        // For click events, wait a bit for the checked state to update
-        setTimeout(checkState, 10);
-      } else {
-        // For change events, the state should already be updated, but use a small delay to be safe
-        setTimeout(checkState, 0);
-      }
+      // Use a longer delay to ensure radio button state is fully updated
+      // This is especially important when switching from one option to another
+      setTimeout(checkState, 50);
     }
 
     // Listen for clicks/changes on the low-rise option
@@ -341,9 +343,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Use event delegation to listen for changes on any option in the group
     if (homeTypeContainer) {
+      console.log("Home type container found:", homeTypeContainer);
       homeTypeContainer.addEventListener("change", function (event) {
         // Only react to radio/checkbox changes
         if (event.target.type === "radio" || event.target.type === "checkbox") {
+          console.log("Change event detected on:", event.target.id);
           // If a different option (not low-rise or high-rise) was selected, reset to show all
           const isLowRise =
             event.target.id === "Multi-unit-low-rise-3-stories-or-more";
@@ -362,6 +366,7 @@ document.addEventListener("DOMContentLoaded", function () {
       homeTypeContainer.addEventListener("click", function (event) {
         // Only react to radio/checkbox clicks
         if (event.target.type === "radio" || event.target.type === "checkbox") {
+          console.log("Click event detected on:", event.target.id);
           // If a different option (not low-rise or high-rise) was clicked, reset to show all
           const isLowRise =
             event.target.id === "Multi-unit-low-rise-3-stories-or-more";
@@ -377,6 +382,10 @@ document.addEventListener("DOMContentLoaded", function () {
           updateStoriesBasedOnSelection(event);
         }
       });
+    } else {
+      console.warn(
+        "Home type container NOT found - event delegation may not work!"
+      );
     }
 
     // Run once on page load to set initial state
