@@ -636,6 +636,82 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
 
   // ============================================
+  // Features Conditional Required Fields Logic
+  // ============================================
+  (function initFeaturesRequiredFieldsLogic() {
+    const wallToWallCarpetCheckbox = document.getElementById(
+      "General-Home-Information----Features----Wall-to-wall-carpet-house"
+    );
+    const crawlspaceCheckbox = document.getElementById(
+      "General-Home-Information----Features----Crawlspace"
+    );
+    const cementSlabCheckbox = document.getElementById(
+      "General-Home-Information----Features----Cement-slab-on-grade"
+    );
+
+    const wallToWallCarpetField = document.getElementById(
+      "wall-to-wall-carpet-field"
+    );
+    const crawlField = document.getElementById("crawl-field");
+    const slabField = document.getElementById("slab-field");
+
+    // Helper function to update required attributes for all form fields in a wrapper
+    function updateRequiredFields(wrapper, isRequired) {
+      if (!wrapper) return;
+      const fields = wrapper.querySelectorAll("input, select, textarea");
+      fields.forEach((field) => {
+        if (isRequired) {
+          field.setAttribute("required", "required");
+        } else {
+          field.removeAttribute("required");
+        }
+      });
+    }
+
+    // Wall-to-wall carpet logic
+    if (wallToWallCarpetCheckbox && wallToWallCarpetField) {
+      function updateWallToWallCarpetRequired() {
+        const isChecked = wallToWallCarpetCheckbox.checked;
+        updateRequiredFields(wallToWallCarpetField, isChecked);
+      }
+
+      wallToWallCarpetCheckbox.addEventListener(
+        "click",
+        updateWallToWallCarpetRequired
+      );
+      wallToWallCarpetCheckbox.addEventListener(
+        "change",
+        updateWallToWallCarpetRequired
+      );
+      updateWallToWallCarpetRequired();
+    }
+
+    // Crawlspace logic
+    if (crawlspaceCheckbox && crawlField) {
+      function updateCrawlspaceRequired() {
+        const isChecked = crawlspaceCheckbox.checked;
+        updateRequiredFields(crawlField, isChecked);
+      }
+
+      crawlspaceCheckbox.addEventListener("click", updateCrawlspaceRequired);
+      crawlspaceCheckbox.addEventListener("change", updateCrawlspaceRequired);
+      updateCrawlspaceRequired();
+    }
+
+    // Cement slab logic
+    if (cementSlabCheckbox && slabField) {
+      function updateCementSlabRequired() {
+        const isChecked = cementSlabCheckbox.checked;
+        updateRequiredFields(slabField, isChecked);
+      }
+
+      cementSlabCheckbox.addEventListener("click", updateCementSlabRequired);
+      cementSlabCheckbox.addEventListener("change", updateCementSlabRequired);
+      updateCementSlabRequired();
+    }
+  })();
+
+  // ============================================
   // Mold Logic
   /* ============================================
   (function initMoldLogic() {
