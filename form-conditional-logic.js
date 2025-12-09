@@ -16,20 +16,26 @@ document.addEventListener("DOMContentLoaded", function () {
         if (radio.checked) {
           // Apply selected styles
           label.style.backgroundColor = "#313794";
-          label.style.color = "#f9aff";
+          label.style.color = "#ffffff";
           // Also apply color to child elements (spans, divs, etc.)
-          const textElements = label.querySelectorAll("span, div, p, label");
+          const textElements = label.querySelectorAll(
+            "span, div, p, label, .score-form_radio-label-new"
+          );
           textElements.forEach((el) => {
-            el.style.color = "#f9aff";
+            el.style.color = "#ffffff";
+            el.style.setProperty("color", "#ffffff", "important");
           });
         } else {
           // Revert to original styles
           label.style.backgroundColor = "";
           label.style.color = "";
           // Revert child element colors
-          const textElements = label.querySelectorAll("span, div, p, label");
+          const textElements = label.querySelectorAll(
+            "span, div, p, label, .score-form_radio-label-new"
+          );
           textElements.forEach((el) => {
             el.style.color = "";
+            el.style.removeProperty("color");
           });
         }
       }
