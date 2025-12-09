@@ -926,6 +926,125 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
 
   // ============================================
+  // Indoor Conditions Logic
+  // ============================================
+  (function initIndoorConditionsLogic() {
+    const cleaningSuppliesNACheckbox = document.getElementById(
+      "Indoor-Conditions----Cleaning-supplies-N-A"
+    );
+    const personalCareSuppliesNACheckbox = document.getElementById(
+      "Indoor-Conditions----Personal-care-supplies-N-A"
+    );
+    const artSuppliesNACheckbox = document.getElementById(
+      "Indoor-Conditions----Art-Supplies-N-A"
+    );
+    const fertiliserPesticidesNACheckbox = document.getElementById(
+      "Indoor-Conditions----Fertiliser-and-pesticides-N-A"
+    );
+
+    // Helper function to update siblings for a checkbox
+    function updateSiblingsForCheckbox(checkbox) {
+      if (!checkbox) return;
+
+      function updateSiblings() {
+        const isChecked = checkbox.checked;
+
+        // Find the current wrapper
+        const currentWrapper = checkbox.closest(".score-form_checkbox-wrapper");
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all siblings with both classes "score-form_checkbox-wrapper" and "is-small"
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-small")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      checkbox.addEventListener("click", updateSiblings);
+      checkbox.addEventListener("change", updateSiblings);
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updateSiblings();
+    }
+
+    // Setup for each checkbox
+    updateSiblingsForCheckbox(cleaningSuppliesNACheckbox);
+    updateSiblingsForCheckbox(personalCareSuppliesNACheckbox);
+    updateSiblingsForCheckbox(artSuppliesNACheckbox);
+    updateSiblingsForCheckbox(fertiliserPesticidesNACheckbox);
+  })();
+
+  // ============================================
+  // Moisture Logic
+  // ============================================
+  (function initMoistureLogic() {
+    const moistureDontKnowCheckbox = document.getElementById(
+      "Moisture----Are-the-following-outside-your-home----I-don-t-know"
+    );
+    const moistureNACheckbox = document.getElementById(
+      "Moisture----Are-the-following-outside-your-home----INot-applicable"
+    );
+
+    // Helper function to update siblings for a checkbox
+    function updateSiblingsForCheckbox(checkbox) {
+      if (!checkbox) return;
+
+      function updateSiblings() {
+        const isChecked = checkbox.checked;
+
+        // Find the current wrapper
+        const currentWrapper = checkbox.closest(".score-form_checkbox-wrapper");
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-large") &&
+            child.classList.contains("is-margin-bottom")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      checkbox.addEventListener("click", updateSiblings);
+      checkbox.addEventListener("change", updateSiblings);
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updateSiblings();
+    }
+
+    // Setup for each checkbox
+    updateSiblingsForCheckbox(moistureDontKnowCheckbox);
+    updateSiblingsForCheckbox(moistureNACheckbox);
+  })();
+
+  // ============================================
   // Renovation Logic
   /* ============================================
   (function initRenovationLogic() {
@@ -979,7 +1098,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ============================================
   // Pests Logic
-  /* ============================================
+  // ============================================
   (function initPestsLogic() {
     console.log("Pests logic started – looking for elements...");
 
@@ -991,6 +1110,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const radioYes = document.getElementById(
       "Pests----Do-you-treat-for-fleas-yes"
     );
+    const pestsNACheckbox = document.getElementById("Pests----N-A");
 
     console.log("fleas-field:", fleasField);
     console.log("score-form_button:", scoreFormButton);
@@ -1088,6 +1208,44 @@ document.addEventListener("DOMContentLoaded", function () {
     // Run once immediately (in case one was pre-selected on page load)
     updatePestsVisibility();
 
-    console.log("Pests logic fully loaded and listening!");
-  })();*/
+    // Handle N/A checkbox: add pointer-events-none to siblings
+    if (pestsNACheckbox) {
+      function updatePestsNASiblings() {
+        const isChecked = pestsNACheckbox.checked;
+
+        // Find the current wrapper
+        const currentWrapper = pestsNACheckbox.closest(
+          ".score-form_checkbox-wrapper"
+        );
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-large") &&
+            child.classList.contains("is-margin-bottom")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      pestsNACheckbox.addEventListener("click", updatePestsNASiblings);
+      pestsNACheckbox.addEventListener("change", updatePestsNASiblings);
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updatePestsNASiblings();
+    }
+  })();
 });
