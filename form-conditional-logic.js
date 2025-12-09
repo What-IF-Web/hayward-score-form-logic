@@ -531,6 +531,55 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
 
   // ============================================
+  // General Home Information - Heating Units Logic
+  // ============================================
+  (function initGeneralHomeInformationLogic() {
+    const heatingUnitsDontKnow = document.getElementById(
+      "General-Home-Information----Heating-Units-I-don-t-know"
+    );
+
+    if (!heatingUnitsDontKnow) {
+      return;
+    }
+
+    function updateSiblingCheckboxes() {
+      const isChecked = heatingUnitsDontKnow.checked;
+
+      // Find the parent container (likely the checkbox wrapper)
+      const currentWrapper = heatingUnitsDontKnow.closest(
+        ".score-form_checkbox-wrapper"
+      );
+      if (!currentWrapper || !currentWrapper.parentElement) return;
+
+      // Find the common parent container
+      const parentContainer = currentWrapper.parentElement;
+
+      // Find all siblings with both classes "score-form_checkbox-wrapper" and "is-small"
+      const siblings = Array.from(parentContainer.children).filter(
+        (child) =>
+          child !== currentWrapper &&
+          child.classList.contains("score-form_checkbox-wrapper") &&
+          child.classList.contains("is-small")
+      );
+
+      siblings.forEach((sibling) => {
+        if (isChecked) {
+          sibling.classList.add("pointer-events-none");
+        } else {
+          sibling.classList.remove("pointer-events-none");
+        }
+      });
+    }
+
+    // Listen for clicks/changes on the checkbox
+    heatingUnitsDontKnow.addEventListener("click", updateSiblingCheckboxes);
+    heatingUnitsDontKnow.addEventListener("change", updateSiblingCheckboxes);
+
+    // Run once immediately (in case it was pre-selected on page load)
+    updateSiblingCheckboxes();
+  })();
+
+  // ============================================
   // Features N/A Logic
   /*============================================
   (function initFeaturesNALogic() {
