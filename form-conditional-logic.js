@@ -713,7 +713,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ============================================
   // Mold Logic
-  /* ============================================
+  // ============================================
   (function initMoldLogic() {
     console.log("Mold logic started – looking for elements...");
 
@@ -757,7 +757,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateMoldVisibility();
 
     console.log("Mold logic fully loaded and listening!");
-  })();*/
+  })();
 
   // ============================================
   // Renovation Logic
