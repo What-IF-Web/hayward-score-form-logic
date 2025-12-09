@@ -581,7 +581,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ============================================
   // Features N/A Logic
-  /*============================================
+  //============================================
   (function initFeaturesNALogic() {
     const naCheckbox = document.getElementById(
       "General-Home-Information----Features----N-A"
@@ -605,6 +605,26 @@ document.addEventListener("DOMContentLoaded", function () {
           div.classList.remove("has-greyed");
         }
       });
+
+      // Find siblings with class score-form_checkbox-wrapper.is-row
+      const currentWrapper = naCheckbox.closest(".score-form_checkbox-wrapper");
+      if (currentWrapper && currentWrapper.parentElement) {
+        const parentContainer = currentWrapper.parentElement;
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-row")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
     }
 
     // Listen for clicks/changes on the checkbox
@@ -614,7 +634,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Run once immediately (in case it was pre-selected on page load)
     updateFeaturesGreyState();
   })();
-  */
 
   // ============================================
   // Mold Logic
