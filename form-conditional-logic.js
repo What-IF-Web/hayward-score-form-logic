@@ -1,5 +1,49 @@
 // Form Conditional Logic
 document.addEventListener("DOMContentLoaded", function () {
+  // Helper function to style radio buttons when selected
+  function setupRadioButtonStyles(radioNo, radioYes) {
+    function updateRadioStyles(radio) {
+      if (!radio) return;
+
+      // Find the label or wrapper element (try multiple selectors)
+      const label =
+        radio.closest("label") ||
+        radio.closest(".score-form_radio-wrapper") ||
+        radio.closest(".score-form_checkbox-wrapper") ||
+        radio.parentElement;
+
+      if (label) {
+        if (radio.checked) {
+          // Apply selected styles
+          label.style.backgroundColor = "#1c2154";
+          label.style.color = "#f9aff";
+        } else {
+          // Revert to original styles
+          label.style.backgroundColor = "";
+          label.style.color = "";
+        }
+      }
+    }
+
+    function updateBothRadioStyles() {
+      updateRadioStyles(radioNo);
+      updateRadioStyles(radioYes);
+    }
+
+    // Listen for changes on both radios
+    if (radioNo) {
+      radioNo.addEventListener("click", updateBothRadioStyles);
+      radioNo.addEventListener("change", updateBothRadioStyles);
+    }
+    if (radioYes) {
+      radioYes.addEventListener("click", updateBothRadioStyles);
+      radioYes.addEventListener("change", updateBothRadioStyles);
+    }
+
+    // Apply initial styles
+    updateBothRadioStyles();
+  }
+
   // ============================================
   // Active Military Housing Logic
   // ============================================
@@ -32,6 +76,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Listen for clicks/changes on both radios
     if (radioNo) radioNo.addEventListener("click", updateHousingVisibility);
     if (radioYes) radioYes.addEventListener("click", updateHousingVisibility);
+
+    // Setup radio button styles
+    setupRadioButtonStyles(radioNo, radioYes);
 
     // Run once immediately (in case one was pre-selected on page load)
     updateHousingVisibility();
@@ -151,6 +198,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Listen for clicks/changes on both radios
     if (radioNo) radioNo.addEventListener("click", updateBasementVisibility);
     if (radioYes) radioYes.addEventListener("click", updateBasementVisibility);
+
+    // Setup radio button styles
+    setupRadioButtonStyles(radioNo, radioYes);
 
     // Listen for changes in basement fields to validate in real-time when "yes" is selected
     if (basementLooksLikeWrapper) {
@@ -765,6 +815,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (radioNo) radioNo.addEventListener("click", updateMoldVisibility);
     if (radioYes) radioYes.addEventListener("click", updateMoldVisibility);
 
+    // Setup radio button styles
+    setupRadioButtonStyles(radioNo, radioYes);
+
     // Add form validation to prevent submission when neither is selected
     function setupFormValidation() {
       // Find the form - try multiple approaches
@@ -1195,6 +1248,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Listen for clicks/changes on both radios
     if (radioNo) radioNo.addEventListener("click", updateFleasVisibility);
     if (radioYes) radioYes.addEventListener("click", updateFleasVisibility);
+
+    // Setup radio button styles
+    setupRadioButtonStyles(radioNo, radioYes);
 
     // Run once immediately (in case one was pre-selected on page load)
     updateFleasVisibility();
