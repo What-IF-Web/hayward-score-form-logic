@@ -729,6 +729,10 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("mold---no radio:", radioNo);
     console.log("mold---yes radio:", radioYes);
 
+    // Make the mold radio buttons required (set on one, applies to the group)
+    if (radioNo) radioNo.setAttribute("required", "required");
+    if (radioYes) radioYes.setAttribute("required", "required");
+
     // Hide dropdown by default
     if (moldDropdown) moldDropdown.style.display = "none";
 
@@ -744,7 +748,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       if (moldDropdown) {
-        moldDropdown.style.display = yesChecked ? "block" : "none";
+        moldDropdown.style.display = noChecked ? "block" : "none";
         console.log(`mold-dropdown display: ${moldDropdown.style.display}`);
       }
     }
@@ -753,10 +757,172 @@ document.addEventListener("DOMContentLoaded", function () {
     if (radioNo) radioNo.addEventListener("click", updateMoldVisibility);
     if (radioYes) radioYes.addEventListener("click", updateMoldVisibility);
 
+    // Add form validation to prevent submission when neither is selected
+    function setupFormValidation() {
+      // Find the form - try multiple approaches
+      let form = null;
+      if (radioNo) {
+        form = radioNo.closest("form");
+      }
+      if (!form && radioYes) {
+        form = radioYes.closest("form");
+      }
+      if (!form) {
+        // Try to find form by common selectors
+        form = document.querySelector("form");
+      }
+
+      if (form) {
+        form.addEventListener("submit", function (event) {
+          const noChecked = radioNo && radioNo.checked;
+          const yesChecked = radioYes && radioYes.checked;
+
+          if (!noChecked && !yesChecked) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Trigger HTML5 validation on the first radio button
+            if (radioNo) {
+              radioNo.reportValidity();
+            } else if (radioYes) {
+              radioYes.reportValidity();
+            }
+
+            return false;
+          }
+        });
+      }
+
+      // Also handle button clicks (in case the form uses a button instead of submit)
+      const submitButton = document.querySelector(
+        'button[type="submit"], input[type="submit"], .score-form_button'
+      );
+      if (submitButton) {
+        submitButton.addEventListener("click", function (event) {
+          const noChecked = radioNo && radioNo.checked;
+          const yesChecked = radioYes && radioYes.checked;
+
+          if (!noChecked && !yesChecked) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Trigger HTML5 validation
+            if (radioNo) {
+              radioNo.reportValidity();
+            } else if (radioYes) {
+              radioYes.reportValidity();
+            }
+
+            return false;
+          }
+        });
+      }
+    }
+
+    // Setup form validation
+    setupFormValidation();
+
     // Run once immediately (in case one was pre-selected on page load)
     updateMoldVisibility();
 
     console.log("Mold logic fully loaded and listening!");
+  })();
+
+  // ============================================
+  // Proximity Logic
+  // ============================================
+  (function initProximityLogic() {
+    const proximityNACheckbox = document.getElementById(
+      "Proximity----Smell-in-home----Not-applicable"
+    );
+    const proximityMileNACheckbox = document.getElementById(
+      "Proximity----Do-You-Live-Within-1-2-Mile-Of-Any-Of-The-Following-Not-applicable"
+    );
+
+    // Handle first checkbox: Smell-in-home----Not-applicable
+    if (proximityNACheckbox) {
+      function updateProximitySiblings() {
+        const isChecked = proximityNACheckbox.checked;
+
+        // Find the current wrapper
+        const currentWrapper = proximityNACheckbox.closest(
+          ".score-form_checkbox-wrapper"
+        );
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all siblings with both classes "score-form_checkbox-wrapper" and "is-dropdown"
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-dropdown")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      proximityNACheckbox.addEventListener("click", updateProximitySiblings);
+      proximityNACheckbox.addEventListener("change", updateProximitySiblings);
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updateProximitySiblings();
+    }
+
+    // Handle second checkbox: Do-You-Live-Within-1-2-Mile-Of-Any-Of-The-Following-Not-applicable
+    if (proximityMileNACheckbox) {
+      function updateProximityMileSiblings() {
+        const isChecked = proximityMileNACheckbox.checked;
+
+        // Find the current wrapper
+        const currentWrapper = proximityMileNACheckbox.closest(
+          ".score-form_checkbox-wrapper"
+        );
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-large") &&
+            child.classList.contains("is-margin-bottom")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      proximityMileNACheckbox.addEventListener(
+        "click",
+        updateProximityMileSiblings
+      );
+      proximityMileNACheckbox.addEventListener(
+        "change",
+        updateProximityMileSiblings
+      );
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updateProximityMileSiblings();
+    }
   })();
 
   // ============================================
