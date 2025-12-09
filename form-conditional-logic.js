@@ -1046,7 +1046,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ============================================
   // Renovation Logic
-  /* ============================================
+  // ============================================
   (function initRenovationLogic() {
     console.log("Renovation logic started – looking for elements...");
 
@@ -1094,7 +1094,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateRenovationVisibility();
 
     console.log("Renovation logic fully loaded and listening!");
-  })();*/
+  })();
 
   // ============================================
   // Pests Logic
@@ -1199,6 +1199,71 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Run once immediately (in case it was pre-selected on page load)
       updatePestsNASiblings();
+    }
+  })();
+
+  // ============================================
+  // Health Symptoms Logic
+  // ============================================
+  (function initHealthSymptomsLogic() {
+    const symptomsAfterOtherCheckbox = document.getElementById(
+      "symptoms-after-other"
+    );
+    const symptomsDuringOtherCheckbox = document.getElementById(
+      "symptoms-during-other"
+    );
+
+    const gotWorseAfterOtherField = document.getElementById(
+      "Health-Symptoms----Got-worse-after----Other-2"
+    );
+    const symptomsDuringOrAfterOtherField = document.getElementById(
+      "Health-Symptoms---Symptoms-During-or-After----Other-2"
+    );
+
+    // Helper function to update required attributes for a field
+    function updateRequiredField(field, isRequired) {
+      if (!field) return;
+      if (isRequired) {
+        field.setAttribute("required", "required");
+      } else {
+        field.removeAttribute("required");
+      }
+    }
+
+    // Symptoms after other logic
+    if (symptomsAfterOtherCheckbox && gotWorseAfterOtherField) {
+      function updateSymptomsAfterOtherRequired() {
+        const isChecked = symptomsAfterOtherCheckbox.checked;
+        updateRequiredField(gotWorseAfterOtherField, isChecked);
+      }
+
+      symptomsAfterOtherCheckbox.addEventListener(
+        "click",
+        updateSymptomsAfterOtherRequired
+      );
+      symptomsAfterOtherCheckbox.addEventListener(
+        "change",
+        updateSymptomsAfterOtherRequired
+      );
+      updateSymptomsAfterOtherRequired();
+    }
+
+    // Symptoms during other logic
+    if (symptomsDuringOtherCheckbox && symptomsDuringOrAfterOtherField) {
+      function updateSymptomsDuringOtherRequired() {
+        const isChecked = symptomsDuringOtherCheckbox.checked;
+        updateRequiredField(symptomsDuringOrAfterOtherField, isChecked);
+      }
+
+      symptomsDuringOtherCheckbox.addEventListener(
+        "click",
+        updateSymptomsDuringOtherRequired
+      );
+      symptomsDuringOtherCheckbox.addEventListener(
+        "change",
+        updateSymptomsDuringOtherRequired
+      );
+      updateSymptomsDuringOtherRequired();
     }
   })();
 });
