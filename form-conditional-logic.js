@@ -1100,47 +1100,105 @@ document.addEventListener("DOMContentLoaded", function () {
   // Pests Logic
   // ============================================
   (function initPestsLogic() {
+    const fleasField = document.getElementById("fleas-field");
+    const radioNo = document.getElementById(
+      "Pests----Do-you-treat-for-fleas-no"
+    );
+    const radioYes = document.getElementById(
+      "Pests----Do-you-treat-for-fleas-yes"
+    );
     const pestsNACheckbox = document.getElementById("Pests----N-A");
 
-    if (!pestsNACheckbox) {
-      return;
-    }
+    // Make the fleas radio buttons required (set on one, applies to the group)
+    if (radioNo) radioNo.setAttribute("required", "required");
+    if (radioYes) radioYes.setAttribute("required", "required");
 
-    function updatePestsNASiblings() {
-      const isChecked = pestsNACheckbox.checked;
+    // Hide fleas-field by default
+    if (fleasField) fleasField.style.display = "none";
 
-      // Find the current wrapper
-      const currentWrapper = pestsNACheckbox.closest(
-        ".score-form_checkbox-wrapper"
-      );
-      if (!currentWrapper || !currentWrapper.parentElement) return;
-
-      // Find the parent container
-      const parentContainer = currentWrapper.parentElement;
-
-      // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
-      const siblings = Array.from(parentContainer.children).filter(
-        (child) =>
-          child !== currentWrapper &&
-          child.classList.contains("score-form_checkbox-wrapper") &&
-          child.classList.contains("is-large") &&
-          child.classList.contains("is-margin-bottom")
-      );
-
-      siblings.forEach((sibling) => {
-        if (isChecked) {
-          sibling.classList.add("pointer-events-none");
+    // Helper function to update required attributes for all form fields in a wrapper
+    function updateRequiredFields(wrapper, isRequired) {
+      if (!wrapper) return;
+      const fields = wrapper.querySelectorAll("input, select, textarea");
+      fields.forEach((field) => {
+        if (isRequired) {
+          field.setAttribute("required", "required");
         } else {
-          sibling.classList.remove("pointer-events-none");
+          field.removeAttribute("required");
         }
       });
     }
 
-    // Listen for clicks/changes on the checkbox
-    pestsNACheckbox.addEventListener("click", updatePestsNASiblings);
-    pestsNACheckbox.addEventListener("change", updatePestsNASiblings);
+    function updateFleasVisibility() {
+      const noChecked = radioNo && radioNo.checked;
+      const yesChecked = radioYes && radioYes.checked;
 
-    // Run once immediately (in case it was pre-selected on page load)
-    updatePestsNASiblings();
+      if (noChecked) {
+        // "No" selected: hide fleas-field and remove required
+        if (fleasField) {
+          fleasField.style.display = "none";
+          updateRequiredFields(fleasField, false);
+        }
+      } else if (yesChecked) {
+        // "Yes" selected: show fleas-field and make it required
+        if (fleasField) {
+          fleasField.style.display = "block";
+          updateRequiredFields(fleasField, true);
+        }
+      } else {
+        // Neither selected: hide fleas-field and remove required
+        if (fleasField) {
+          fleasField.style.display = "none";
+          updateRequiredFields(fleasField, false);
+        }
+      }
+    }
+
+    // Listen for clicks/changes on both radios
+    if (radioNo) radioNo.addEventListener("click", updateFleasVisibility);
+    if (radioYes) radioYes.addEventListener("click", updateFleasVisibility);
+
+    // Run once immediately (in case one was pre-selected on page load)
+    updateFleasVisibility();
+
+    // Handle N/A checkbox: add pointer-events-none to siblings
+    if (pestsNACheckbox) {
+      function updatePestsNASiblings() {
+        const isChecked = pestsNACheckbox.checked;
+
+        // Find the current wrapper
+        const currentWrapper = pestsNACheckbox.closest(
+          ".score-form_checkbox-wrapper"
+        );
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-large") &&
+            child.classList.contains("is-margin-bottom")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      pestsNACheckbox.addEventListener("click", updatePestsNASiblings);
+      pestsNACheckbox.addEventListener("change", updatePestsNASiblings);
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updatePestsNASiblings();
+    }
   })();
 });
