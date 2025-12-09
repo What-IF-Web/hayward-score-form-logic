@@ -537,46 +537,54 @@ document.addEventListener("DOMContentLoaded", function () {
     const heatingUnitsDontKnow = document.getElementById(
       "General-Home-Information----Heating-Units-I-don-t-know"
     );
+    const coolingUnitsDontKnow = document.getElementById(
+      "General-Home-Information----Cooling-Units-I-Dont-Know"
+    );
 
-    if (!heatingUnitsDontKnow) {
-      return;
+    // Helper function to update siblings for a checkbox
+    function updateSiblingCheckboxes(checkbox) {
+      if (!checkbox) return;
+
+      function updateSiblings() {
+        const isChecked = checkbox.checked;
+
+        // Find the parent container (likely the checkbox wrapper)
+        const currentWrapper = checkbox.closest(".score-form_checkbox-wrapper");
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the common parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all siblings with both classes "score-form_checkbox-wrapper" and "is-small"
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-small")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      checkbox.addEventListener("click", updateSiblings);
+      checkbox.addEventListener("change", updateSiblings);
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updateSiblings();
     }
 
-    function updateSiblingCheckboxes() {
-      const isChecked = heatingUnitsDontKnow.checked;
+    // Setup for heating units
+    updateSiblingCheckboxes(heatingUnitsDontKnow);
 
-      // Find the parent container (likely the checkbox wrapper)
-      const currentWrapper = heatingUnitsDontKnow.closest(
-        ".score-form_checkbox-wrapper"
-      );
-      if (!currentWrapper || !currentWrapper.parentElement) return;
-
-      // Find the common parent container
-      const parentContainer = currentWrapper.parentElement;
-
-      // Find all siblings with both classes "score-form_checkbox-wrapper" and "is-small"
-      const siblings = Array.from(parentContainer.children).filter(
-        (child) =>
-          child !== currentWrapper &&
-          child.classList.contains("score-form_checkbox-wrapper") &&
-          child.classList.contains("is-small")
-      );
-
-      siblings.forEach((sibling) => {
-        if (isChecked) {
-          sibling.classList.add("pointer-events-none");
-        } else {
-          sibling.classList.remove("pointer-events-none");
-        }
-      });
-    }
-
-    // Listen for clicks/changes on the checkbox
-    heatingUnitsDontKnow.addEventListener("click", updateSiblingCheckboxes);
-    heatingUnitsDontKnow.addEventListener("change", updateSiblingCheckboxes);
-
-    // Run once immediately (in case it was pre-selected on page load)
-    updateSiblingCheckboxes();
+    // Setup for cooling units
+    updateSiblingCheckboxes(coolingUnitsDontKnow);
   })();
 
   // ============================================
