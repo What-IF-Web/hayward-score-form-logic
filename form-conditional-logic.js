@@ -1048,52 +1048,82 @@ document.addEventListener("DOMContentLoaded", function () {
   // Renovation Logic
   // ============================================
   (function initRenovationLogic() {
-    console.log("Renovation logic started – looking for elements...");
-
     const lastRemodelRenovationOne = document.getElementById(
       "last-remodel-renovation-one"
     );
-    const radioOne = document.getElementById("yes-major-renovation-one");
-    const radioTwo = document.getElementById("yes-major-renovation-two");
+    const lastRemodelRenovationTwo = document.getElementById(
+      "last-remodel-renovation-two"
+    );
+    const yesMajorRadio = document.getElementById("Yes-Major");
+    const majorRenovationYesRadio = document.getElementById(
+      "major-renovation-Yes"
+    );
 
-    console.log("last-remodel-renovation-one:", lastRemodelRenovationOne);
-    console.log("yes-major-renovation-one radio:", radioOne);
-    console.log("yes-major-renovation-two radio:", radioTwo);
+    // Helper function to update required attributes for all form fields in a wrapper
+    function updateRequiredFields(wrapper, isRequired) {
+      if (!wrapper) return;
+      const fields = wrapper.querySelectorAll("input, select, textarea");
+      fields.forEach((field) => {
+        if (isRequired) {
+          field.setAttribute("required", "required");
+        } else {
+          field.removeAttribute("required");
+        }
+      });
+    }
 
-    // Hide element by default
+    // Hide both fields by default
     if (lastRemodelRenovationOne)
       lastRemodelRenovationOne.style.display = "none";
+    if (lastRemodelRenovationTwo)
+      lastRemodelRenovationTwo.style.display = "none";
 
     function updateRenovationVisibility() {
-      const oneChecked = radioOne && radioOne.checked;
-      const twoChecked = radioTwo && radioTwo.checked;
+      const yesMajorChecked = yesMajorRadio && yesMajorRadio.checked;
+      const majorRenovationYesChecked =
+        majorRenovationYesRadio && majorRenovationYesRadio.checked;
 
-      console.log(
-        "Updating renovation visibility – one:",
-        oneChecked,
-        "two:",
-        twoChecked
-      );
-
+      // Handle last-remodel-renovation-one (shown when Yes-Major is clicked)
       if (lastRemodelRenovationOne) {
-        lastRemodelRenovationOne.style.display =
-          oneChecked || twoChecked ? "block" : "none";
-        console.log(
-          `last-remodel-renovation-one display: ${lastRemodelRenovationOne.style.display}`
-        );
+        if (yesMajorChecked) {
+          lastRemodelRenovationOne.style.display = "block";
+          updateRequiredFields(lastRemodelRenovationOne, true);
+        } else {
+          lastRemodelRenovationOne.style.display = "none";
+          updateRequiredFields(lastRemodelRenovationOne, false);
+        }
+      }
+
+      // Handle last-remodel-renovation-two (shown when major-renovation-Yes is clicked)
+      if (lastRemodelRenovationTwo) {
+        if (majorRenovationYesChecked) {
+          lastRemodelRenovationTwo.style.display = "block";
+          updateRequiredFields(lastRemodelRenovationTwo, true);
+        } else {
+          lastRemodelRenovationTwo.style.display = "none";
+          updateRequiredFields(lastRemodelRenovationTwo, false);
+        }
       }
     }
 
     // Listen for clicks/changes on both radios
-    if (radioOne)
-      radioOne.addEventListener("click", updateRenovationVisibility);
-    if (radioTwo)
-      radioTwo.addEventListener("click", updateRenovationVisibility);
+    if (yesMajorRadio) {
+      yesMajorRadio.addEventListener("click", updateRenovationVisibility);
+      yesMajorRadio.addEventListener("change", updateRenovationVisibility);
+    }
+    if (majorRenovationYesRadio) {
+      majorRenovationYesRadio.addEventListener(
+        "click",
+        updateRenovationVisibility
+      );
+      majorRenovationYesRadio.addEventListener(
+        "change",
+        updateRenovationVisibility
+      );
+    }
 
     // Run once immediately (in case one was pre-selected on page load)
     updateRenovationVisibility();
-
-    console.log("Renovation logic fully loaded and listening!");
   })();
 
   // ============================================
