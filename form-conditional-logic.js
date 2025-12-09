@@ -1100,152 +1100,47 @@ document.addEventListener("DOMContentLoaded", function () {
   // Pests Logic
   // ============================================
   (function initPestsLogic() {
-    console.log("Pests logic started – looking for elements...");
-
-    const fleasField = document.getElementById("fleas-field");
-    const scoreFormButton = document.querySelector(".score-form_button");
-    const radioNo = document.getElementById(
-      "Pests----Do-you-treat-for-fleas-no"
-    );
-    const radioYes = document.getElementById(
-      "Pests----Do-you-treat-for-fleas-yes"
-    );
     const pestsNACheckbox = document.getElementById("Pests----N-A");
 
-    console.log("fleas-field:", fleasField);
-    console.log("score-form_button:", scoreFormButton);
-    console.log("fleas---no radio:", radioNo);
-    console.log("fleas---yes radio:", radioYes);
+    if (!pestsNACheckbox) {
+      return;
+    }
 
-    // Hide fleas-field by default
-    if (fleasField) fleasField.style.display = "none";
+    function updatePestsNASiblings() {
+      const isChecked = pestsNACheckbox.checked;
 
-    function validateFleasField() {
-      if (!fleasField) return true;
+      // Find the current wrapper
+      const currentWrapper = pestsNACheckbox.closest(
+        ".score-form_checkbox-wrapper"
+      );
+      if (!currentWrapper || !currentWrapper.parentElement) return;
 
-      // Find all required fields within fleas-field
-      const requiredFields = fleasField.querySelectorAll(
-        "input[required], select[required], textarea[required]"
+      // Find the parent container
+      const parentContainer = currentWrapper.parentElement;
+
+      // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
+      const siblings = Array.from(parentContainer.children).filter(
+        (child) =>
+          child !== currentWrapper &&
+          child.classList.contains("score-form_checkbox-wrapper") &&
+          child.classList.contains("is-large") &&
+          child.classList.contains("is-margin-bottom")
       );
 
-      // Check if all required fields are filled
-      let allFilled = true;
-      requiredFields.forEach((field) => {
-        if (field.type === "checkbox" || field.type === "radio") {
-          // For checkboxes/radios, check if at least one in the group is checked
-          const name = field.name;
-          if (name) {
-            const groupChecked = document.querySelector(
-              `input[name="${name}"]:checked`
-            );
-            if (!groupChecked) allFilled = false;
-          } else if (!field.checked) {
-            allFilled = false;
-          }
+      siblings.forEach((sibling) => {
+        if (isChecked) {
+          sibling.classList.add("pointer-events-none");
         } else {
-          // For text inputs, selects, textareas
-          if (!field.value || field.value.trim() === "") {
-            allFilled = false;
-          }
+          sibling.classList.remove("pointer-events-none");
         }
       });
-
-      return allFilled;
     }
 
-    function updatePestsVisibility() {
-      const noChecked = radioNo && radioNo.checked;
-      const yesChecked = radioYes && radioYes.checked;
+    // Listen for clicks/changes on the checkbox
+    pestsNACheckbox.addEventListener("click", updatePestsNASiblings);
+    pestsNACheckbox.addEventListener("change", updatePestsNASiblings);
 
-      console.log(
-        "Updating pests visibility – no:",
-        noChecked,
-        "yes:",
-        yesChecked
-      );
-
-      if (fleasField) {
-        fleasField.style.display = yesChecked ? "block" : "none";
-        console.log(`fleas-field display: ${fleasField.style.display}`);
-      }
-
-      // Update button state
-      if (scoreFormButton) {
-        if (noChecked) {
-          // "No" selected: enable button
-          scoreFormButton.disabled = false;
-          scoreFormButton.style.pointerEvents = "";
-          console.log("Button enabled (no fleas treatment)");
-        } else if (yesChecked) {
-          // "Yes" selected: check if required fields are filled
-          const isValid = validateFleasField();
-          scoreFormButton.disabled = !isValid;
-          scoreFormButton.style.pointerEvents = isValid ? "" : "none";
-          console.log(
-            `Button ${isValid ? "enabled" : "disabled"} (fleas treatment: ${
-              isValid ? "valid" : "invalid"
-            })`
-          );
-        } else {
-          // Neither selected: disable button
-          scoreFormButton.disabled = true;
-          scoreFormButton.style.pointerEvents = "none";
-          console.log("Button disabled (no selection)");
-        }
-      }
-    }
-
-    // Listen for clicks/changes on both radios
-    if (radioNo) radioNo.addEventListener("click", updatePestsVisibility);
-    if (radioYes) radioYes.addEventListener("click", updatePestsVisibility);
-
-    // Listen for changes in fleas-field to validate in real-time
-    if (fleasField) {
-      fleasField.addEventListener("input", updatePestsVisibility);
-      fleasField.addEventListener("change", updatePestsVisibility);
-    }
-
-    // Run once immediately (in case one was pre-selected on page load)
-    updatePestsVisibility();
-
-    // Handle N/A checkbox: add pointer-events-none to siblings
-    if (pestsNACheckbox) {
-      function updatePestsNASiblings() {
-        const isChecked = pestsNACheckbox.checked;
-
-        // Find the current wrapper
-        const currentWrapper = pestsNACheckbox.closest(
-          ".score-form_checkbox-wrapper"
-        );
-        if (!currentWrapper || !currentWrapper.parentElement) return;
-
-        // Find the parent container
-        const parentContainer = currentWrapper.parentElement;
-
-        // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
-        const siblings = Array.from(parentContainer.children).filter(
-          (child) =>
-            child !== currentWrapper &&
-            child.classList.contains("score-form_checkbox-wrapper") &&
-            child.classList.contains("is-large") &&
-            child.classList.contains("is-margin-bottom")
-        );
-
-        siblings.forEach((sibling) => {
-          if (isChecked) {
-            sibling.classList.add("pointer-events-none");
-          } else {
-            sibling.classList.remove("pointer-events-none");
-          }
-        });
-      }
-
-      // Listen for clicks/changes on the checkbox
-      pestsNACheckbox.addEventListener("click", updatePestsNASiblings);
-      pestsNACheckbox.addEventListener("change", updatePestsNASiblings);
-
-      // Run once immediately (in case it was pre-selected on page load)
-      updatePestsNASiblings();
-    }
+    // Run once immediately (in case it was pre-selected on page load)
+    updatePestsNASiblings();
   })();
 });
