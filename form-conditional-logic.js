@@ -668,6 +668,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateFeaturesGreyState() {
       const isChecked = naCheckbox.checked;
+      console.log("updateFeaturesGreyState called, N/A is checked:", isChecked);
       const targetDivs = document.querySelectorAll(
         ".score-form_checkbox-group.home-features div.score-form_checkbox-wrapper.is-row"
       );
@@ -689,8 +690,15 @@ document.addEventListener("DOMContentLoaded", function () {
       if (isChecked) {
         featureCheckboxIds.forEach((id) => {
           const checkbox = document.getElementById(id);
-          if (checkbox && checkbox.checked) {
-            checkbox.checked = false;
+          console.log(`Checking checkbox: ${id}`, checkbox, checkbox?.checked);
+          if (checkbox) {
+            if (checkbox.checked) {
+              checkbox.checked = false;
+              // Trigger change event in case there's custom form logic
+              checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+              checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+              console.log(`Unchecked: ${id}`);
+            }
           }
         });
       }
