@@ -672,14 +672,32 @@ document.addEventListener("DOMContentLoaded", function () {
         ".score-form_checkbox-group.home-features div.score-form_checkbox-wrapper.is-row"
       );
 
+      // List of specific feature checkbox IDs to uncheck when N/A is checked
+      const featureCheckboxIds = [
+        "General-Home-Information----Features----Wall-to-wall-carpet-house",
+        "General-Home-Information----Features----Wall-To-Wall-Carpet-bedrooms-only",
+        "General-Home-Information----Features----Attached-or-underground-garage",
+        "General-Home-Information----Features----Attic",
+        "General-Home-Information----Features----Crawlspace",
+        "General-Home-Information----Features----Cement-slab-on-grade",
+        "General-Home-Information----Features----Fireplace",
+        "General-Home-Information----Features----Room-Portable-air-purifiers",
+        "General-Home-Information----Features----Built-on-stilts-posts-poles",
+      ];
+
+      // Uncheck all specific feature checkboxes when N/A is checked
+      if (isChecked) {
+        featureCheckboxIds.forEach((id) => {
+          const checkbox = document.getElementById(id);
+          if (checkbox && checkbox.checked) {
+            checkbox.checked = false;
+          }
+        });
+      }
+
       targetDivs.forEach((div) => {
         if (isChecked) {
           div.classList.add("has-greyed");
-          // Uncheck all checkboxes in each greyed div
-          const checkbox = div.querySelector('input[type="checkbox"]');
-          if (checkbox && checkbox !== naCheckbox && checkbox.checked) {
-            checkbox.checked = false;
-          }
         } else {
           div.classList.remove("has-greyed");
         }
