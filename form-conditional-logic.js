@@ -991,6 +991,27 @@ document.addEventListener("DOMContentLoaded", function () {
       function updateProximityMileSiblings() {
         const isChecked = proximityMileNACheckbox.checked;
 
+        // List of specific proximity checkbox IDs to uncheck when N/A is checked
+        const proximityCheckboxIds = [
+          "Proximity----Live-within-1-2-mile----Agricultural-area-or-farm",
+          "Proximity----Live-within-1-2-mile----Airport",
+          "Proximity----Live-within-1-2-mile----Highway-or-high-traffic-city-street",
+          "Proximity----Live-within-1-2-mile----Industrial-area-or-chemical-plant",
+        ];
+
+        // Uncheck all specific proximity checkboxes when N/A is checked
+        if (isChecked) {
+          proximityCheckboxIds.forEach((id) => {
+            const checkbox = document.getElementById(id);
+            if (checkbox && checkbox.checked) {
+              checkbox.checked = false;
+              // Trigger change event in case there's custom form logic
+              checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+              checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+          });
+        }
+
         // Find the current wrapper
         const currentWrapper = proximityMileNACheckbox.closest(
           ".score-form_checkbox-wrapper"
@@ -1012,8 +1033,10 @@ document.addEventListener("DOMContentLoaded", function () {
         siblings.forEach((sibling) => {
           if (isChecked) {
             sibling.classList.add("pointer-events-none");
+            sibling.classList.add("has-greyed");
           } else {
             sibling.classList.remove("pointer-events-none");
+            sibling.classList.remove("has-greyed");
           }
         });
       }
