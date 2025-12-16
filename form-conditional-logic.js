@@ -675,6 +675,11 @@ document.addEventListener("DOMContentLoaded", function () {
       targetDivs.forEach((div) => {
         if (isChecked) {
           div.classList.add("has-greyed");
+          // Uncheck all checkboxes in each greyed div
+          const checkbox = div.querySelector('input[type="checkbox"]');
+          if (checkbox && checkbox !== naCheckbox && checkbox.checked) {
+            checkbox.checked = false;
+          }
         } else {
           div.classList.remove("has-greyed");
         }
@@ -694,11 +699,6 @@ document.addEventListener("DOMContentLoaded", function () {
         siblings.forEach((sibling) => {
           if (isChecked) {
             sibling.classList.add("pointer-events-none");
-            // Uncheck all checkboxes in this sibling wrapper
-            const checkbox = sibling.querySelector('input[type="checkbox"]');
-            if (checkbox && checkbox.checked) {
-              checkbox.checked = false;
-            }
           } else {
             sibling.classList.remove("pointer-events-none");
           }
