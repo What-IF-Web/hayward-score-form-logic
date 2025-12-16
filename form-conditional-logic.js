@@ -1038,10 +1038,37 @@ document.addEventListener("DOMContentLoaded", function () {
       // Listen for clicks/changes on the checkbox
       console.log("Attaching event listeners to proximityMileNACheckbox");
 
-      // Test listener to see if ANY event fires
-      proximityMileNACheckbox.addEventListener("click", function (e) {
-        console.log("CLICK EVENT FIRED!", e.target.checked);
+      // Test all possible events
+      proximityMileNACheckbox.addEventListener(
+        "click",
+        function (e) {
+          console.log("CLICK EVENT FIRED on checkbox!", e.target.checked);
+        },
+        true
+      ); // Use capture phase
+
+      proximityMileNACheckbox.addEventListener("change", function (e) {
+        console.log("CHANGE EVENT FIRED on checkbox!", e.target.checked);
       });
+
+      proximityMileNACheckbox.addEventListener("input", function (e) {
+        console.log("INPUT EVENT FIRED on checkbox!", e.target.checked);
+      });
+
+      // Also try listening on the parent wrapper
+      const checkboxWrapper = proximityMileNACheckbox.closest(
+        ".score-form_checkbox-wrapper"
+      );
+      console.log("Checkbox wrapper:", checkboxWrapper);
+      if (checkboxWrapper) {
+        checkboxWrapper.addEventListener("click", function (e) {
+          console.log(
+            "CLICK EVENT FIRED on wrapper!",
+            e.target,
+            proximityMileNACheckbox.checked
+          );
+        });
+      }
 
       proximityMileNACheckbox.addEventListener(
         "click",
