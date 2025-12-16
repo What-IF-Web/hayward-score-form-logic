@@ -965,6 +965,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Handle second checkbox: Do-You-Live-Within-1-2-Mile-Of-Any-Of-The-Following-Not-applicable
+    console.log("proximityMileNACheckbox found:", proximityMileNACheckbox);
     if (proximityMileNACheckbox) {
       function updateProximityMileSiblings() {
         const isChecked = proximityMileNACheckbox.checked;
@@ -1035,6 +1036,13 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Listen for clicks/changes on the checkbox
+      console.log("Attaching event listeners to proximityMileNACheckbox");
+
+      // Test listener to see if ANY event fires
+      proximityMileNACheckbox.addEventListener("click", function (e) {
+        console.log("CLICK EVENT FIRED!", e.target.checked);
+      });
+
       proximityMileNACheckbox.addEventListener(
         "click",
         updateProximityMileSiblings
@@ -1043,6 +1051,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "change",
         updateProximityMileSiblings
       );
+      console.log("Event listeners attached");
 
       // Run once immediately (in case it was pre-selected on page load)
       updateProximityMileSiblings();
