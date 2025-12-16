@@ -592,8 +592,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Run once on page load to set initial state
     updateStoriesBasedOnSelection();
-
-    console.log("Script fully loaded and listening!");
   })();
 
   // ============================================
@@ -662,13 +660,11 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     if (!naCheckbox) {
-      console.log("Features N/A checkbox not found");
       return;
     }
 
     function updateFeaturesGreyState() {
       const isChecked = naCheckbox.checked;
-      console.log("updateFeaturesGreyState called, N/A is checked:", isChecked);
       const targetDivs = document.querySelectorAll(
         ".score-form_checkbox-group.home-features div.score-form_checkbox-wrapper.is-row"
       );
@@ -690,14 +686,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (isChecked) {
         featureCheckboxIds.forEach((id) => {
           const checkbox = document.getElementById(id);
-          console.log(`Checking checkbox: ${id}`, checkbox, checkbox?.checked);
           if (checkbox) {
             if (checkbox.checked) {
               checkbox.checked = false;
               // Trigger change event in case there's custom form logic
               checkbox.dispatchEvent(new Event("change", { bubbles: true }));
               checkbox.dispatchEvent(new Event("input", { bubbles: true }));
-              console.log(`Unchecked: ${id}`);
             }
           }
         });
@@ -820,8 +814,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Mold Logic
   // ============================================
   (function initMoldLogic() {
-    console.log("Mold logic started – looking for elements...");
-
     const moldDropdown = document.getElementById("mold-dropdown");
     const radioNo = document.getElementById(
       "Indoor-Conditions----Any-visible-mold-on-walls-and-or-ceilings-no"
@@ -829,10 +821,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const radioYes = document.getElementById(
       "Indoor-Conditions----Any-visible-mold-on-walls-and-or-ceilings-yes"
     );
-
-    console.log("mold-dropdown:", moldDropdown);
-    console.log("mold---no radio:", radioNo);
-    console.log("mold---yes radio:", radioYes);
 
     // Make the mold radio buttons required (set on one, applies to the group)
     if (radioNo) radioNo.setAttribute("required", "required");
@@ -845,16 +833,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
 
-      console.log(
-        "Updating mold visibility – no:",
-        noChecked,
-        "yes:",
-        yesChecked
-      );
-
       if (moldDropdown) {
         moldDropdown.style.display = noChecked ? "block" : "none";
-        console.log(`mold-dropdown display: ${moldDropdown.style.display}`);
       }
     }
 
@@ -932,8 +912,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Run once immediately (in case one was pre-selected on page load)
     updateMoldVisibility();
-
-    console.log("Mold logic fully loaded and listening!");
   })();
 
   // ============================================
