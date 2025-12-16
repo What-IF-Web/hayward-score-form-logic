@@ -1376,4 +1376,60 @@ document.addEventListener("DOMContentLoaded", function () {
       updateSymptomsDuringOtherRequired();
     }
   })();
+
+  // ============================================
+  // Type of Walls - Cladding Other Logic
+  // ============================================
+  (function initCladdingOtherLogic() {
+    const claddingOtherCheckbox = document.getElementById(
+      "General-Home-Information----Type-of-Walls----Cladding-Other"
+    );
+    const claddingOtherField = document.getElementById(
+      "General-Home-Information----Type-of-Walls----Cladding-Other-Field"
+    );
+
+    // Hide cladding-other-field by default
+    if (claddingOtherField) claddingOtherField.style.display = "none";
+
+    // Helper function to update required attributes for a field
+    function updateRequiredField(field, isRequired) {
+      if (!field) return;
+      if (isRequired) {
+        field.setAttribute("required", "required");
+      } else {
+        field.removeAttribute("required");
+      }
+    }
+
+    function updateCladdingOtherVisibility() {
+      if (!claddingOtherCheckbox || !claddingOtherField) return;
+
+      const isChecked = claddingOtherCheckbox.checked;
+
+      if (isChecked) {
+        // Show the field and make it required
+        claddingOtherField.style.display = "block";
+        updateRequiredField(claddingOtherField, true);
+      } else {
+        // Hide the field and remove required
+        claddingOtherField.style.display = "none";
+        updateRequiredField(claddingOtherField, false);
+      }
+    }
+
+    // Listen for clicks/changes on the checkbox
+    if (claddingOtherCheckbox) {
+      claddingOtherCheckbox.addEventListener(
+        "click",
+        updateCladdingOtherVisibility
+      );
+      claddingOtherCheckbox.addEventListener(
+        "change",
+        updateCladdingOtherVisibility
+      );
+    }
+
+    // Run once immediately (in case it was pre-selected on page load)
+    updateCladdingOtherVisibility();
+  })();
 });
