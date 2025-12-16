@@ -694,6 +694,11 @@ document.addEventListener("DOMContentLoaded", function () {
         siblings.forEach((sibling) => {
           if (isChecked) {
             sibling.classList.add("pointer-events-none");
+            // Uncheck all checkboxes in this sibling wrapper
+            const checkbox = sibling.querySelector('input[type="checkbox"]');
+            if (checkbox && checkbox.checked) {
+              checkbox.checked = false;
+            }
           } else {
             sibling.classList.remove("pointer-events-none");
           }
