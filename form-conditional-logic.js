@@ -990,6 +990,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (proximityMileNACheckbox) {
       function updateProximityMileSiblings() {
         const isChecked = proximityMileNACheckbox.checked;
+        console.log(
+          "updateProximityMileSiblings called, N/A is checked:",
+          isChecked
+        );
 
         // List of specific proximity checkbox IDs to uncheck when N/A is checked
         const proximityCheckboxIds = [
@@ -1003,11 +1007,19 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isChecked) {
           proximityCheckboxIds.forEach((id) => {
             const checkbox = document.getElementById(id);
-            if (checkbox && checkbox.checked) {
-              checkbox.checked = false;
-              // Trigger change event in case there's custom form logic
-              checkbox.dispatchEvent(new Event("change", { bubbles: true }));
-              checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+            console.log(
+              `Checking proximity checkbox: ${id}`,
+              checkbox,
+              checkbox?.checked
+            );
+            if (checkbox) {
+              if (checkbox.checked) {
+                checkbox.checked = false;
+                // Trigger change event in case there's custom form logic
+                checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+                checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+                console.log(`Unchecked: ${id}`);
+              }
             }
           });
         }
@@ -1030,10 +1042,13 @@ document.addEventListener("DOMContentLoaded", function () {
             child.classList.contains("is-margin-bottom")
         );
 
+        console.log(`Found ${siblings.length} siblings to grey out`);
+
         siblings.forEach((sibling) => {
           if (isChecked) {
             sibling.classList.add("pointer-events-none");
             sibling.classList.add("has-greyed");
+            console.log("Added has-greyed to sibling:", sibling);
           } else {
             sibling.classList.remove("pointer-events-none");
             sibling.classList.remove("has-greyed");
