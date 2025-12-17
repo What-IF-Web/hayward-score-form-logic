@@ -942,12 +942,13 @@ document.addEventListener("DOMContentLoaded", function () {
         // Find the parent container
         const parentContainer = currentWrapper.parentElement;
 
-        // Find all siblings with both classes "score-form_checkbox-wrapper" and "is-dropdown"
+        // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
         const siblings = Array.from(parentContainer.children).filter(
           (child) =>
             child !== currentWrapper &&
             child.classList.contains("score-form_checkbox-wrapper") &&
-            child.classList.contains("is-dropdown")
+            child.classList.contains("is-large") &&
+            child.classList.contains("is-margin-bottom")
         );
 
         siblings.forEach((sibling) => {
