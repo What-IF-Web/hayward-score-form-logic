@@ -924,6 +924,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const proximityMileNACheckbox = document.getElementById(
       "Proximity----Do-You-Live-Within-1-2-Mile-Of-Any-Of-The-Following-Not-applicable"
     );
+    const proximityLiveWithinMileNACheckbox = document.getElementById(
+      "Proximity----Live-within-1-2-mile----Not-applicable"
+    );
 
     // Handle first checkbox: Smell-in-home----Not-applicable
     if (proximityNACheckbox) {
@@ -968,39 +971,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (proximityMileNACheckbox) {
       function updateProximityMileSiblings() {
         const isChecked = proximityMileNACheckbox.checked;
-        console.log(
-          "updateProximityMileSiblings called, N/A is checked:",
-          isChecked
-        );
-
-        // List of specific proximity checkbox IDs to uncheck when N/A is checked
-        const proximityCheckboxIds = [
-          "Proximity----Live-within-1-2-mile----Agricultural-area-or-farm",
-          "Proximity----Live-within-1-2-mile----Airport",
-          "Proximity----Live-within-1-2-mile----Highway-or-high-traffic-city-street",
-          "Proximity----Live-within-1-2-mile----Industrial-area-or-chemical-plant",
-        ];
-
-        // Uncheck all specific proximity checkboxes when N/A is checked
-        if (isChecked) {
-          proximityCheckboxIds.forEach((id) => {
-            const checkbox = document.getElementById(id);
-            console.log(
-              `Checking proximity checkbox: ${id}`,
-              checkbox,
-              checkbox?.checked
-            );
-            if (checkbox) {
-              if (checkbox.checked) {
-                checkbox.checked = false;
-                // Trigger change event in case there's custom form logic
-                checkbox.dispatchEvent(new Event("change", { bubbles: true }));
-                checkbox.dispatchEvent(new Event("input", { bubbles: true }));
-                console.log(`Unchecked: ${id}`);
-              }
-            }
-          });
-        }
 
         // Find the current wrapper
         const currentWrapper = proximityMileNACheckbox.closest(
@@ -1020,16 +990,11 @@ document.addEventListener("DOMContentLoaded", function () {
             child.classList.contains("is-margin-bottom")
         );
 
-        console.log(`Found ${siblings.length} siblings to grey out`);
-
         siblings.forEach((sibling) => {
           if (isChecked) {
             sibling.classList.add("pointer-events-none");
-            sibling.classList.add("has-greyed");
-            console.log("Added has-greyed to sibling:", sibling);
           } else {
             sibling.classList.remove("pointer-events-none");
-            sibling.classList.remove("has-greyed");
           }
         });
       }
@@ -1046,6 +1011,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Run once immediately (in case it was pre-selected on page load)
       updateProximityMileSiblings();
+    }
+
+    // Handle third checkbox: Live-within-1-2-mile----Not-applicable
+    if (proximityLiveWithinMileNACheckbox) {
+      function updateProximityLiveWithinMileSiblings() {
+        const isChecked = proximityLiveWithinMileNACheckbox.checked;
+
+        // Find the current wrapper
+        const currentWrapper = proximityLiveWithinMileNACheckbox.closest(
+          ".score-form_checkbox-wrapper"
+        );
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all siblings with classes "score-form_checkbox-wrapper", "is-large", and "is-margin-bottom"
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper") &&
+            child.classList.contains("is-large") &&
+            child.classList.contains("is-margin-bottom")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      proximityLiveWithinMileNACheckbox.addEventListener(
+        "click",
+        updateProximityLiveWithinMileSiblings
+      );
+      proximityLiveWithinMileNACheckbox.addEventListener(
+        "change",
+        updateProximityLiveWithinMileSiblings
+      );
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updateProximityLiveWithinMileSiblings();
     }
   })();
 
