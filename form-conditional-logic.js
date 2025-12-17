@@ -1632,6 +1632,14 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     const pestsNACheckbox = document.getElementById("Pests----N-A");
 
+    // Debug logging
+    console.log("Pests Logic - Elements found:", {
+      fleasField: !!fleasField,
+      radioNo: !!radioNo,
+      radioYes: !!radioYes,
+      pestsNACheckbox: !!pestsNACheckbox,
+    });
+
     // Make the fleas radio buttons required (set on one, applies to the group)
     if (radioNo) radioNo.setAttribute("required", "required");
     if (radioYes) radioYes.setAttribute("required", "required");
@@ -1656,30 +1664,45 @@ document.addEventListener("DOMContentLoaded", function () {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
 
+      console.log("Pests Logic - updateFleasVisibility called:", {
+        noChecked,
+        yesChecked,
+        fleasFieldExists: !!fleasField,
+      });
+
       if (noChecked) {
         // "No" selected: hide fleas-field and remove required
         if (fleasField) {
           fleasField.style.display = "none";
           updateRequiredFields(fleasField, false);
+          console.log("Pests Logic - Set display to none (No selected)");
         }
       } else if (yesChecked) {
         // "Yes" selected: show fleas-field and make it required
         if (fleasField) {
           fleasField.style.display = "block";
           updateRequiredFields(fleasField, true);
+          console.log("Pests Logic - Set display to block (Yes selected)");
         }
       } else {
         // Neither selected: hide fleas-field and remove required
         if (fleasField) {
           fleasField.style.display = "none";
           updateRequiredFields(fleasField, false);
+          console.log("Pests Logic - Set display to none (Neither selected)");
         }
       }
     }
 
     // Listen for clicks/changes on both radios
-    if (radioNo) radioNo.addEventListener("click", updateFleasVisibility);
-    if (radioYes) radioYes.addEventListener("click", updateFleasVisibility);
+    if (radioNo) {
+      radioNo.addEventListener("click", updateFleasVisibility);
+      radioNo.addEventListener("change", updateFleasVisibility);
+    }
+    if (radioYes) {
+      radioYes.addEventListener("click", updateFleasVisibility);
+      radioYes.addEventListener("change", updateFleasVisibility);
+    }
 
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
