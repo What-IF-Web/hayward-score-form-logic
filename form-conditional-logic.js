@@ -352,6 +352,64 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
 
   // ============================================
+  // Water Quality Radio Button Styles (Protected Groups)
+  // ============================================
+  (function initWaterQualityStyles() {
+    // Changes in tap water appearance - Apply styles to all 5 radio options
+    const tapWaterRadios = [
+      document.getElementById("Never-3"),
+      document.getElementById("2-3-times-week"),
+      document.getElementById("2-3-times-month"),
+      document.getElementById("Every-few-months"),
+      document.getElementById("1-2-times-year"),
+    ].filter((radio) => radio !== null);
+
+    tapWaterRadios.forEach((radio) => {
+      if (radio) {
+        radio.addEventListener("click", function () {
+          tapWaterRadios.forEach((r) => {
+            const label =
+              r.closest("label") ||
+              r.closest(".score-form_radio-wrapper") ||
+              r.closest(".score-form_checkbox-wrapper") ||
+              r.parentElement;
+            if (label) {
+              if (r.checked) {
+                label.style.backgroundColor = "#313794";
+                label.style.color = "#ffffff";
+                const textElements = label.querySelectorAll(
+                  "span, div, p, label, .score-form_radio-label-new"
+                );
+                textElements.forEach((el) => {
+                  el.style.color = "#ffffff";
+                  el.style.setProperty("color", "#ffffff", "important");
+                });
+              } else {
+                label.style.backgroundColor = "";
+                label.style.color = "";
+                const textElements = label.querySelectorAll(
+                  "span, div, p, label, .score-form_radio-label-new"
+                );
+                textElements.forEach((el) => {
+                  el.style.color = "";
+                  el.style.removeProperty("color");
+                });
+              }
+            }
+          });
+        });
+      }
+    });
+
+    // Private well water system - Apply styles to No/Yes options
+    const wellSystemNo = document.getElementById("No-7");
+    const wellSystemYes = document.getElementById("Yes-5");
+    if (wellSystemNo && wellSystemYes) {
+      setupRadioButtonStyles(wellSystemNo, wellSystemYes);
+    }
+  })();
+
+  // ============================================
   // Basement Logic
   // ============================================
   (function initBasementLogic() {
