@@ -2,17 +2,19 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Helper function to style radio buttons when selected
   function setupRadioButtonStyles(radioNo, radioYes) {
-    // Check if these radios belong to the protected groups
-    const protectedGroupPatterns = [
-      "Indoor-Conditions----How-often-is-your-water-so-brown",
-      "Indoor-Conditions----Is-your-home-supplied-by-a-private-well",
+    // Check if these radios belong to the protected groups (by parent container ID)
+    const protectedContainerIds = [
+      "private-well-water-system",
+      "changes-in-tap-water-appearance",
     ];
 
     function isProtectedGroup(radio) {
-      if (!radio || !radio.name) return false;
-      return protectedGroupPatterns.some((pattern) =>
-        radio.name.includes(pattern)
-      );
+      if (!radio) return false;
+      // Check if radio is inside a container with one of the protected IDs
+      return protectedContainerIds.some((id) => {
+        const container = document.getElementById(id);
+        return container && container.contains(radio);
+      });
     }
 
     const radioNoIsProtected = isProtectedGroup(radioNo);
