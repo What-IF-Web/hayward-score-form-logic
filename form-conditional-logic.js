@@ -2,6 +2,23 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Helper function to style radio buttons when selected
   function setupRadioButtonStyles(radioNo, radioYes) {
+    // Check if these radios belong to the protected groups
+    const protectedGroupPatterns = [
+      "Indoor-Conditions----How-often-is-your-water-so-brown",
+      "Indoor-Conditions----Is-your-home-supplied-by-a-private-well",
+    ];
+
+    function isProtectedGroup(radio) {
+      if (!radio || !radio.name) return false;
+      return protectedGroupPatterns.some((pattern) =>
+        radio.name.includes(pattern)
+      );
+    }
+
+    const radioNoIsProtected = isProtectedGroup(radioNo);
+    const radioYesIsProtected = isProtectedGroup(radioYes);
+    const isProtectedPair = radioNoIsProtected || radioYesIsProtected;
+
     function updateRadioStyles(radio) {
       if (!radio) return;
 
@@ -26,17 +43,20 @@ document.addEventListener("DOMContentLoaded", function () {
             el.style.setProperty("color", "#ffffff", "important");
           });
         } else {
-          // Revert to original styles
-          label.style.backgroundColor = "";
-          label.style.color = "";
-          // Revert child element colors
-          const textElements = label.querySelectorAll(
-            "span, div, p, label, .score-form_radio-label-new"
-          );
-          textElements.forEach((el) => {
-            el.style.color = "";
-            el.style.removeProperty("color");
-          });
+          // Revert to original styles ONLY if not protected or if same group
+          const shouldRevert = !isProtectedPair || radio.name === radioNo.name;
+          if (shouldRevert) {
+            label.style.backgroundColor = "";
+            label.style.color = "";
+            // Revert child element colors
+            const textElements = label.querySelectorAll(
+              "span, div, p, label, .score-form_radio-label-new"
+            );
+            textElements.forEach((el) => {
+              el.style.color = "";
+              el.style.removeProperty("color");
+            });
+          }
         }
       }
     }
