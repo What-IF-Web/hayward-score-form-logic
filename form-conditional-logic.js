@@ -8,18 +8,22 @@ document.addEventListener("DOMContentLoaded", function () {
       "changes-in-tap-water-appearance",
     ];
 
-    function isProtectedGroup(radio) {
-      if (!radio) return false;
-      // Check if radio is inside a container with one of the protected IDs
-      return protectedContainerIds.some((id) => {
+    function getProtectedContainerId(radio) {
+      if (!radio) return null;
+      // Return the ID of the protected container this radio is in, or null
+      for (let id of protectedContainerIds) {
         const container = document.getElementById(id);
-        return container && container.contains(radio);
-      });
+        if (container && container.contains(radio)) {
+          return id;
+        }
+      }
+      return null;
     }
 
-    const radioNoIsProtected = isProtectedGroup(radioNo);
-    const radioYesIsProtected = isProtectedGroup(radioYes);
-    const isProtectedPair = radioNoIsProtected || radioYesIsProtected;
+    const radioNoContainerId = getProtectedContainerId(radioNo);
+    const radioYesContainerId = getProtectedContainerId(radioYes);
+    const isProtectedPair =
+      radioNoContainerId !== null || radioYesContainerId !== null;
 
     function updateRadioStyles(radio) {
       if (!radio) return;
@@ -45,8 +49,15 @@ document.addEventListener("DOMContentLoaded", function () {
             el.style.setProperty("color", "#ffffff", "important");
           });
         } else {
-          // Revert to original styles ONLY if not protected or if same group
-          const shouldRevert = !isProtectedPair || radio.name === radioNo.name;
+          // Revert to original styles ONLY if:
+          // 1. Not protected at all, OR
+          // 2. Protected AND in the same container as the current pair
+          const radioContainerId = getProtectedContainerId(radio);
+          const inSameContainer =
+            radioContainerId === radioNoContainerId &&
+            radioContainerId === radioYesContainerId;
+          const shouldRevert = !isProtectedPair || inSameContainer;
+
           if (shouldRevert) {
             label.style.backgroundColor = "";
             label.style.color = "";
