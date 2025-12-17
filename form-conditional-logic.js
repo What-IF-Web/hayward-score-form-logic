@@ -965,7 +965,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         siblings.forEach((sibling) => {
           if (isChecked) {
-            // Uncheck all checkboxes within this sibling (including direct children and nested)
+            // Uncheck all checkboxes within this sibling
             const checkboxes = sibling.querySelectorAll(
               'input[type="checkbox"]'
             );
@@ -977,21 +977,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 checkbox.dispatchEvent(new Event("input", { bubbles: true }));
               }
             });
-
-            // Also check if the sibling itself contains a direct checkbox
-            const directCheckbox = sibling.querySelector(
-              'input[type="checkbox"]'
-            );
-            if (directCheckbox && directCheckbox.checked) {
-              directCheckbox.checked = false;
-              directCheckbox.dispatchEvent(
-                new Event("change", { bubbles: true })
-              );
-              directCheckbox.dispatchEvent(
-                new Event("input", { bubbles: true })
-              );
-            }
-
             sibling.classList.add("pointer-events-none");
           } else {
             sibling.classList.remove("pointer-events-none");
