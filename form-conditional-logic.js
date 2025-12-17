@@ -969,9 +969,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const checkboxes = sibling.querySelectorAll(
               'input[type="checkbox"]'
             );
-            console.log(`Found ${checkboxes.length} checkboxes in sibling`);
             checkboxes.forEach((checkbox) => {
-              console.log("Unchecking checkbox:", checkbox.id);
               if (checkbox.checked) {
                 checkbox.checked = false;
                 // Trigger change event in case there's custom form logic
@@ -1023,11 +1021,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const checkboxes = sibling.querySelectorAll(
               'input[type="checkbox"]'
             );
-            console.log(
-              `[Mile] Found ${checkboxes.length} checkboxes in sibling`
-            );
             checkboxes.forEach((checkbox) => {
-              console.log("[Mile] Unchecking checkbox:", checkbox.id);
               if (checkbox.checked) {
                 checkbox.checked = false;
                 // Trigger change event in case there's custom form logic
@@ -1085,11 +1079,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const checkboxes = sibling.querySelectorAll(
               'input[type="checkbox"]'
             );
-            console.log(
-              `[Live Within] Found ${checkboxes.length} checkboxes in sibling`
-            );
             checkboxes.forEach((checkbox) => {
-              console.log("[Live Within] Unchecking checkbox:", checkbox.id);
               if (checkbox.checked) {
                 checkbox.checked = false;
                 // Trigger change event in case there's custom form logic
