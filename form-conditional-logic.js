@@ -192,6 +192,153 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
 
   // ============================================
+  // Bathroom & Moisture Radio Button Styles
+  // ============================================
+  (function initBathroomMoistureStyles() {
+    // Bath fan while showering
+    const bathFanNo = document.querySelector(
+      'input[name="bath-fan-while-showering"][value="no"], input[name="bath-fan-while-showering"][id*="no"]'
+    );
+    const bathFanYes = document.querySelector(
+      'input[name="bath-fan-while-showering"][value="yes"], input[name="bath-fan-while-showering"][id*="yes"]'
+    );
+    if (bathFanNo && bathFanYes) {
+      setupRadioButtonStyles(bathFanNo, bathFanYes);
+    }
+
+    // Steam nozzle
+    const steamNozzleNo = document.querySelector(
+      'input[name="steam-nozzle"][value="no"], input[name="steam-nozzle"][id*="no"]'
+    );
+    const steamNozzleYes = document.querySelector(
+      'input[name="steam-nozzle"][value="yes"], input[name="steam-nozzle"][id*="yes"]'
+    );
+    if (steamNozzleNo && steamNozzleYes) {
+      setupRadioButtonStyles(steamNozzleNo, steamNozzleYes);
+    }
+
+    // Indoor jacuzzi
+    const indoorJacuzziNo = document.querySelector(
+      'input[name="indoor-jacuzzi"][value="no"], input[name="indoor-jacuzzi"][id*="no"]'
+    );
+    const indoorJacuzziYes = document.querySelector(
+      'input[name="indoor-jacuzzi"][value="yes"], input[name="indoor-jacuzzi"][id*="yes"]'
+    );
+    if (indoorJacuzziNo && indoorJacuzziYes) {
+      setupRadioButtonStyles(indoorJacuzziNo, indoorJacuzziYes);
+    }
+
+    // Condensation walls ceiling
+    const condensationWallsNo = document.querySelector(
+      'input[name="condensation-walls-ceiling"][value="no"], input[name="condensation-walls-ceiling"][id*="no"]'
+    );
+    const condensationWallsYes = document.querySelector(
+      'input[name="condensation-walls-ceiling"][value="yes"], input[name="condensation-walls-ceiling"][id*="yes"]'
+    );
+    if (condensationWallsNo && condensationWallsYes) {
+      setupRadioButtonStyles(condensationWallsNo, condensationWallsYes);
+    }
+
+    // Condensation laundry
+    const condensationLaundryNo = document.querySelector(
+      'input[name="condensation-laundry"][value="no"], input[name="condensation-laundry"][id*="no"]'
+    );
+    const condensationLaundryYes = document.querySelector(
+      'input[name="condensation-laundry"][value="yes"], input[name="condensation-laundry"][id*="yes"]'
+    );
+    if (condensationLaundryNo && condensationLaundryYes) {
+      setupRadioButtonStyles(condensationLaundryNo, condensationLaundryYes);
+    }
+
+    // Humidifier one or more
+    const humidifierNo = document.querySelector(
+      'input[name="humidifier-one-or-more"][value="no"], input[name="humidifier-one-or-more"][id*="no"]'
+    );
+    const humidifierYes = document.querySelector(
+      'input[name="humidifier-one-or-more"][value="yes"], input[name="humidifier-one-or-more"][id*="yes"]'
+    );
+    if (humidifierNo && humidifierYes) {
+      setupRadioButtonStyles(humidifierNo, humidifierYes);
+    }
+  })();
+
+  // ============================================
+  // Indoor Cleanliness Radio Button Styles
+  // ============================================
+  (function initIndoorCleanlinessStyles() {
+    // Musty odors
+    const mustyOdorsNo = document.querySelector(
+      'input[name="musty-odors"][value="no"], input[name="musty-odors"][id*="no"]'
+    );
+    const mustyOdorsYes = document.querySelector(
+      'input[name="musty-odors"][value="yes"], input[name="musty-odors"][id*="yes"]'
+    );
+    if (mustyOdorsNo && mustyOdorsYes) {
+      setupRadioButtonStyles(mustyOdorsNo, mustyOdorsYes);
+    }
+
+    // Dust on surfaces
+    const dustSurfacesNo = document.querySelector(
+      'input[name="dust-on-surfaces"][value="no"], input[name="dust-on-surfaces"][id*="no"]'
+    );
+    const dustSurfacesYes = document.querySelector(
+      'input[name="dust-on-surfaces"][value="yes"], input[name="dust-on-surfaces"][id*="yes"]'
+    );
+    if (dustSurfacesNo && dustSurfacesYes) {
+      setupRadioButtonStyles(dustSurfacesNo, dustSurfacesYes);
+    }
+
+    // Dirt or dust on windowsills
+    const dirtWindowsillsNo = document.querySelector(
+      'input[name="dirt-or-dust-on-windowsills"][value="no"], input[name="dirt-or-dust-on-windowsills"][id*="no"]'
+    );
+    const dirtWindowsillsYes = document.querySelector(
+      'input[name="dirt-or-dust-on-windowsills"][value="yes"], input[name="dirt-or-dust-on-windowsills"][id*="yes"]'
+    );
+    if (dirtWindowsillsNo && dirtWindowsillsYes) {
+      setupRadioButtonStyles(dirtWindowsillsNo, dirtWindowsillsYes);
+    }
+
+    // Water stains wall ceiling
+    const waterStainsNo = document.querySelector(
+      'input[name="water-stains-wall-ceiling"][value="no"], input[name="water-stains-wall-ceiling"][id*="no"]'
+    );
+    const waterStainsYes = document.querySelector(
+      'input[name="water-stains-wall-ceiling"][value="yes"], input[name="water-stains-wall-ceiling"][id*="yes"]'
+    );
+    if (waterStainsNo && waterStainsYes) {
+      setupRadioButtonStyles(waterStainsNo, waterStainsYes);
+    }
+  })();
+
+  // ============================================
+  // Household Habits Radio Button Styles
+  // ============================================
+  (function initHouseholdHabitsStyles() {
+    // Shoes off
+    const shoesOffNo = document.querySelector(
+      'input[name="shoes-off"][value="no"], input[name="shoes-off"][id*="no"]'
+    );
+    const shoesOffYes = document.querySelector(
+      'input[name="shoes-off"][value="yes"], input[name="shoes-off"][id*="yes"]'
+    );
+    if (shoesOffNo && shoesOffYes) {
+      setupRadioButtonStyles(shoesOffNo, shoesOffYes);
+    }
+
+    // Smoke tobacco home
+    const smokeTobaccoNo = document.querySelector(
+      'input[name="smoke-tobacco-home"][value="no"], input[name="smoke-tobacco-home"][id*="no"]'
+    );
+    const smokeTobaccoYes = document.querySelector(
+      'input[name="smoke-tobacco-home"][value="yes"], input[name="smoke-tobacco-home"][id*="yes"]'
+    );
+    if (smokeTobaccoNo && smokeTobaccoYes) {
+      setupRadioButtonStyles(smokeTobaccoNo, smokeTobaccoYes);
+    }
+  })();
+
+  // ============================================
   // Basement Logic
   // ============================================
   (function initBasementLogic() {
