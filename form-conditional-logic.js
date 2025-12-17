@@ -121,6 +121,77 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
 
   // ============================================
+  // Cooking & Range Hood Radio Button Styles
+  // ============================================
+  (function initCookingRangeHoodStyles() {
+    // Cook with steamer
+    const cookSteamerNo = document.querySelector(
+      'input[name="cook-with-steamer"][value="no"], input[name="cook-with-steamer"][id*="no"]'
+    );
+    const cookSteamerYes = document.querySelector(
+      'input[name="cook-with-steamer"][value="yes"], input[name="cook-with-steamer"][id*="yes"]'
+    );
+    if (cookSteamerNo && cookSteamerYes) {
+      setupRadioButtonStyles(cookSteamerNo, cookSteamerYes);
+    }
+
+    // Boil simmer wok
+    const boilSimmerNo = document.querySelector(
+      'input[name="boil-simmer-wok"][value="no"], input[name="boil-simmer-wok"][id*="no"]'
+    );
+    const boilSimmerYes = document.querySelector(
+      'input[name="boil-simmer-wok"][value="yes"], input[name="boil-simmer-wok"][id*="yes"]'
+    );
+    if (boilSimmerNo && boilSimmerYes) {
+      setupRadioButtonStyles(boilSimmerNo, boilSimmerYes);
+    }
+
+    // Cook with gas
+    const cookGasNo = document.querySelector(
+      'input[name="cook-with-gas"][value="no"], input[name="cook-with-gas"][id*="no"]'
+    );
+    const cookGasYes = document.querySelector(
+      'input[name="cook-with-gas"][value="yes"], input[name="cook-with-gas"][id*="yes"]'
+    );
+    if (cookGasNo && cookGasYes) {
+      setupRadioButtonStyles(cookGasNo, cookGasYes);
+    }
+
+    // Range hood fan
+    const rangeHoodFanNo = document.querySelector(
+      'input[name="range-hood-fan"][value="no"], input[name="range-hood-fan"][id*="no"]'
+    );
+    const rangeHoodFanYes = document.querySelector(
+      'input[name="range-hood-fan"][value="yes"], input[name="range-hood-fan"][id*="yes"]'
+    );
+    if (rangeHoodFanNo && rangeHoodFanYes) {
+      setupRadioButtonStyles(rangeHoodFanNo, rangeHoodFanYes);
+    }
+
+    // Range hood cooking
+    const rangeHoodCookingNo = document.querySelector(
+      'input[name="range-hood-cooking"][value="no"], input[name="range-hood-cooking"][id*="no"]'
+    );
+    const rangeHoodCookingYes = document.querySelector(
+      'input[name="range-hood-cooking"][value="yes"], input[name="range-hood-cooking"][id*="yes"]'
+    );
+    if (rangeHoodCookingNo && rangeHoodCookingYes) {
+      setupRadioButtonStyles(rangeHoodCookingNo, rangeHoodCookingYes);
+    }
+
+    // Range hood kitchen
+    const rangeHoodKitchenNo = document.querySelector(
+      'input[name="range-hood-kitchen"][value="no"], input[name="range-hood-kitchen"][id*="no"]'
+    );
+    const rangeHoodKitchenYes = document.querySelector(
+      'input[name="range-hood-kitchen"][value="yes"], input[name="range-hood-kitchen"][id*="yes"]'
+    );
+    if (rangeHoodKitchenNo && rangeHoodKitchenYes) {
+      setupRadioButtonStyles(rangeHoodKitchenNo, rangeHoodKitchenYes);
+    }
+  })();
+
+  // ============================================
   // Basement Logic
   // ============================================
   (function initBasementLogic() {
