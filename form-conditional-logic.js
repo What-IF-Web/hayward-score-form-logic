@@ -629,6 +629,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         siblings.forEach((sibling) => {
           if (isChecked) {
+            // Uncheck all checkboxes within this sibling
+            const checkboxes = sibling.querySelectorAll(
+              'input[type="checkbox"]'
+            );
+            checkboxes.forEach((checkbox) => {
+              if (checkbox.checked) {
+                checkbox.checked = false;
+                // Trigger change event in case there's custom form logic
+                checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+                checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+              }
+            });
             sibling.classList.add("pointer-events-none");
           } else {
             sibling.classList.remove("pointer-events-none");
