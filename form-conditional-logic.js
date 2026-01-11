@@ -1547,6 +1547,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const lastRemodelRenovationTwo = document.getElementById(
       "last-remodel-renovation-two"
     );
+    const yesMajorRenovationOne = document.getElementById(
+      "yes-major-renovation-one"
+    );
     const yesMajorRadio = document.getElementById("Yes-Major");
     const majorRenovationYesRadio = document.getElementById(
       "major-renovation-Yes"
@@ -1570,6 +1573,7 @@ document.addEventListener("DOMContentLoaded", function () {
       lastRemodelRenovationOne.style.display = "none";
     if (lastRemodelRenovationTwo)
       lastRemodelRenovationTwo.style.display = "none";
+    if (yesMajorRenovationOne) yesMajorRenovationOne.style.display = "none";
 
     function updateRenovationVisibility() {
       const yesMajorChecked = yesMajorRadio && yesMajorRadio.checked;
@@ -1587,6 +1591,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
+      // Handle yes-major-renovation-one (hidden when any radio other than Yes-Major is clicked)
+      if (yesMajorRenovationOne) {
+        if (yesMajorChecked) {
+          yesMajorRenovationOne.style.display = "block";
+          updateRequiredFields(yesMajorRenovationOne, true);
+        } else {
+          yesMajorRenovationOne.style.display = "none";
+          updateRequiredFields(yesMajorRenovationOne, false);
+        }
+      }
+
       // Handle last-remodel-renovation-two (shown when major-renovation-Yes is clicked)
       if (lastRemodelRenovationTwo) {
         if (majorRenovationYesChecked) {
@@ -1599,79 +1614,30 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Find all radio buttons in the same group as yesMajorRadio
+    // Find all radio buttons in the same group as Yes-Major
+    let allYesMajorGroupRadios = [];
     if (yesMajorRadio && yesMajorRadio.name) {
-      const allYesMajorGroupRadios = document.querySelectorAll(
+      allYesMajorGroupRadios = document.querySelectorAll(
         `input[type="radio"][name="${yesMajorRadio.name}"]`
       );
-      allYesMajorGroupRadios.forEach((radio) => {
-        radio.addEventListener("click", updateRenovationVisibility);
-        radio.addEventListener("change", updateRenovationVisibility);
-      });
     }
 
-    // Find all radio buttons in the same group as majorRenovationYesRadio
-    if (majorRenovationYesRadio && majorRenovationYesRadio.name) {
-      const allMajorRenovationGroupRadios = document.querySelectorAll(
-        `input[type="radio"][name="${majorRenovationYesRadio.name}"]`
-      );
-      allMajorRenovationGroupRadios.forEach((radio) => {
-        radio.addEventListener("click", updateRenovationVisibility);
-        radio.addEventListener("change", updateRenovationVisibility);
-      });
-    }
+    // Listen for clicks/changes on all radios in the Yes-Major group
+    allYesMajorGroupRadios.forEach((radio) => {
+      radio.addEventListener("click", updateRenovationVisibility);
+      radio.addEventListener("change", updateRenovationVisibility);
+    });
 
-    // Fallback: if name attribute is not available, use event delegation on parent containers
-    if (yesMajorRadio) {
-      const yesMajorContainer =
-        yesMajorRadio.closest("fieldset") ||
-        yesMajorRadio.closest(".score-form_radio-group") ||
-        yesMajorRadio.closest(".score-form_checkbox-group") ||
-        yesMajorRadio.parentElement;
-      if (yesMajorContainer) {
-        yesMajorContainer.addEventListener("change", function (event) {
-          if (
-            event.target.type === "radio" &&
-            event.target.name === yesMajorRadio.name
-          ) {
-            updateRenovationVisibility();
-          }
-        });
-        yesMajorContainer.addEventListener("click", function (event) {
-          if (
-            event.target.type === "radio" &&
-            event.target.name === yesMajorRadio.name
-          ) {
-            updateRenovationVisibility();
-          }
-        });
-      }
-    }
-
+    // Listen for clicks/changes on major-renovation-Yes radio
     if (majorRenovationYesRadio) {
-      const majorRenovationContainer =
-        majorRenovationYesRadio.closest("fieldset") ||
-        majorRenovationYesRadio.closest(".score-form_radio-group") ||
-        majorRenovationYesRadio.closest(".score-form_checkbox-group") ||
-        majorRenovationYesRadio.parentElement;
-      if (majorRenovationContainer) {
-        majorRenovationContainer.addEventListener("change", function (event) {
-          if (
-            event.target.type === "radio" &&
-            event.target.name === majorRenovationYesRadio.name
-          ) {
-            updateRenovationVisibility();
-          }
-        });
-        majorRenovationContainer.addEventListener("click", function (event) {
-          if (
-            event.target.type === "radio" &&
-            event.target.name === majorRenovationYesRadio.name
-          ) {
-            updateRenovationVisibility();
-          }
-        });
-      }
+      majorRenovationYesRadio.addEventListener(
+        "click",
+        updateRenovationVisibility
+      );
+      majorRenovationYesRadio.addEventListener(
+        "change",
+        updateRenovationVisibility
+      );
     }
 
     // Run once immediately (in case one was pre-selected on page load)
