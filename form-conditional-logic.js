@@ -1599,20 +1599,79 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Listen for clicks/changes on both radios
-    if (yesMajorRadio) {
-      yesMajorRadio.addEventListener("click", updateRenovationVisibility);
-      yesMajorRadio.addEventListener("change", updateRenovationVisibility);
+    // Find all radio buttons in the same group as yesMajorRadio
+    if (yesMajorRadio && yesMajorRadio.name) {
+      const allYesMajorGroupRadios = document.querySelectorAll(
+        `input[type="radio"][name="${yesMajorRadio.name}"]`
+      );
+      allYesMajorGroupRadios.forEach((radio) => {
+        radio.addEventListener("click", updateRenovationVisibility);
+        radio.addEventListener("change", updateRenovationVisibility);
+      });
     }
+
+    // Find all radio buttons in the same group as majorRenovationYesRadio
+    if (majorRenovationYesRadio && majorRenovationYesRadio.name) {
+      const allMajorRenovationGroupRadios = document.querySelectorAll(
+        `input[type="radio"][name="${majorRenovationYesRadio.name}"]`
+      );
+      allMajorRenovationGroupRadios.forEach((radio) => {
+        radio.addEventListener("click", updateRenovationVisibility);
+        radio.addEventListener("change", updateRenovationVisibility);
+      });
+    }
+
+    // Fallback: if name attribute is not available, use event delegation on parent containers
+    if (yesMajorRadio) {
+      const yesMajorContainer =
+        yesMajorRadio.closest("fieldset") ||
+        yesMajorRadio.closest(".score-form_radio-group") ||
+        yesMajorRadio.closest(".score-form_checkbox-group") ||
+        yesMajorRadio.parentElement;
+      if (yesMajorContainer) {
+        yesMajorContainer.addEventListener("change", function (event) {
+          if (
+            event.target.type === "radio" &&
+            event.target.name === yesMajorRadio.name
+          ) {
+            updateRenovationVisibility();
+          }
+        });
+        yesMajorContainer.addEventListener("click", function (event) {
+          if (
+            event.target.type === "radio" &&
+            event.target.name === yesMajorRadio.name
+          ) {
+            updateRenovationVisibility();
+          }
+        });
+      }
+    }
+
     if (majorRenovationYesRadio) {
-      majorRenovationYesRadio.addEventListener(
-        "click",
-        updateRenovationVisibility
-      );
-      majorRenovationYesRadio.addEventListener(
-        "change",
-        updateRenovationVisibility
-      );
+      const majorRenovationContainer =
+        majorRenovationYesRadio.closest("fieldset") ||
+        majorRenovationYesRadio.closest(".score-form_radio-group") ||
+        majorRenovationYesRadio.closest(".score-form_checkbox-group") ||
+        majorRenovationYesRadio.parentElement;
+      if (majorRenovationContainer) {
+        majorRenovationContainer.addEventListener("change", function (event) {
+          if (
+            event.target.type === "radio" &&
+            event.target.name === majorRenovationYesRadio.name
+          ) {
+            updateRenovationVisibility();
+          }
+        });
+        majorRenovationContainer.addEventListener("click", function (event) {
+          if (
+            event.target.type === "radio" &&
+            event.target.name === majorRenovationYesRadio.name
+          ) {
+            updateRenovationVisibility();
+          }
+        });
+      }
     }
 
     // Run once immediately (in case one was pre-selected on page load)
