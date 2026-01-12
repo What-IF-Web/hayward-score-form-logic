@@ -1611,6 +1611,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Find and setup sibling radio buttons to hide fields when clicked
+    // For Yes-Major radio (controls lastRemodelRenovationOne)
     if (yesMajorRadio) {
       const radioName = yesMajorRadio.getAttribute("name");
       if (radioName) {
@@ -1623,6 +1624,34 @@ document.addEventListener("DOMContentLoaded", function () {
           // Skip Yes-Major itself
           if (sibling !== yesMajorRadio) {
             // When any sibling is clicked, the browser automatically unchecks Yes-Major
+            // So we just need to trigger the visibility update
+            sibling.addEventListener("click", function () {
+              // Use setTimeout to ensure the radio state is fully updated
+              setTimeout(() => {
+                updateRenovationVisibility();
+              }, 0);
+            });
+            sibling.addEventListener("change", function () {
+              updateRenovationVisibility();
+            });
+          }
+        });
+      }
+    }
+
+    // For major-renovation-Yes radio (controls lastRemodelRenovationTwo)
+    if (majorRenovationYesRadio) {
+      const radioName = majorRenovationYesRadio.getAttribute("name");
+      if (radioName) {
+        // Find all radio buttons in the same group
+        const siblingRadios = document.querySelectorAll(
+          `input[type="radio"][name="${radioName}"]`
+        );
+
+        siblingRadios.forEach((sibling) => {
+          // Skip major-renovation-Yes itself
+          if (sibling !== majorRenovationYesRadio) {
+            // When any sibling is clicked, the browser automatically unchecks major-renovation-Yes
             // So we just need to trigger the visibility update
             sibling.addEventListener("click", function () {
               // Use setTimeout to ensure the radio state is fully updated
@@ -1729,13 +1758,98 @@ document.addEventListener("DOMContentLoaded", function () {
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
 
+    // Add form validation to prevent submission when neither is selected
+    function setupFormValidation() {
+      // Find the form - try multiple approaches
+      let form = null;
+      if (radioNo) {
+        form = radioNo.closest("form");
+      }
+      if (!form && radioYes) {
+        form = radioYes.closest("form");
+      }
+      if (!form) {
+        // Try to find form by common selectors
+        form = document.querySelector("form");
+      }
+
+      if (form) {
+        form.addEventListener("submit", function (event) {
+          const noChecked = radioNo && radioNo.checked;
+          const yesChecked = radioYes && radioYes.checked;
+          const naChecked = pestsNACheckbox && pestsNACheckbox.checked;
+
+          // Only require selection if N/A is not checked
+          if (!naChecked && !noChecked && !yesChecked) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Trigger HTML5 validation on the first radio button
+            if (radioNo) {
+              radioNo.reportValidity();
+            } else if (radioYes) {
+              radioYes.reportValidity();
+            }
+
+            return false;
+          }
+        });
+      }
+
+      // Also handle button clicks (in case the form uses a button instead of submit)
+      const submitButton = document.querySelector(
+        'button[type="submit"], input[type="submit"], .score-form_button'
+      );
+      if (submitButton) {
+        submitButton.addEventListener("click", function (event) {
+          const noChecked = radioNo && radioNo.checked;
+          const yesChecked = radioYes && radioYes.checked;
+          const naChecked = pestsNACheckbox && pestsNACheckbox.checked;
+
+          // Only require selection if N/A is not checked
+          if (!naChecked && !noChecked && !yesChecked) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Trigger HTML5 validation
+            if (radioNo) {
+              radioNo.reportValidity();
+            } else if (radioYes) {
+              radioYes.reportValidity();
+            }
+
+            return false;
+          }
+        });
+      }
+    }
+
+    // Setup form validation
+    setupFormValidation();
+
     // Run once immediately (in case one was pre-selected on page load)
     updateFleasVisibility();
 
-    // Handle N/A checkbox: uncheck and disable siblings
+    // Handle N/A checkbox: uncheck and disable siblings, and remove required from radios
     if (pestsNACheckbox) {
       function updatePestsNASiblings() {
         const isChecked = pestsNACheckbox.checked;
+
+        // Handle radio button required attributes
+        if (isChecked) {
+          // Remove required when N/A is checked
+          if (radioNo) radioNo.removeAttribute("required");
+          if (radioYes) radioYes.removeAttribute("required");
+          // Uncheck radio buttons
+          if (radioNo && radioNo.checked) radioNo.checked = false;
+          if (radioYes && radioYes.checked) radioYes.checked = false;
+          // Update fleas visibility
+          updateFleasVisibility();
+        } else {
+          // Add required back when N/A is unchecked
+          if (radioNo) radioNo.setAttribute("required", "required");
+          if (radioYes) radioYes.setAttribute("required", "required");
+        }
 
         // Find the current wrapper
         const currentWrapper = pestsNACheckbox.closest(
