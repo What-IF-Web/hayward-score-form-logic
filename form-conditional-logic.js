@@ -1518,6 +1518,17 @@ document.addEventListener("DOMContentLoaded", function () {
         siblings.forEach((sibling) => {
           if (isChecked) {
             sibling.classList.add("pointer-events-none");
+            // Uncheck the sibling checkbox
+            const siblingCheckbox = sibling.querySelector(
+              'input[type="checkbox"]'
+            );
+            if (siblingCheckbox && siblingCheckbox.checked) {
+              siblingCheckbox.checked = false;
+              // Trigger change event in case other logic depends on it
+              siblingCheckbox.dispatchEvent(
+                new Event("change", { bubbles: true })
+              );
+            }
           } else {
             sibling.classList.remove("pointer-events-none");
           }
