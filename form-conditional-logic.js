@@ -1558,9 +1558,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const lastRemodelRenovationTwo = document.getElementById(
       "last-remodel-renovation-two"
     );
-    const yesMajorRenovationOne = document.getElementById(
-      "yes-major-renovation-one"
-    );
     const yesMajorRadio = document.getElementById("Yes-Major");
     const majorRenovationYesRadio = document.getElementById(
       "major-renovation-Yes"
@@ -1584,7 +1581,6 @@ document.addEventListener("DOMContentLoaded", function () {
       lastRemodelRenovationOne.style.display = "none";
     if (lastRemodelRenovationTwo)
       lastRemodelRenovationTwo.style.display = "none";
-    if (yesMajorRenovationOne) yesMajorRenovationOne.style.display = "none";
 
     function updateRenovationVisibility() {
       const yesMajorChecked = yesMajorRadio && yesMajorRadio.checked;
@@ -1602,17 +1598,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      // Handle yes-major-renovation-one (hidden when any radio other than Yes-Major is clicked)
-      if (yesMajorRenovationOne) {
-        if (yesMajorChecked) {
-          yesMajorRenovationOne.style.display = "block";
-          updateRequiredFields(yesMajorRenovationOne, true);
-        } else {
-          yesMajorRenovationOne.style.display = "none";
-          updateRequiredFields(yesMajorRenovationOne, false);
-        }
-      }
-
       // Handle last-remodel-renovation-two (shown when major-renovation-Yes is clicked)
       if (lastRemodelRenovationTwo) {
         if (majorRenovationYesChecked) {
@@ -1625,21 +1610,43 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Find all radio buttons in the same group as Yes-Major
-    let allYesMajorGroupRadios = [];
-    if (yesMajorRadio && yesMajorRadio.name) {
-      allYesMajorGroupRadios = document.querySelectorAll(
-        `input[type="radio"][name="${yesMajorRadio.name}"]`
-      );
+    // Find and setup sibling radio buttons to uncheck Yes-Major when clicked
+    if (yesMajorRadio) {
+      const radioName = yesMajorRadio.getAttribute("name");
+      if (radioName) {
+        // Find all radio buttons in the same group
+        const siblingRadios = document.querySelectorAll(
+          `input[type="radio"][name="${radioName}"]`
+        );
+
+        siblingRadios.forEach((sibling) => {
+          // Skip Yes-Major itself
+          if (sibling !== yesMajorRadio) {
+            // When any sibling is clicked, uncheck Yes-Major
+            sibling.addEventListener("click", function () {
+              if (yesMajorRadio.checked) {
+                yesMajorRadio.checked = false;
+                // Trigger update to hide the conditional field
+                updateRenovationVisibility();
+              }
+            });
+            sibling.addEventListener("change", function () {
+              if (yesMajorRadio.checked) {
+                yesMajorRadio.checked = false;
+                // Trigger update to hide the conditional field
+                updateRenovationVisibility();
+              }
+            });
+          }
+        });
+      }
     }
 
-    // Listen for clicks/changes on all radios in the Yes-Major group
-    allYesMajorGroupRadios.forEach((radio) => {
-      radio.addEventListener("click", updateRenovationVisibility);
-      radio.addEventListener("change", updateRenovationVisibility);
-    });
-
-    // Listen for clicks/changes on major-renovation-Yes radio
+    // Listen for clicks/changes on both radios
+    if (yesMajorRadio) {
+      yesMajorRadio.addEventListener("click", updateRenovationVisibility);
+      yesMajorRadio.addEventListener("change", updateRenovationVisibility);
+    }
     if (majorRenovationYesRadio) {
       majorRenovationYesRadio.addEventListener(
         "click",
