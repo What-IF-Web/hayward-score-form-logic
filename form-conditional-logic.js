@@ -1610,7 +1610,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Find and setup sibling radio buttons to uncheck Yes-Major when clicked
+    // Find and setup sibling radio buttons to hide fields when clicked
     if (yesMajorRadio) {
       const radioName = yesMajorRadio.getAttribute("name");
       if (radioName) {
@@ -1622,20 +1622,16 @@ document.addEventListener("DOMContentLoaded", function () {
         siblingRadios.forEach((sibling) => {
           // Skip Yes-Major itself
           if (sibling !== yesMajorRadio) {
-            // When any sibling is clicked, uncheck Yes-Major
+            // When any sibling is clicked, the browser automatically unchecks Yes-Major
+            // So we just need to trigger the visibility update
             sibling.addEventListener("click", function () {
-              if (yesMajorRadio.checked) {
-                yesMajorRadio.checked = false;
-                // Trigger update to hide the conditional field
+              // Use setTimeout to ensure the radio state is fully updated
+              setTimeout(() => {
                 updateRenovationVisibility();
-              }
+              }, 0);
             });
             sibling.addEventListener("change", function () {
-              if (yesMajorRadio.checked) {
-                yesMajorRadio.checked = false;
-                // Trigger update to hide the conditional field
-                updateRenovationVisibility();
-              }
+              updateRenovationVisibility();
             });
           }
         });
@@ -1736,7 +1732,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Run once immediately (in case one was pre-selected on page load)
     updateFleasVisibility();
 
-    // Handle N/A checkbox: add pointer-events-none to siblings
+    // Handle N/A checkbox: uncheck and disable siblings
     if (pestsNACheckbox) {
       function updatePestsNASiblings() {
         const isChecked = pestsNACheckbox.checked;
@@ -1761,6 +1757,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         siblings.forEach((sibling) => {
           if (isChecked) {
+            // Uncheck all checkboxes within this sibling
+            const checkboxes = sibling.querySelectorAll(
+              'input[type="checkbox"]'
+            );
+            checkboxes.forEach((checkbox) => {
+              if (checkbox.checked) {
+                checkbox.checked = false;
+                // Trigger change event in case there's custom form logic
+                checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+                checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+              }
+            });
             sibling.classList.add("pointer-events-none");
           } else {
             sibling.classList.remove("pointer-events-none");
