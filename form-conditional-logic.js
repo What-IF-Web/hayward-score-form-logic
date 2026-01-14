@@ -997,6 +997,11 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Found " + possibleDropdowns.length + " dropdowns");
 
     possibleDropdowns.forEach((dropdown) => {
+      // Skip if not a select element or doesn't have options
+      if (!dropdown.options || dropdown.options.length === 0) {
+        return;
+      }
+
       // Check if this dropdown contains the age range options
       const options = Array.from(dropdown.options);
 
@@ -1043,7 +1048,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const yearBuilt = parseInt(homeBuiltYearField.value, 10);
       const currentYear = new Date().getFullYear();
 
-      console.log("Filtering - Year built:", yearBuilt, "Current year:", currentYear);
+      console.log(
+        "Filtering - Year built:",
+        yearBuilt,
+        "Current year:",
+        currentYear
+      );
 
       if (!yearBuilt || isNaN(yearBuilt) || yearBuilt > currentYear) {
         // If no valid year entered, show all options
@@ -1119,7 +1129,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!matchedRange) {
           // Can't determine the range for this option, show it
-          console.log("No match found for option:", option.id, option.value, option.textContent);
+          console.log(
+            "No match found for option:",
+            option.id,
+            option.value,
+            option.textContent
+          );
           option.disabled = false;
           option.style.display = "";
           return;
