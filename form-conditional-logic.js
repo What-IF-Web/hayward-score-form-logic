@@ -980,6 +980,11 @@ document.addEventListener("DOMContentLoaded", function () {
       "General-Home-Information----Approximately-when-was-your-home-built"
     );
 
+    if (!homeBuiltYearField) {
+      console.log("Home built year field not found");
+      return;
+    }
+
     // Find the dropdown that contains the age range options
     // Look for a dropdown with the class .score-form_input.is-dropdown
     let ageDropdown = null;
@@ -989,24 +994,45 @@ document.addEventListener("DOMContentLoaded", function () {
       ".score-form_input.is-dropdown"
     );
 
+    console.log("Found " + possibleDropdowns.length + " dropdowns");
+
     possibleDropdowns.forEach((dropdown) => {
       // Check if this dropdown contains the age range options
+      const options = Array.from(dropdown.options);
+
+      // Log the first few options to debug
+      if (options.length > 0) {
+        console.log(
+          "Dropdown options:",
+          options.slice(0, 5).map((opt) => ({
+            id: opt.id,
+            value: opt.value,
+            text: opt.textContent,
+          }))
+        );
+      }
+
       const hasAgeOptions =
         dropdown.querySelector("#Less-than-6-months") ||
-        dropdown.querySelector('option[id*="Less-than-6-months"]') ||
-        Array.from(dropdown.options).some(
+        dropdown.querySelector('option[id="Less-than-6-months"]') ||
+        options.some(
           (opt) =>
             opt.id === "Less-than-6-months" ||
             opt.value === "Less-than-6-months" ||
-            opt.textContent.includes("Less than 6 months")
+            opt.id.includes("Less-than") ||
+            opt.value.includes("Less-than") ||
+            opt.textContent.toLowerCase().includes("less than 6 months") ||
+            opt.textContent.toLowerCase().includes("6 months")
         );
 
       if (hasAgeOptions) {
         ageDropdown = dropdown;
+        console.log("Found age dropdown");
       }
     });
 
-    if (!homeBuiltYearField || !ageDropdown) {
+    if (!ageDropdown) {
+      console.log("Age dropdown not found");
       return;
     }
 
@@ -1017,8 +1043,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const yearBuilt = parseInt(homeBuiltYearField.value, 10);
       const currentYear = new Date().getFullYear();
 
+      console.log("Filtering - Year built:", yearBuilt, "Current year:", currentYear);
+
       if (!yearBuilt || isNaN(yearBuilt) || yearBuilt > currentYear) {
         // If no valid year entered, show all options
+        console.log("Invalid year or future year - showing all options");
         allOptions.forEach((option) => {
           if (option.value) {
             // Skip the placeholder/empty option
@@ -1033,59 +1062,96 @@ document.addEventListener("DOMContentLoaded", function () {
       const homeAge = currentYear - yearBuilt;
       const homeAgeInMonths = homeAge * 12;
 
-      // Define the ranges for each option
-      const ageRanges = {
-        "Less-than-6-months": { minMonths: 0, maxMonths: 6 },
-        "7-12-months": { minMonths: 7, maxMonths: 12 },
-        "13-24-months": { minMonths: 13, maxMonths: 24 },
-        "2-4-years": { minYears: 2, maxYears: 4 },
-        "5-9-years": { minYears: 5, maxYears: 9 },
-        "10---14-years": { minYears: 10, maxYears: 14 },
-        "More-than-15-years": { minYears: 15, maxYears: Infinity },
-      };
+      console.log("Home age:", homeAge, "years,", homeAgeInMonths, "months");
+
+      // Define the ranges for each option (using flexible matching)
+      const ageRanges = [
+        {
+          keywords: ["Less-than-6", "less than 6", "6 months"],
+          minMonths: 0,
+          maxMonths: 5,
+        },
+        {
+          keywords: ["7-12-months", "7-12", "7 to 12"],
+          minMonths: 7,
+          maxMonths: 12,
+        },
+        {
+          keywords: ["13-24-months", "13-24", "13 to 24"],
+          minMonths: 13,
+          maxMonths: 24,
+        },
+        { keywords: ["2-4-years", "2-4 years"], minYears: 2, maxYears: 4 },
+        { keywords: ["5-9-years", "5-9 years"], minYears: 5, maxYears: 9 },
+        {
+          keywords: ["10---14", "10-14", "10 to 14"],
+          minYears: 10,
+          maxYears: 14,
+        },
+        {
+          keywords: ["More-than-15", "more than 15", "15 years"],
+          minYears: 15,
+          maxYears: Infinity,
+        },
+      ];
 
       // Filter options based on home age
       allOptions.forEach((option) => {
         // Skip the placeholder/empty option
         if (!option.value) return;
 
-        // Try to match the option by ID or value
-        let optionKey = null;
-        for (const key in ageRanges) {
-          if (
-            option.id === key ||
-            option.value === key ||
-            option.id.includes(key) ||
-            option.value.includes(key)
-          ) {
-            optionKey = key;
+        // Try to match the option by ID, value, or text content
+        let matchedRange = null;
+
+        for (const range of ageRanges) {
+          const matches = range.keywords.some(
+            (keyword) =>
+              option.id.includes(keyword) ||
+              option.value.includes(keyword) ||
+              option.textContent.toLowerCase().includes(keyword.toLowerCase())
+          );
+
+          if (matches) {
+            matchedRange = range;
             break;
           }
         }
 
-        if (!optionKey) {
+        if (!matchedRange) {
           // Can't determine the range for this option, show it
+          console.log("No match found for option:", option.id, option.value, option.textContent);
           option.disabled = false;
           option.style.display = "";
           return;
         }
 
-        const range = ageRanges[optionKey];
         let shouldShow = false;
 
         // Check if the home age falls within this range
-        if (range.minMonths !== undefined && range.maxMonths !== undefined) {
+        if (
+          matchedRange.minMonths !== undefined &&
+          matchedRange.maxMonths !== undefined
+        ) {
           // Range is in months
           shouldShow =
-            homeAgeInMonths >= range.minMonths &&
-            homeAgeInMonths <= range.maxMonths;
+            homeAgeInMonths >= matchedRange.minMonths &&
+            homeAgeInMonths <= matchedRange.maxMonths;
         } else if (
-          range.minYears !== undefined &&
-          range.maxYears !== undefined
+          matchedRange.minYears !== undefined &&
+          matchedRange.maxYears !== undefined
         ) {
           // Range is in years
-          shouldShow = homeAge >= range.minYears && homeAge <= range.maxYears;
+          shouldShow =
+            homeAge >= matchedRange.minYears &&
+            homeAge <= matchedRange.maxYears;
         }
+
+        console.log(
+          "Option:",
+          option.textContent.trim(),
+          "shouldShow:",
+          shouldShow
+        );
 
         // Show or hide the option
         if (shouldShow) {
