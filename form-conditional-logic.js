@@ -1110,6 +1110,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!matchedRange) {
           // Can't determine the range for this option, show it
+          console.log("No match for option:", option.id, option.textContent.trim());
           option.style.display = "";
           return;
         }
