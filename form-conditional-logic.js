@@ -1144,8 +1144,14 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     // Make the mold radio buttons required (set on one, applies to the group)
-    if (radioNo) radioNo.setAttribute("required", "required");
-    if (radioYes) radioYes.setAttribute("required", "required");
+    if (radioNo) {
+      radioNo.setAttribute("required", "required");
+      radioNo.setCustomValidity("Please select Yes or No");
+    }
+    if (radioYes) {
+      radioYes.setAttribute("required", "required");
+      radioYes.setCustomValidity("Please select Yes or No");
+    }
 
     // Hide dropdown by default
     if (moldDropdown) moldDropdown.style.display = "none";
@@ -1154,14 +1160,26 @@ document.addEventListener("DOMContentLoaded", function () {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
 
+      // Clear validation message when either is selected
+      if (noChecked || yesChecked) {
+        if (radioNo) radioNo.setCustomValidity("");
+        if (radioYes) radioYes.setCustomValidity("");
+      }
+
       if (moldDropdown) {
         moldDropdown.style.display = noChecked ? "block" : "none";
       }
     }
 
     // Listen for clicks/changes on both radios
-    if (radioNo) radioNo.addEventListener("click", updateMoldVisibility);
-    if (radioYes) radioYes.addEventListener("click", updateMoldVisibility);
+    if (radioNo) {
+      radioNo.addEventListener("click", updateMoldVisibility);
+      radioNo.addEventListener("change", updateMoldVisibility);
+    }
+    if (radioYes) {
+      radioYes.addEventListener("click", updateMoldVisibility);
+      radioYes.addEventListener("change", updateMoldVisibility);
+    }
 
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
@@ -1182,50 +1200,72 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (form) {
-        form.addEventListener("submit", function (event) {
-          const noChecked = radioNo && radioNo.checked;
-          const yesChecked = radioYes && radioYes.checked;
+        form.addEventListener(
+          "submit",
+          function (event) {
+            const noChecked = radioNo && radioNo.checked;
+            const yesChecked = radioYes && radioYes.checked;
 
-          if (!noChecked && !yesChecked) {
-            event.preventDefault();
-            event.stopPropagation();
+            if (!noChecked && !yesChecked) {
+              event.preventDefault();
+              event.stopPropagation();
 
-            // Trigger HTML5 validation on the first radio button
-            if (radioNo) {
-              radioNo.reportValidity();
-            } else if (radioYes) {
-              radioYes.reportValidity();
+              // Set custom validation message and trigger HTML5 validation
+              if (radioNo) {
+                radioNo.setCustomValidity(
+                  "Please select Yes or No for visible mold"
+                );
+                radioNo.reportValidity();
+              } else if (radioYes) {
+                radioYes.setCustomValidity(
+                  "Please select Yes or No for visible mold"
+                );
+                radioYes.reportValidity();
+              }
+
+              return false;
             }
-
-            return false;
-          }
-        });
+          },
+          true
+        );
       }
 
       // Also handle button clicks (in case the form uses a button instead of submit)
-      const submitButton = document.querySelector(
-        'button[type="submit"], input[type="submit"], .score-form_button'
+      // Look for all possible next/submit buttons
+      const buttons = document.querySelectorAll(
+        'button[type="submit"], input[type="submit"], .score-form_button, button[class*="next"], button[class*="submit"]'
       );
-      if (submitButton) {
-        submitButton.addEventListener("click", function (event) {
-          const noChecked = radioNo && radioNo.checked;
-          const yesChecked = radioYes && radioYes.checked;
 
-          if (!noChecked && !yesChecked) {
-            event.preventDefault();
-            event.stopPropagation();
+      buttons.forEach(function (button) {
+        button.addEventListener(
+          "click",
+          function (event) {
+            const noChecked = radioNo && radioNo.checked;
+            const yesChecked = radioYes && radioYes.checked;
 
-            // Trigger HTML5 validation
-            if (radioNo) {
-              radioNo.reportValidity();
-            } else if (radioYes) {
-              radioYes.reportValidity();
+            if (!noChecked && !yesChecked) {
+              event.preventDefault();
+              event.stopPropagation();
+
+              // Set custom validation message and trigger HTML5 validation
+              if (radioNo) {
+                radioNo.setCustomValidity(
+                  "Please select Yes or No for visible mold"
+                );
+                radioNo.reportValidity();
+              } else if (radioYes) {
+                radioYes.setCustomValidity(
+                  "Please select Yes or No for visible mold"
+                );
+                radioYes.reportValidity();
+              }
+
+              return false;
             }
-
-            return false;
-          }
-        });
-      }
+          },
+          true
+        );
+      });
     }
 
     // Setup form validation
