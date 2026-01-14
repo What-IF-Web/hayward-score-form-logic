@@ -1067,19 +1067,27 @@ document.addEventListener("DOMContentLoaded", function () {
           maxMonths: 5,
         },
         {
-          keywords: ["7-12-months", "7-12", "7 to 12"],
+          keywords: ["7 - 12 months", "7-12-months", "7-12", "7 to 12"],
           minMonths: 7,
           maxMonths: 12,
         },
         {
-          keywords: ["13-24-months", "13-24", "13 to 24"],
+          keywords: ["13 - 24 months", "13-24-months", "13-24", "13 to 24"],
           minMonths: 13,
           maxMonths: 24,
         },
-        { keywords: ["2-4-years", "2-4 years"], minYears: 2, maxYears: 4 },
-        { keywords: ["5-9-years", "5-9 years"], minYears: 5, maxYears: 9 },
         {
-          keywords: ["10---14", "10-14", "10 to 14"],
+          keywords: ["2 - 4 years", "2-4-years", "2-4 years"],
+          minYears: 2,
+          maxYears: 4,
+        },
+        {
+          keywords: ["5 - 9 years", "5-9-years", "5-9 years"],
+          minYears: 5,
+          maxYears: 9,
+        },
+        {
+          keywords: ["10 - 14 years", "10---14", "10-14", "10 to 14"],
           minYears: 10,
           maxYears: 14,
         },
