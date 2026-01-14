@@ -982,28 +982,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const ageDropdownInput = document.getElementById("house-living-age");
 
     if (!homeBuiltYearField) {
-      console.log("Home built year field not found");
       return;
     }
 
     if (!ageDropdownInput) {
-      console.log("house-living-age dropdown input not found");
       return;
     }
-
-    console.log("Found both year field and dropdown input");
 
     // Find the dropdown container and list
     const ageDropdownContainer = ageDropdownInput.closest(".w-dropdown");
     if (!ageDropdownContainer) {
-      console.log("Dropdown container (.w-dropdown) not found");
       return;
     }
 
     const ageDropdownList =
       ageDropdownContainer.querySelector(".w-dropdown-list");
     if (!ageDropdownList) {
-      console.log("Dropdown list (.w-dropdown-list) not found");
       return;
     }
 
@@ -1011,42 +1005,18 @@ document.addEventListener("DOMContentLoaded", function () {
     let allOptions = Array.from(ageDropdownList.querySelectorAll("nav"));
     if (allOptions.length === 0) {
       allOptions = Array.from(ageDropdownList.children);
-      console.log(
-        "Using dropdown list children:",
-        allOptions.length,
-        "elements"
-      );
-    } else {
-      console.log("Using nav elements:", allOptions.length, "elements");
     }
 
     if (allOptions.length === 0) {
-      console.log("No options found in dropdown");
       return;
     }
-
-    console.log(
-      "Setup complete! First 3 options:",
-      allOptions.slice(0, 3).map((opt) => ({
-        id: opt.id,
-        text: opt.textContent.trim(),
-      }))
-    );
 
     function filterDropdownOptions() {
       const yearBuilt = parseInt(homeBuiltYearField.value, 10);
       const currentYear = new Date().getFullYear();
 
-      console.log(
-        "Filter triggered - Year:",
-        yearBuilt,
-        "Current year:",
-        currentYear
-      );
-
       if (!yearBuilt || isNaN(yearBuilt) || yearBuilt > currentYear) {
         // If no valid year entered, show all options
-        console.log("Invalid/empty year - showing all options");
         allOptions.forEach((option) => {
           option.style.display = "";
         });
@@ -1056,8 +1026,6 @@ document.addEventListener("DOMContentLoaded", function () {
       // Calculate the age of the home in years
       const homeAge = currentYear - yearBuilt;
       const homeAgeInMonths = homeAge * 12;
-
-      console.log("Home age:", homeAge, "years (", homeAgeInMonths, "months)");
 
       // Define the ranges for each option (using flexible matching)
       const ageRanges = [
@@ -1118,11 +1086,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!matchedRange) {
           // Can't determine the range for this option, show it
-          console.log(
-            "No match for option:",
-            option.id,
-            option.textContent.trim()
-          );
           option.style.display = "";
           return;
         }
@@ -1156,20 +1119,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Show or hide the option
-        console.log(
-          "Option:",
-          option.textContent.trim(),
-          "- Show:",
-          shouldShow
-        );
         if (shouldShow) {
           option.style.display = "";
         } else {
           option.style.display = "none";
         }
       });
-
-      console.log("Filtering complete!");
     }
 
     // Listen for changes on the home built year field
