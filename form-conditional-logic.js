@@ -1116,23 +1116,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let shouldShow = false;
 
-        // Check if the home age falls within this range
+        // Show option if its range maximum is <= the home's age
+        // (Home could have been built anytime during that year)
         if (
           matchedRange.minMonths !== undefined &&
           matchedRange.maxMonths !== undefined
         ) {
-          // Range is in months
-          shouldShow =
-            homeAgeInMonths >= matchedRange.minMonths &&
-            homeAgeInMonths <= matchedRange.maxMonths;
+          // Range is in months - show if the range's max is <= home's age in months
+          shouldShow = matchedRange.maxMonths <= homeAgeInMonths;
         } else if (
           matchedRange.minYears !== undefined &&
           matchedRange.maxYears !== undefined
         ) {
-          // Range is in years
-          shouldShow =
-            homeAge >= matchedRange.minYears &&
-            homeAge <= matchedRange.maxYears;
+          // Range is in years - convert max to months for comparison
+          // Show only if the entire range maximum is <= home's age
+          const rangeMaxMonths = matchedRange.maxYears * 12;
+          shouldShow = rangeMaxMonths <= homeAgeInMonths;
         }
 
         // Show or hide the option
