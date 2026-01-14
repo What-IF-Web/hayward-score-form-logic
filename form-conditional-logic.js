@@ -1903,7 +1903,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Health Symptoms Logic
   // ============================================
   (function initHealthSymptomsLogic() {
-    // Debug: Do you feel sick radio buttons
+    // Do you feel sick radio buttons
     const radioNo = document.getElementById(
       "health-symptoms-do-you-feel-sick-no"
     );
@@ -1911,72 +1911,8 @@ document.addEventListener("DOMContentLoaded", function () {
       "health-symptoms-do-you-feel-sick-yes"
     );
 
-    console.log("=== Health Symptoms Radio Debug ===");
-    console.log("radioNo element:", radioNo);
-    console.log("radioYes element:", radioYes);
-
-    if (radioNo) {
-      console.log("radioNo found - ID:", radioNo.id);
-      console.log("radioNo type:", radioNo.type);
-      console.log("radioNo name:", radioNo.name);
-      console.log("radioNo checked:", radioNo.checked);
-      console.log("radioNo disabled:", radioNo.disabled);
-      console.log("radioNo parent:", radioNo.parentElement);
-    } else {
-      console.warn("radioNo NOT FOUND with ID: health-symptoms-do-you-feel-sick-no");
-    }
-
-    if (radioYes) {
-      console.log("radioYes found - ID:", radioYes.id);
-      console.log("radioYes type:", radioYes.type);
-      console.log("radioYes name:", radioYes.name);
-      console.log("radioYes checked:", radioYes.checked);
-      console.log("radioYes disabled:", radioYes.disabled);
-      console.log("radioYes parent:", radioYes.parentElement);
-    } else {
-      console.warn("radioYes NOT FOUND with ID: health-symptoms-do-you-feel-sick-yes");
-    }
-
-    // Add click event listeners with logging
-    if (radioNo) {
-      radioNo.addEventListener("click", function (e) {
-        console.log("=== radioNo CLICKED ===");
-        console.log("Event:", e);
-        console.log("Target:", e.target);
-        console.log("Checked before:", radioNo.checked);
-        setTimeout(() => {
-          console.log("Checked after:", radioNo.checked);
-        }, 0);
-      });
-
-      radioNo.addEventListener("change", function (e) {
-        console.log("=== radioNo CHANGED ===");
-        console.log("Event:", e);
-        console.log("Checked:", radioNo.checked);
-      });
-    }
-
-    if (radioYes) {
-      radioYes.addEventListener("click", function (e) {
-        console.log("=== radioYes CLICKED ===");
-        console.log("Event:", e);
-        console.log("Target:", e.target);
-        console.log("Checked before:", radioYes.checked);
-        setTimeout(() => {
-          console.log("Checked after:", radioYes.checked);
-        }, 0);
-      });
-
-      radioYes.addEventListener("change", function (e) {
-        console.log("=== radioYes CHANGED ===");
-        console.log("Event:", e);
-        console.log("Checked:", radioYes.checked);
-      });
-    }
-
     // Setup radio button styles
     if (radioNo && radioYes) {
-      console.log("Setting up radio button styles for health symptoms radios");
       setupRadioButtonStyles(radioNo, radioYes);
     }
 
