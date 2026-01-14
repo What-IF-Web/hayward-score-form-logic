@@ -994,6 +994,8 @@ document.addEventListener("DOMContentLoaded", function () {
       ".score-form_input.is-dropdown.w-dropdown"
     );
 
+    console.log("Found " + possibleDropdowns.length + " Webflow dropdowns");
+
     possibleDropdowns.forEach((dropdown) => {
       // Find the dropdown list inside this container
       const dropdownList = dropdown.querySelector(".w-dropdown-list");
@@ -1004,6 +1006,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const options = dropdownList.querySelectorAll("nav");
 
       if (options.length === 0) return;
+
+      console.log("Dropdown has " + options.length + " nav options");
+      console.log("First 3 options:", Array.from(options).slice(0, 3).map(opt => ({
+        id: opt.id,
+        text: opt.textContent.trim()
+      })));
 
       // Check if this dropdown contains the age range options
       const hasAgeOptions = Array.from(options).some(
@@ -1020,19 +1028,26 @@ document.addEventListener("DOMContentLoaded", function () {
         ageDropdownContainer = dropdown;
         ageDropdownList = dropdownList;
         allOptions = Array.from(options);
+        console.log("Found age dropdown with " + allOptions.length + " options!");
       }
     });
 
     if (!ageDropdownContainer || !ageDropdownList || allOptions.length === 0) {
+      console.log("Age dropdown not found");
       return;
     }
+
+    console.log("Setup complete. Will filter based on year input.");
 
     function filterDropdownOptions() {
       const yearBuilt = parseInt(homeBuiltYearField.value, 10);
       const currentYear = new Date().getFullYear();
 
+      console.log("Filter triggered - Year built:", yearBuilt, "Current year:", currentYear);
+
       if (!yearBuilt || isNaN(yearBuilt) || yearBuilt > currentYear) {
         // If no valid year entered, show all options
+        console.log("Invalid year - showing all options");
         allOptions.forEach((option) => {
           option.style.display = "";
         });
@@ -1042,6 +1057,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // Calculate the age of the home in years
       const homeAge = currentYear - yearBuilt;
       const homeAgeInMonths = homeAge * 12;
+
+      console.log("Home age:", homeAge, "years (" + homeAgeInMonths + " months)");
 
       // Define the ranges for each option (using flexible matching)
       const ageRanges = [
@@ -1120,6 +1137,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Show or hide the option
+        console.log("Option:", option.textContent.trim(), "- shouldShow:", shouldShow);
         if (shouldShow) {
           option.style.display = "";
         } else {
