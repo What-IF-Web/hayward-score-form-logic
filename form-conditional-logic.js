@@ -979,75 +979,74 @@ document.addEventListener("DOMContentLoaded", function () {
     const homeBuiltYearField = document.getElementById(
       "General-Home-Information----Approximately-when-was-your-home-built"
     );
+    const ageDropdownInput = document.getElementById("house-living-age");
 
     if (!homeBuiltYearField) {
+      console.log("Home built year field not found");
       return;
     }
 
-    // Find the Webflow custom dropdown that contains the age range options
-    // Look for dropdowns with the class .score-form_input.is-dropdown.w-dropdown
-    let ageDropdownContainer = null;
-    let ageDropdownList = null;
-    let allOptions = [];
+    if (!ageDropdownInput) {
+      console.log("house-living-age dropdown input not found");
+      return;
+    }
 
-    const possibleDropdowns = document.querySelectorAll(
-      ".score-form_input.is-dropdown.w-dropdown"
-    );
+    console.log("Found both year field and dropdown input");
 
-    console.log("Found " + possibleDropdowns.length + " Webflow dropdowns");
+    // Find the dropdown container and list
+    const ageDropdownContainer = ageDropdownInput.closest(".w-dropdown");
+    if (!ageDropdownContainer) {
+      console.log("Dropdown container (.w-dropdown) not found");
+      return;
+    }
 
-    possibleDropdowns.forEach((dropdown) => {
-      // Find the dropdown list inside this container
-      const dropdownList = dropdown.querySelector(".w-dropdown-list");
+    const ageDropdownList =
+      ageDropdownContainer.querySelector(".w-dropdown-list");
+    if (!ageDropdownList) {
+      console.log("Dropdown list (.w-dropdown-list) not found");
+      return;
+    }
 
-      if (!dropdownList) return;
-
-      // Get all the nav/option elements inside the dropdown list
-      const options = dropdownList.querySelectorAll("nav");
-
-      if (options.length === 0) return;
-
-      console.log("Dropdown has " + options.length + " nav options");
-      console.log("First 3 options:", Array.from(options).slice(0, 3).map(opt => ({
-        id: opt.id,
-        text: opt.textContent.trim()
-      })));
-
-      // Check if this dropdown contains the age range options
-      const hasAgeOptions = Array.from(options).some(
-        (opt) =>
-          opt.textContent.toLowerCase().includes("less than 6 months") ||
-          opt.textContent.toLowerCase().includes("7-12 months") ||
-          opt.textContent.toLowerCase().includes("2-4 years") ||
-          opt.id.includes("Less-than-6-months") ||
-          opt.id.includes("7-12-months") ||
-          opt.id.includes("2-4-years")
+    // Get all option elements - try nav first, then direct children
+    let allOptions = Array.from(ageDropdownList.querySelectorAll("nav"));
+    if (allOptions.length === 0) {
+      allOptions = Array.from(ageDropdownList.children);
+      console.log(
+        "Using dropdown list children:",
+        allOptions.length,
+        "elements"
       );
+    } else {
+      console.log("Using nav elements:", allOptions.length, "elements");
+    }
 
-      if (hasAgeOptions) {
-        ageDropdownContainer = dropdown;
-        ageDropdownList = dropdownList;
-        allOptions = Array.from(options);
-        console.log("Found age dropdown with " + allOptions.length + " options!");
-      }
-    });
-
-    if (!ageDropdownContainer || !ageDropdownList || allOptions.length === 0) {
-      console.log("Age dropdown not found");
+    if (allOptions.length === 0) {
+      console.log("No options found in dropdown");
       return;
     }
 
-    console.log("Setup complete. Will filter based on year input.");
+    console.log(
+      "Setup complete! First 3 options:",
+      allOptions.slice(0, 3).map((opt) => ({
+        id: opt.id,
+        text: opt.textContent.trim(),
+      }))
+    );
 
     function filterDropdownOptions() {
       const yearBuilt = parseInt(homeBuiltYearField.value, 10);
       const currentYear = new Date().getFullYear();
 
-      console.log("Filter triggered - Year built:", yearBuilt, "Current year:", currentYear);
+      console.log(
+        "Filter triggered - Year:",
+        yearBuilt,
+        "Current year:",
+        currentYear
+      );
 
       if (!yearBuilt || isNaN(yearBuilt) || yearBuilt > currentYear) {
         // If no valid year entered, show all options
-        console.log("Invalid year - showing all options");
+        console.log("Invalid/empty year - showing all options");
         allOptions.forEach((option) => {
           option.style.display = "";
         });
@@ -1058,7 +1057,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const homeAge = currentYear - yearBuilt;
       const homeAgeInMonths = homeAge * 12;
 
-      console.log("Home age:", homeAge, "years (" + homeAgeInMonths + " months)");
+      console.log("Home age:", homeAge, "years (", homeAgeInMonths, "months)");
 
       // Define the ranges for each option (using flexible matching)
       const ageRanges = [
@@ -1137,13 +1136,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Show or hide the option
-        console.log("Option:", option.textContent.trim(), "- shouldShow:", shouldShow);
+        console.log(
+          "Option:",
+          option.textContent.trim(),
+          "- Show:",
+          shouldShow
+        );
         if (shouldShow) {
           option.style.display = "";
         } else {
           option.style.display = "none";
         }
       });
+
+      console.log("Filtering complete!");
     }
 
     // Listen for changes on the home built year field
