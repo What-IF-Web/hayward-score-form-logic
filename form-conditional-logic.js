@@ -1141,10 +1141,18 @@ document.addEventListener("DOMContentLoaded", function () {
           matchedRange.minYears !== undefined &&
           matchedRange.maxYears !== undefined
         ) {
-          // Range is in years - convert max to months for comparison
-          // Show only if the entire range maximum is <= home's age
-          const rangeMaxMonths = matchedRange.maxYears * 12;
-          shouldShow = rangeMaxMonths <= homeAgeInMonths;
+          // Range is in years
+          if (matchedRange.maxYears === Infinity) {
+            // Open-ended range (e.g., "More than 15 years")
+            // Show if home is old enough to qualify for this range
+            const rangeMinMonths = matchedRange.minYears * 12;
+            shouldShow = homeAgeInMonths >= rangeMinMonths;
+          } else {
+            // Closed range - convert max to months for comparison
+            // Show only if the entire range maximum is <= home's age
+            const rangeMaxMonths = matchedRange.maxYears * 12;
+            shouldShow = rangeMaxMonths <= homeAgeInMonths;
+          }
         }
 
         // Show or hide the option
