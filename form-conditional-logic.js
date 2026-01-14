@@ -981,89 +981,60 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     if (!homeBuiltYearField) {
-      console.log("Home built year field not found");
       return;
     }
 
-    // Find the dropdown that contains the age range options
-    // Look for a dropdown with the class .score-form_input.is-dropdown
-    let ageDropdown = null;
+    // Find the Webflow custom dropdown that contains the age range options
+    // Look for dropdowns with the class .score-form_input.is-dropdown.w-dropdown
+    let ageDropdownContainer = null;
+    let ageDropdownList = null;
+    let allOptions = [];
 
-    // Try to find the dropdown by looking for options with specific IDs
     const possibleDropdowns = document.querySelectorAll(
-      ".score-form_input.is-dropdown"
+      ".score-form_input.is-dropdown.w-dropdown"
     );
 
-    console.log("Found " + possibleDropdowns.length + " dropdowns");
-
     possibleDropdowns.forEach((dropdown) => {
-      // Skip if not a select element or doesn't have options
-      if (!dropdown.options || dropdown.options.length === 0) {
-        return;
-      }
+      // Find the dropdown list inside this container
+      const dropdownList = dropdown.querySelector(".w-dropdown-list");
+
+      if (!dropdownList) return;
+
+      // Get all the nav/option elements inside the dropdown list
+      const options = dropdownList.querySelectorAll("nav");
+
+      if (options.length === 0) return;
 
       // Check if this dropdown contains the age range options
-      const options = Array.from(dropdown.options);
-
-      // Log the first few options to debug
-      if (options.length > 0) {
-        console.log(
-          "Dropdown options:",
-          options.slice(0, 5).map((opt) => ({
-            id: opt.id,
-            value: opt.value,
-            text: opt.textContent,
-          }))
-        );
-      }
-
-      const hasAgeOptions =
-        dropdown.querySelector("#Less-than-6-months") ||
-        dropdown.querySelector('option[id="Less-than-6-months"]') ||
-        options.some(
-          (opt) =>
-            opt.id === "Less-than-6-months" ||
-            opt.value === "Less-than-6-months" ||
-            opt.id.includes("Less-than") ||
-            opt.value.includes("Less-than") ||
-            opt.textContent.toLowerCase().includes("less than 6 months") ||
-            opt.textContent.toLowerCase().includes("6 months")
-        );
+      const hasAgeOptions = Array.from(options).some(
+        (opt) =>
+          opt.textContent.toLowerCase().includes("less than 6 months") ||
+          opt.textContent.toLowerCase().includes("7-12 months") ||
+          opt.textContent.toLowerCase().includes("2-4 years") ||
+          opt.id.includes("Less-than-6-months") ||
+          opt.id.includes("7-12-months") ||
+          opt.id.includes("2-4-years")
+      );
 
       if (hasAgeOptions) {
-        ageDropdown = dropdown;
-        console.log("Found age dropdown");
+        ageDropdownContainer = dropdown;
+        ageDropdownList = dropdownList;
+        allOptions = Array.from(options);
       }
     });
 
-    if (!ageDropdown) {
-      console.log("Age dropdown not found");
+    if (!ageDropdownContainer || !ageDropdownList || allOptions.length === 0) {
       return;
     }
-
-    // Store all options for later reference
-    const allOptions = Array.from(ageDropdown.options);
 
     function filterDropdownOptions() {
       const yearBuilt = parseInt(homeBuiltYearField.value, 10);
       const currentYear = new Date().getFullYear();
 
-      console.log(
-        "Filtering - Year built:",
-        yearBuilt,
-        "Current year:",
-        currentYear
-      );
-
       if (!yearBuilt || isNaN(yearBuilt) || yearBuilt > currentYear) {
         // If no valid year entered, show all options
-        console.log("Invalid year or future year - showing all options");
         allOptions.forEach((option) => {
-          if (option.value) {
-            // Skip the placeholder/empty option
-            option.disabled = false;
-            option.style.display = "";
-          }
+          option.style.display = "";
         });
         return;
       }
@@ -1071,8 +1042,6 @@ document.addEventListener("DOMContentLoaded", function () {
       // Calculate the age of the home in years
       const homeAge = currentYear - yearBuilt;
       const homeAgeInMonths = homeAge * 12;
-
-      console.log("Home age:", homeAge, "years,", homeAgeInMonths, "months");
 
       // Define the ranges for each option (using flexible matching)
       const ageRanges = [
@@ -1107,17 +1076,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Filter options based on home age
       allOptions.forEach((option) => {
-        // Skip the placeholder/empty option
-        if (!option.value) return;
-
-        // Try to match the option by ID, value, or text content
+        // Try to match the option by ID or text content
         let matchedRange = null;
 
         for (const range of ageRanges) {
           const matches = range.keywords.some(
             (keyword) =>
               option.id.includes(keyword) ||
-              option.value.includes(keyword) ||
               option.textContent.toLowerCase().includes(keyword.toLowerCase())
           );
 
@@ -1129,13 +1094,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!matchedRange) {
           // Can't determine the range for this option, show it
-          console.log(
-            "No match found for option:",
-            option.id,
-            option.value,
-            option.textContent
-          );
-          option.disabled = false;
           option.style.display = "";
           return;
         }
@@ -1161,30 +1119,13 @@ document.addEventListener("DOMContentLoaded", function () {
             homeAge <= matchedRange.maxYears;
         }
 
-        console.log(
-          "Option:",
-          option.textContent.trim(),
-          "shouldShow:",
-          shouldShow
-        );
-
         // Show or hide the option
         if (shouldShow) {
-          option.disabled = false;
           option.style.display = "";
         } else {
-          option.disabled = true;
           option.style.display = "none";
         }
       });
-
-      // Clear the dropdown selection if the currently selected option is now hidden
-      if (ageDropdown.value) {
-        const selectedOption = ageDropdown.options[ageDropdown.selectedIndex];
-        if (selectedOption && selectedOption.disabled) {
-          ageDropdown.value = "";
-        }
-      }
     }
 
     // Listen for changes on the home built year field
