@@ -2111,6 +2111,84 @@ document.addEventListener("DOMContentLoaded", function () {
       setupRadioButtonStyles(radioNo, radioYes);
     }
 
+    // Allergic reactions radio buttons
+    const allergicReactionsNo = document.getElementById(
+      "health-symptoms-allergic-reactions-no"
+    );
+    const allergicReactionsYes = document.getElementById(
+      "health-symptoms-allergic-reactions-yes"
+    );
+
+    console.log("Allergic reactions radios:", {
+      no: allergicReactionsNo,
+      yes: allergicReactionsYes
+    });
+
+    if (allergicReactionsNo && allergicReactionsYes) {
+      console.log("Setting up allergic reactions radio styles");
+      setupRadioButtonStyles(allergicReactionsNo, allergicReactionsYes);
+      
+      // Add extra logging for clicks
+      allergicReactionsNo.addEventListener("click", function(e) {
+        console.log("Allergic reactions NO clicked", {
+          checked: this.checked,
+          event: e,
+          disabled: this.disabled,
+          readOnly: this.readOnly
+        });
+      });
+      
+      allergicReactionsYes.addEventListener("click", function(e) {
+        console.log("Allergic reactions YES clicked", {
+          checked: this.checked,
+          event: e,
+          disabled: this.disabled,
+          readOnly: this.readOnly
+        });
+      });
+    } else {
+      console.log("Allergic reactions radios not found!");
+    }
+
+    // Adverse reactions radio buttons
+    const adverseReactionsNo = document.getElementById(
+      "health-symptoms-adverse-reactions-no"
+    );
+    const adverseReactionsYes = document.getElementById(
+      "health-symptoms-adverse-reactions-yes"
+    );
+
+    console.log("Adverse reactions radios:", {
+      no: adverseReactionsNo,
+      yes: adverseReactionsYes
+    });
+
+    if (adverseReactionsNo && adverseReactionsYes) {
+      console.log("Setting up adverse reactions radio styles");
+      setupRadioButtonStyles(adverseReactionsNo, adverseReactionsYes);
+      
+      // Add extra logging for clicks
+      adverseReactionsNo.addEventListener("click", function(e) {
+        console.log("Adverse reactions NO clicked", {
+          checked: this.checked,
+          event: e,
+          disabled: this.disabled,
+          readOnly: this.readOnly
+        });
+      });
+      
+      adverseReactionsYes.addEventListener("click", function(e) {
+        console.log("Adverse reactions YES clicked", {
+          checked: this.checked,
+          event: e,
+          disabled: this.disabled,
+          readOnly: this.readOnly
+        });
+      });
+    } else {
+      console.log("Adverse reactions radios not found!");
+    }
+
     const symptomsAfterOtherCheckbox = document.getElementById(
       "symptoms-after-other"
     );
