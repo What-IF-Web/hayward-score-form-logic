@@ -2,11 +2,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Helper function to style radio buttons when selected
   function setupRadioButtonStyles(radioNo, radioYes) {
-    console.log("Setting up radio button styles for:", {
-      radioNo: radioNo ? radioNo.id || radioNo.name : "none",
-      radioYes: radioYes ? radioYes.id || radioYes.name : "none"
-    });
-
     // Check if these radios belong to the protected groups (by parent container ID)
     const protectedContainerIds = [
       "private-well-water-system",
@@ -19,7 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
       for (let id of protectedContainerIds) {
         const container = document.getElementById(id);
         if (container && container.contains(radio)) {
-          console.log("Radio is in protected container:", id);
           return id;
         }
       }
@@ -30,17 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const radioYesContainerId = getProtectedContainerId(radioYes);
     const isProtectedPair =
       radioNoContainerId !== null || radioYesContainerId !== null;
-    
-    console.log("Protected status:", {
-      radioNoContainer: radioNoContainerId,
-      radioYesContainer: radioYesContainerId,
-      isProtectedPair: isProtectedPair
-    });
 
     function updateRadioStyles(radio) {
       if (!radio) return;
-
-      console.log("Updating radio styles for:", radio.id || radio.name, "Checked:", radio.checked);
 
       // Find the label or wrapper element (try multiple selectors)
       const label =
@@ -50,13 +36,11 @@ document.addEventListener("DOMContentLoaded", function () {
         radio.parentElement;
 
       if (!label) {
-        console.log("No label found for radio:", radio.id || radio.name);
         return;
       }
 
       if (radio.checked) {
         // Apply selected styles
-        console.log("Applying selected styles to:", radio.id || radio.name);
         label.style.backgroundColor = "#313794";
         label.style.color = "#ffffff";
         // Also apply color to child elements (spans, divs, etc.)
@@ -77,14 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
           radioContainerId === radioYesContainerId;
         const shouldRevert = !isProtectedPair || inSameContainer;
 
-        console.log("Radio unchecked:", radio.id || radio.name, {
-          radioContainerId: radioContainerId,
-          inSameContainer: inSameContainer,
-          shouldRevert: shouldRevert
-        });
-
         if (shouldRevert) {
-          console.log("Reverting styles for:", radio.id || radio.name);
           label.style.backgroundColor = "";
           label.style.color = "";
           // Revert child element colors
@@ -95,32 +72,26 @@ document.addEventListener("DOMContentLoaded", function () {
             el.style.color = "";
             el.style.removeProperty("color");
           });
-        } else {
-          console.log("Skipping revert for protected radio:", radio.id || radio.name);
         }
       }
     }
 
     function updateBothRadioStyles() {
-      console.log("Updating both radio styles");
       updateRadioStyles(radioNo);
       updateRadioStyles(radioYes);
     }
 
     // Listen for changes on both radios
     if (radioNo) {
-      console.log("Adding event listeners to radioNo:", radioNo.id || radioNo.name);
       radioNo.addEventListener("click", updateBothRadioStyles);
       radioNo.addEventListener("change", updateBothRadioStyles);
     }
     if (radioYes) {
-      console.log("Adding event listeners to radioYes:", radioYes.id || radioYes.name);
       radioYes.addEventListener("click", updateBothRadioStyles);
       radioYes.addEventListener("change", updateBothRadioStyles);
     }
 
     // Apply initial styles
-    console.log("Applying initial styles");
     updateBothRadioStyles();
   }
 
@@ -2119,35 +2090,8 @@ document.addEventListener("DOMContentLoaded", function () {
       "health-symptoms-allergic-reactions-yes"
     );
 
-    console.log("Allergic reactions radios:", {
-      no: allergicReactionsNo,
-      yes: allergicReactionsYes
-    });
-
     if (allergicReactionsNo && allergicReactionsYes) {
-      console.log("Setting up allergic reactions radio styles");
       setupRadioButtonStyles(allergicReactionsNo, allergicReactionsYes);
-      
-      // Add extra logging for clicks
-      allergicReactionsNo.addEventListener("click", function(e) {
-        console.log("Allergic reactions NO clicked", {
-          checked: this.checked,
-          event: e,
-          disabled: this.disabled,
-          readOnly: this.readOnly
-        });
-      });
-      
-      allergicReactionsYes.addEventListener("click", function(e) {
-        console.log("Allergic reactions YES clicked", {
-          checked: this.checked,
-          event: e,
-          disabled: this.disabled,
-          readOnly: this.readOnly
-        });
-      });
-    } else {
-      console.log("Allergic reactions radios not found!");
     }
 
     // Adverse reactions radio buttons
@@ -2158,35 +2102,8 @@ document.addEventListener("DOMContentLoaded", function () {
       "health-symptoms-adverse-reactions-yes"
     );
 
-    console.log("Adverse reactions radios:", {
-      no: adverseReactionsNo,
-      yes: adverseReactionsYes
-    });
-
     if (adverseReactionsNo && adverseReactionsYes) {
-      console.log("Setting up adverse reactions radio styles");
       setupRadioButtonStyles(adverseReactionsNo, adverseReactionsYes);
-      
-      // Add extra logging for clicks
-      adverseReactionsNo.addEventListener("click", function(e) {
-        console.log("Adverse reactions NO clicked", {
-          checked: this.checked,
-          event: e,
-          disabled: this.disabled,
-          readOnly: this.readOnly
-        });
-      });
-      
-      adverseReactionsYes.addEventListener("click", function(e) {
-        console.log("Adverse reactions YES clicked", {
-          checked: this.checked,
-          event: e,
-          disabled: this.disabled,
-          readOnly: this.readOnly
-        });
-      });
-    } else {
-      console.log("Adverse reactions radios not found!");
     }
 
     const symptomsAfterOtherCheckbox = document.getElementById(
