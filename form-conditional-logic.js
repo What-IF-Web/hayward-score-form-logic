@@ -511,26 +511,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (noChecked) {
         // "No" selected: hide both fields and remove required
+        console.log("Hiding basement fields (No selected)");
         if (basementLooksLikeWrapper) {
           basementLooksLikeWrapper.style.display = "none";
           updateRequiredFields(basementLooksLikeWrapper, false);
+          console.log("✓ basementLooksLikeWrapper hidden");
+        } else {
+          console.warn("✗ basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
           basementWetDampDryWrapper.style.display = "none";
           updateRequiredFields(basementWetDampDryWrapper, false);
+          console.log("✓ basementWetDampDryWrapper hidden");
+        } else {
+          console.warn("✗ basementWetDampDryWrapper not found!");
         }
       } else if (yesChecked) {
         // "Yes" selected: show both fields and make them required
+        console.log("Showing basement fields (Yes selected)");
         if (basementLooksLikeWrapper) {
           basementLooksLikeWrapper.style.display = "block";
           updateRequiredFields(basementLooksLikeWrapper, true);
+          console.log("✓ basementLooksLikeWrapper shown", basementLooksLikeWrapper);
+        } else {
+          console.warn("✗ basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
           basementWetDampDryWrapper.style.display = "block";
           updateRequiredFields(basementWetDampDryWrapper, true);
+          console.log("✓ basementWetDampDryWrapper shown", basementWetDampDryWrapper);
+        } else {
+          console.warn("✗ basementWetDampDryWrapper not found!");
         }
       } else {
         // Neither selected: hide both fields and remove required
+        console.log("Hiding basement fields (Neither selected)");
         if (basementLooksLikeWrapper) {
           basementLooksLikeWrapper.style.display = "none";
           updateRequiredFields(basementLooksLikeWrapper, false);
