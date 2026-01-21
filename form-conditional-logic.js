@@ -532,6 +532,28 @@ document.addEventListener("DOMContentLoaded", function () {
         if (basementLooksLikeWrapper) {
           basementLooksLikeWrapper.style.setProperty("display", "block", "important");
           updateRequiredFields(basementLooksLikeWrapper, true);
+          
+          // Check if parent is hidden
+          let parent = basementLooksLikeWrapper.parentElement;
+          console.log("Parent element:", parent);
+          console.log("Parent display:", window.getComputedStyle(parent).display);
+          console.log("Parent visibility:", window.getComputedStyle(parent).visibility);
+          
+          // Show all parent elements up the chain
+          let currentElement = basementLooksLikeWrapper;
+          while (currentElement.parentElement) {
+            currentElement = currentElement.parentElement;
+            const computedStyle = window.getComputedStyle(currentElement);
+            if (computedStyle.display === "none") {
+              console.log("Found hidden parent:", currentElement);
+              currentElement.style.setProperty("display", "block", "important");
+            }
+            // Stop at body or form
+            if (currentElement.tagName === "BODY" || currentElement.tagName === "FORM") {
+              break;
+            }
+          }
+          
           console.log("✓ basementLooksLikeWrapper shown", basementLooksLikeWrapper);
         } else {
           console.warn("✗ basementLooksLikeWrapper not found!");
@@ -539,6 +561,22 @@ document.addEventListener("DOMContentLoaded", function () {
         if (basementWetDampDryWrapper) {
           basementWetDampDryWrapper.style.setProperty("display", "block", "important");
           updateRequiredFields(basementWetDampDryWrapper, true);
+          
+          // Show all parent elements up the chain
+          let currentElement = basementWetDampDryWrapper;
+          while (currentElement.parentElement) {
+            currentElement = currentElement.parentElement;
+            const computedStyle = window.getComputedStyle(currentElement);
+            if (computedStyle.display === "none") {
+              console.log("Found hidden parent:", currentElement);
+              currentElement.style.setProperty("display", "block", "important");
+            }
+            // Stop at body or form
+            if (currentElement.tagName === "BODY" || currentElement.tagName === "FORM") {
+              break;
+            }
+          }
+          
           console.log("✓ basementWetDampDryWrapper shown", basementWetDampDryWrapper);
         } else {
           console.warn("✗ basementWetDampDryWrapper not found!");
