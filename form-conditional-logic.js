@@ -515,27 +515,55 @@ document.addEventListener("DOMContentLoaded", function () {
         // "Yes" selected: show both fields and make them required
         console.log("Showing basement fields...");
         if (basementLooksLikeWrapper) {
-          console.log("Setting basementLooksLikeWrapper to block");
+          console.log("Setting basementLooksLikeWrapper visible");
           basementLooksLikeWrapper.style.setProperty("display", "block", "important");
+          basementLooksLikeWrapper.style.setProperty("visibility", "visible", "important");
+          basementLooksLikeWrapper.style.setProperty("opacity", "1", "important");
           updateRequiredFields(basementLooksLikeWrapper, true);
+          
+          // Check parent visibility
+          let parent = basementLooksLikeWrapper.parentElement;
+          let parentLevel = 1;
+          while (parent && parentLevel <= 3 && parent.tagName !== "BODY") {
+            const parentStyle = window.getComputedStyle(parent);
+            console.log(
+              `Parent ${parentLevel}:`,
+              parent.tagName,
+              parent.className,
+              "display:", parentStyle.display,
+              "visibility:", parentStyle.visibility
+            );
+            if (parentStyle.display === "none") {
+              console.warn(`⚠️ Parent ${parentLevel} is hidden!`, parent);
+            }
+            parent = parent.parentElement;
+            parentLevel++;
+          }
+          
           console.log(
-            "After set:",
-            basementLooksLikeWrapper.style.display,
+            "After set - display:",
             window.getComputedStyle(basementLooksLikeWrapper).display,
-            basementLooksLikeWrapper
+            "visibility:",
+            window.getComputedStyle(basementLooksLikeWrapper).visibility,
+            "opacity:",
+            window.getComputedStyle(basementLooksLikeWrapper).opacity
           );
         } else {
           console.warn("basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
-          console.log("Setting basementWetDampDryWrapper to block");
+          console.log("Setting basementWetDampDryWrapper visible");
           basementWetDampDryWrapper.style.setProperty("display", "block", "important");
+          basementWetDampDryWrapper.style.setProperty("visibility", "visible", "important");
+          basementWetDampDryWrapper.style.setProperty("opacity", "1", "important");
           updateRequiredFields(basementWetDampDryWrapper, true);
           console.log(
-            "After set:",
-            basementWetDampDryWrapper.style.display,
+            "After set - display:",
             window.getComputedStyle(basementWetDampDryWrapper).display,
-            basementWetDampDryWrapper
+            "visibility:",
+            window.getComputedStyle(basementWetDampDryWrapper).visibility,
+            "opacity:",
+            window.getComputedStyle(basementWetDampDryWrapper).opacity
           );
         } else {
           console.warn("basementWetDampDryWrapper not found!");
@@ -565,70 +593,44 @@ document.addEventListener("DOMContentLoaded", function () {
       radioYes.addEventListener("change", updateBasementVisibility);
     }
 
-    // Re-apply basement visibility when any form change occurs (to handle Formly updates)
-    function ensureBasementVisible() {
-      // Only update if radioYes is checked (to show fields)
-      if (radioYes && radioYes.checked) {
-        let reapplied = false;
-        if (basementLooksLikeWrapper) {
-          const computedDisplay = window.getComputedStyle(basementLooksLikeWrapper).display;
-          if (computedDisplay === "none") {
-            basementLooksLikeWrapper.style.setProperty("display", "block", "important");
-            reapplied = true;
-          }
+    // Use MutationObserver to watch for style changes and immediately revert them
+    if (basementLooksLikeWrapper && basementWetDampDryWrapper) {
+      let isUpdating = false; // Prevent infinite loop
+      
+      const observer = new MutationObserver(function (mutations) {
+        if (isUpdating) return;
+        
+        // Only intervene if "yes" is selected
+        if (radioYes && radioYes.checked) {
+          mutations.forEach(function (mutation) {
+            if (mutation.type === "attributes" && mutation.attributeName === "style") {
+              const target = mutation.target;
+              
+              // Check if this is one of our basement wrappers
+              if (target === basementLooksLikeWrapper || target === basementWetDampDryWrapper) {
+                const computedStyle = window.getComputedStyle(target);
+                
+                // If it's hidden, show it immediately
+                if (computedStyle.display === "none" || 
+                    computedStyle.visibility === "hidden" || 
+                    computedStyle.opacity === "0") {
+                  isUpdating = true;
+                  console.log("Basement: Blocked hide attempt on", target.id);
+                  target.style.setProperty("display", "block", "important");
+                  target.style.setProperty("visibility", "visible", "important");
+                  target.style.setProperty("opacity", "1", "important");
+                  setTimeout(() => { isUpdating = false; }, 10);
+                }
+              }
+            }
+          });
         }
-        if (basementWetDampDryWrapper) {
-          const computedDisplay = window.getComputedStyle(basementWetDampDryWrapper).display;
-          if (computedDisplay === "none") {
-            basementWetDampDryWrapper.style.setProperty("display", "block", "important");
-            reapplied = true;
-          }
-        }
-        if (reapplied) {
-          console.log("Basement: Re-applied visibility");
-        }
-      }
-    }
+      });
 
-    // Set up interval to continuously check if fields are hidden when they should be visible
-    setInterval(function () {
-      ensureBasementVisible();
-    }, 50); // Check every 50ms for faster response
-
-    // Listen for any changes in the basement fields themselves
-    if (basementLooksLikeWrapper) {
-      basementLooksLikeWrapper.addEventListener(
-        "change",
-        ensureBasementVisible,
-        true
-      );
-      basementLooksLikeWrapper.addEventListener(
-        "input",
-        ensureBasementVisible,
-        true
-      );
-      basementLooksLikeWrapper.addEventListener(
-        "click",
-        ensureBasementVisible,
-        true
-      );
-    }
-    if (basementWetDampDryWrapper) {
-      basementWetDampDryWrapper.addEventListener(
-        "change",
-        ensureBasementVisible,
-        true
-      );
-      basementWetDampDryWrapper.addEventListener(
-        "input",
-        ensureBasementVisible,
-        true
-      );
-      basementWetDampDryWrapper.addEventListener(
-        "click",
-        ensureBasementVisible,
-        true
-      );
+      // Observe both wrappers
+      const config = { attributes: true, attributeFilter: ["style"], subtree: false };
+      observer.observe(basementLooksLikeWrapper, config);
+      observer.observe(basementWetDampDryWrapper, config);
     }
 
     // Setup radio button styles
@@ -2009,8 +2011,17 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Showing fleas field...");
         if (fleasField) {
           fleasField.style.setProperty("display", "block", "important");
+          fleasField.style.setProperty("visibility", "visible", "important");
+          fleasField.style.setProperty("opacity", "1", "important");
           updateRequiredFields(fleasField, true);
-          console.log("Fleas field display set to:", fleasField.style.display, fleasField);
+          console.log(
+            "Fleas field - display:",
+            window.getComputedStyle(fleasField).display,
+            "visibility:",
+            window.getComputedStyle(fleasField).visibility,
+            "opacity:",
+            window.getComputedStyle(fleasField).opacity
+          );
         } else {
           console.warn("fleasField not found!");
         }
@@ -2034,22 +2045,44 @@ document.addEventListener("DOMContentLoaded", function () {
       radioYes.addEventListener("change", updateFleasVisibility);
     }
 
-    // Re-apply fleas visibility when any form change occurs (to handle Formly updates)
-    function ensureFleasVisible() {
-      // Only update if radioYes is checked (to show field)
-      if (radioYes && radioYes.checked) {
-        const computedDisplay = window.getComputedStyle(fleasField).display;
-        if (fleasField && computedDisplay === "none") {
-          console.log("Fleas: Re-applying visibility");
-          fleasField.style.setProperty("display", "block", "important");
+    // Use MutationObserver to watch for style changes and immediately revert them
+    if (fleasField) {
+      let isUpdating = false; // Prevent infinite loop
+      
+      const observer = new MutationObserver(function (mutations) {
+        if (isUpdating) return;
+        
+        // Only intervene if "yes" is selected
+        if (radioYes && radioYes.checked) {
+          mutations.forEach(function (mutation) {
+            if (mutation.type === "attributes" && mutation.attributeName === "style") {
+              const target = mutation.target;
+              
+              // Check if this is our fleas field
+              if (target === fleasField) {
+                const computedStyle = window.getComputedStyle(target);
+                
+                // If it's hidden, show it immediately
+                if (computedStyle.display === "none" || 
+                    computedStyle.visibility === "hidden" || 
+                    computedStyle.opacity === "0") {
+                  isUpdating = true;
+                  console.log("Fleas: Blocked hide attempt");
+                  target.style.setProperty("display", "block", "important");
+                  target.style.setProperty("visibility", "visible", "important");
+                  target.style.setProperty("opacity", "1", "important");
+                  setTimeout(() => { isUpdating = false; }, 10);
+                }
+              }
+            }
+          });
         }
-      }
-    }
+      });
 
-    // Set up interval to continuously check if field is hidden when it should be visible
-    setInterval(function () {
-      ensureFleasVisible();
-    }, 50); // Check every 50ms for faster response
+      // Observe the fleas field
+      const config = { attributes: true, attributeFilter: ["style"], subtree: false };
+      observer.observe(fleasField, config);
+    }
 
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
