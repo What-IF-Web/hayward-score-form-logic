@@ -567,6 +567,36 @@ document.addEventListener("DOMContentLoaded", function () {
       radioYes.addEventListener("change", updateBasementVisibility);
     }
 
+    // Re-apply basement visibility when any form change occurs (to handle Formly updates)
+    // Use a debounced approach to avoid excessive calls
+    let debounceTimer;
+    function debouncedBasementUpdate() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function () {
+        // Only update if radioYes is checked (to show fields)
+        if (radioYes && radioYes.checked) {
+          if (basementLooksLikeWrapper && basementLooksLikeWrapper.style.display === "none") {
+            console.log("🔄 Re-applying basement visibility (detected hidden)");
+            basementLooksLikeWrapper.style.display = "block";
+          }
+          if (basementWetDampDryWrapper && basementWetDampDryWrapper.style.display === "none") {
+            console.log("🔄 Re-applying basement visibility (detected hidden)");
+            basementWetDampDryWrapper.style.display = "block";
+          }
+        }
+      }, 100); // Wait 100ms after last change before updating
+    }
+
+    // Listen for any changes in the basement fields themselves
+    if (basementLooksLikeWrapper) {
+      basementLooksLikeWrapper.addEventListener("change", debouncedBasementUpdate, true);
+      basementLooksLikeWrapper.addEventListener("input", debouncedBasementUpdate, true);
+    }
+    if (basementWetDampDryWrapper) {
+      basementWetDampDryWrapper.addEventListener("change", debouncedBasementUpdate, true);
+      basementWetDampDryWrapper.addEventListener("input", debouncedBasementUpdate, true);
+    }
+
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
 
