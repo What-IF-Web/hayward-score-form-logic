@@ -513,14 +513,14 @@ document.addEventListener("DOMContentLoaded", function () {
         // "No" selected: hide both fields and remove required
         console.log("Hiding basement fields (No selected)");
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.style.display = "none";
+          basementLooksLikeWrapper.style.setProperty("display", "none", "important");
           updateRequiredFields(basementLooksLikeWrapper, false);
           console.log("✓ basementLooksLikeWrapper hidden");
         } else {
           console.warn("✗ basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.style.display = "none";
+          basementWetDampDryWrapper.style.setProperty("display", "none", "important");
           updateRequiredFields(basementWetDampDryWrapper, false);
           console.log("✓ basementWetDampDryWrapper hidden");
         } else {
@@ -530,14 +530,14 @@ document.addEventListener("DOMContentLoaded", function () {
         // "Yes" selected: show both fields and make them required
         console.log("Showing basement fields (Yes selected)");
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.style.display = "block";
+          basementLooksLikeWrapper.style.setProperty("display", "block", "important");
           updateRequiredFields(basementLooksLikeWrapper, true);
           console.log("✓ basementLooksLikeWrapper shown", basementLooksLikeWrapper);
         } else {
           console.warn("✗ basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.style.display = "block";
+          basementWetDampDryWrapper.style.setProperty("display", "block", "important");
           updateRequiredFields(basementWetDampDryWrapper, true);
           console.log("✓ basementWetDampDryWrapper shown", basementWetDampDryWrapper);
         } else {
@@ -547,11 +547,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Neither selected: hide both fields and remove required
         console.log("Hiding basement fields (Neither selected)");
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.style.display = "none";
+          basementLooksLikeWrapper.style.setProperty("display", "none", "important");
           updateRequiredFields(basementLooksLikeWrapper, false);
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.style.display = "none";
+          basementWetDampDryWrapper.style.setProperty("display", "none", "important");
           updateRequiredFields(basementWetDampDryWrapper, false);
         }
       }
