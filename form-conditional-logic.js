@@ -421,6 +421,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const basementWetDampDryWrapper = document.getElementById(
       "basement-wet-damp-dry"
     );
+    const basementFieldWrapper = document.getElementById("basement-field");
     const radioNo = document.getElementById("General-home----basement---no");
     const radioYes = document.getElementById("General-home----basement---yes");
 
@@ -434,7 +435,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (radioNo) radioNo.setAttribute("required", "required");
     if (radioYes) radioYes.setAttribute("required", "required");
 
-    // Hide both wrappers by default
+    // Hide both wrappers and parent wrapper by default
+    if (basementFieldWrapper) {
+      basementFieldWrapper.style.display = "none";
+    }
     if (basementLooksLikeWrapper) {
       basementLooksLikeWrapper.style.display = "none";
     }
@@ -483,8 +487,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateBasementVisibility() {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
-      
-      console.log("Basement visibility update:", { noChecked, yesChecked });
 
       // Helper function to update required attributes for all form fields in a wrapper
       function updateRequiredFields(wrapper, isRequired) {
@@ -500,7 +502,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (noChecked) {
-        // "No" selected: hide both fields and remove required
+        // "No" selected: hide parent wrapper and both fields, remove required
+        if (basementFieldWrapper) {
+          basementFieldWrapper.style.removeProperty("display");
+          basementFieldWrapper.style.display = "none";
+        }
         if (basementLooksLikeWrapper) {
           basementLooksLikeWrapper.style.removeProperty("display");
           basementLooksLikeWrapper.style.display = "none";
@@ -512,64 +518,30 @@ document.addEventListener("DOMContentLoaded", function () {
           updateRequiredFields(basementWetDampDryWrapper, false);
         }
       } else if (yesChecked) {
-        // "Yes" selected: show both fields and make them required
-        console.log("Showing basement fields...");
+        // "Yes" selected: show parent wrapper and both fields, make them required
+        // Show parent wrapper first
+        if (basementFieldWrapper) {
+          basementFieldWrapper.style.setProperty("display", "block", "important");
+        }
+        
         if (basementLooksLikeWrapper) {
-          console.log("Setting basementLooksLikeWrapper visible");
           basementLooksLikeWrapper.style.setProperty("display", "block", "important");
           basementLooksLikeWrapper.style.setProperty("visibility", "visible", "important");
           basementLooksLikeWrapper.style.setProperty("opacity", "1", "important");
           updateRequiredFields(basementLooksLikeWrapper, true);
-          
-          // Check parent visibility
-          let parent = basementLooksLikeWrapper.parentElement;
-          let parentLevel = 1;
-          while (parent && parentLevel <= 3 && parent.tagName !== "BODY") {
-            const parentStyle = window.getComputedStyle(parent);
-            console.log(
-              `Parent ${parentLevel}:`,
-              parent.tagName,
-              parent.className,
-              "display:", parentStyle.display,
-              "visibility:", parentStyle.visibility
-            );
-            if (parentStyle.display === "none") {
-              console.warn(`⚠️ Parent ${parentLevel} is hidden!`, parent);
-            }
-            parent = parent.parentElement;
-            parentLevel++;
-          }
-          
-          console.log(
-            "After set - display:",
-            window.getComputedStyle(basementLooksLikeWrapper).display,
-            "visibility:",
-            window.getComputedStyle(basementLooksLikeWrapper).visibility,
-            "opacity:",
-            window.getComputedStyle(basementLooksLikeWrapper).opacity
-          );
-        } else {
-          console.warn("basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
-          console.log("Setting basementWetDampDryWrapper visible");
           basementWetDampDryWrapper.style.setProperty("display", "block", "important");
           basementWetDampDryWrapper.style.setProperty("visibility", "visible", "important");
           basementWetDampDryWrapper.style.setProperty("opacity", "1", "important");
           updateRequiredFields(basementWetDampDryWrapper, true);
-          console.log(
-            "After set - display:",
-            window.getComputedStyle(basementWetDampDryWrapper).display,
-            "visibility:",
-            window.getComputedStyle(basementWetDampDryWrapper).visibility,
-            "opacity:",
-            window.getComputedStyle(basementWetDampDryWrapper).opacity
-          );
-        } else {
-          console.warn("basementWetDampDryWrapper not found!");
         }
       } else {
-        // Neither selected: hide both fields and remove required
+        // Neither selected: hide parent wrapper and both fields, remove required
+        if (basementFieldWrapper) {
+          basementFieldWrapper.style.removeProperty("display");
+          basementFieldWrapper.style.display = "none";
+        }
         if (basementLooksLikeWrapper) {
           basementLooksLikeWrapper.style.removeProperty("display");
           basementLooksLikeWrapper.style.display = "none";
@@ -594,7 +566,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Use MutationObserver to watch for style changes and immediately revert them
-    if (basementLooksLikeWrapper && basementWetDampDryWrapper) {
+    if (basementFieldWrapper && basementLooksLikeWrapper && basementWetDampDryWrapper) {
       let isUpdating = false; // Prevent infinite loop
       
       const observer = new MutationObserver(function (mutations) {
@@ -606,8 +578,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (mutation.type === "attributes" && mutation.attributeName === "style") {
               const target = mutation.target;
               
-              // Check if this is one of our basement wrappers
-              if (target === basementLooksLikeWrapper || target === basementWetDampDryWrapper) {
+              // Check if this is one of our basement wrappers or the parent wrapper
+              if (target === basementFieldWrapper || 
+                  target === basementLooksLikeWrapper || 
+                  target === basementWetDampDryWrapper) {
                 const computedStyle = window.getComputedStyle(target);
                 
                 // If it's hidden, show it immediately
@@ -615,7 +589,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     computedStyle.visibility === "hidden" || 
                     computedStyle.opacity === "0") {
                   isUpdating = true;
-                  console.log("Basement: Blocked hide attempt on", target.id);
                   target.style.setProperty("display", "block", "important");
                   target.style.setProperty("visibility", "visible", "important");
                   target.style.setProperty("opacity", "1", "important");
@@ -627,8 +600,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
 
-      // Observe both wrappers
+      // Observe parent wrapper and both child wrappers
       const config = { attributes: true, attributeFilter: ["style"], subtree: false };
+      observer.observe(basementFieldWrapper, config);
       observer.observe(basementLooksLikeWrapper, config);
       observer.observe(basementWetDampDryWrapper, config);
     }
@@ -1997,8 +1971,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
 
-      console.log("Fleas visibility update:", { noChecked, yesChecked });
-
       if (noChecked) {
         // "No" selected: hide fleas-field and remove required
         if (fleasField) {
@@ -2008,22 +1980,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       } else if (yesChecked) {
         // "Yes" selected: show fleas-field and make it required
-        console.log("Showing fleas field...");
         if (fleasField) {
           fleasField.style.setProperty("display", "block", "important");
           fleasField.style.setProperty("visibility", "visible", "important");
           fleasField.style.setProperty("opacity", "1", "important");
           updateRequiredFields(fleasField, true);
-          console.log(
-            "Fleas field - display:",
-            window.getComputedStyle(fleasField).display,
-            "visibility:",
-            window.getComputedStyle(fleasField).visibility,
-            "opacity:",
-            window.getComputedStyle(fleasField).opacity
-          );
-        } else {
-          console.warn("fleasField not found!");
         }
       } else {
         // Neither selected: hide fleas-field and remove required
@@ -2067,7 +2028,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     computedStyle.visibility === "hidden" || 
                     computedStyle.opacity === "0") {
                   isUpdating = true;
-                  console.log("Fleas: Blocked hide attempt");
                   target.style.setProperty("display", "block", "important");
                   target.style.setProperty("visibility", "visible", "important");
                   target.style.setProperty("opacity", "1", "important");
