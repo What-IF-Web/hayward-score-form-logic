@@ -608,6 +608,60 @@ document.addEventListener("DOMContentLoaded", function () {
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
 
+    // Prevent other scripts from hiding these elements when "yes" is selected
+    // Use MutationObserver to watch for style changes and re-show if needed
+    if (basementLooksLikeWrapper && basementWetDampDryWrapper) {
+      const observer = new MutationObserver(function (mutations) {
+        // Only intervene if "yes" is selected
+        if (radioYes && radioYes.checked) {
+          mutations.forEach(function (mutation) {
+            if (mutation.type === "attributes" && mutation.attributeName === "style") {
+              const target = mutation.target;
+              
+              // Check if this is one of our basement wrappers
+              if (target === basementLooksLikeWrapper || target === basementWetDampDryWrapper) {
+                const computedStyle = window.getComputedStyle(target);
+                
+                // If something tried to hide it, show it again
+                if (computedStyle.display === "none") {
+                  console.log("⚠️ Something tried to hide", target.id, "- re-showing it");
+                  target.style.setProperty("display", "block", "important");
+                }
+              }
+              
+              // Also check parent elements
+              if (target.contains(basementLooksLikeWrapper) || target.contains(basementWetDampDryWrapper)) {
+                const computedStyle = window.getComputedStyle(target);
+                
+                if (computedStyle.display === "none") {
+                  console.log("⚠️ Something tried to hide parent", target, "- re-showing it");
+                  target.style.setProperty("display", "block", "important");
+                }
+              }
+            }
+          });
+        }
+      });
+
+      // Observe both wrappers and their parents
+      const config = { attributes: true, attributeFilter: ["style"], subtree: false };
+      observer.observe(basementLooksLikeWrapper, config);
+      observer.observe(basementWetDampDryWrapper, config);
+      
+      // Also observe parent elements
+      let parent = basementLooksLikeWrapper.parentElement;
+      while (parent && parent.tagName !== "BODY" && parent.tagName !== "FORM") {
+        observer.observe(parent, config);
+        parent = parent.parentElement;
+      }
+      
+      parent = basementWetDampDryWrapper.parentElement;
+      while (parent && parent.tagName !== "BODY" && parent.tagName !== "FORM") {
+        observer.observe(parent, config);
+        parent = parent.parentElement;
+      }
+    }
+
     // Listen for changes in basement fields to validate in real-time when "yes" is selected
     if (basementLooksLikeWrapper) {
       basementLooksLikeWrapper.addEventListener("input", function () {
