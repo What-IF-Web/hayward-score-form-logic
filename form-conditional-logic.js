@@ -424,6 +424,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const radioNo = document.getElementById("General-home----basement---no");
     const radioYes = document.getElementById("General-home----basement---yes");
 
+    // Debug: Log if elements are found
+    console.log("Basement Logic Init:", {
+      basementLooksLikeWrapper: !!basementLooksLikeWrapper,
+      basementWetDampDryWrapper: !!basementWetDampDryWrapper,
+      radioNo: !!radioNo,
+      radioYes: !!radioYes,
+    });
+
+    // If radio buttons aren't found, exit early
+    if (!radioNo && !radioYes) {
+      console.warn("Basement radio buttons not found. Exiting basement logic.");
+      return;
+    }
+
     // Make the basement radio buttons required (set on one, applies to the group)
     if (radioNo) radioNo.setAttribute("required", "required");
     if (radioYes) radioYes.setAttribute("required", "required");
@@ -476,6 +490,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
 
+      // Debug: Log the current state
+      console.log("updateBasementVisibility called:", {
+        noChecked,
+        yesChecked,
+      });
+
       // Helper function to update required attributes for all form fields in a wrapper
       function updateRequiredFields(wrapper, isRequired) {
         if (!wrapper) return;
@@ -523,8 +543,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Listen for clicks/changes on both radios
-    if (radioNo) radioNo.addEventListener("click", updateBasementVisibility);
-    if (radioYes) radioYes.addEventListener("click", updateBasementVisibility);
+    if (radioNo) {
+      radioNo.addEventListener("click", updateBasementVisibility);
+      radioNo.addEventListener("change", updateBasementVisibility);
+    }
+    if (radioYes) {
+      radioYes.addEventListener("click", updateBasementVisibility);
+      radioYes.addEventListener("change", updateBasementVisibility);
+    }
 
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
