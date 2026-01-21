@@ -502,10 +502,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (noChecked) {
         // "No" selected: hide both fields and remove required
         if (basementLooksLikeWrapper) {
+          basementLooksLikeWrapper.style.removeProperty("display");
           basementLooksLikeWrapper.style.display = "none";
           updateRequiredFields(basementLooksLikeWrapper, false);
         }
         if (basementWetDampDryWrapper) {
+          basementWetDampDryWrapper.style.removeProperty("display");
           basementWetDampDryWrapper.style.display = "none";
           updateRequiredFields(basementWetDampDryWrapper, false);
         }
@@ -514,11 +516,12 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Showing basement fields...");
         if (basementLooksLikeWrapper) {
           console.log("Setting basementLooksLikeWrapper to block");
-          basementLooksLikeWrapper.style.display = "block";
+          basementLooksLikeWrapper.style.setProperty("display", "block", "important");
           updateRequiredFields(basementLooksLikeWrapper, true);
           console.log(
             "After set:",
             basementLooksLikeWrapper.style.display,
+            window.getComputedStyle(basementLooksLikeWrapper).display,
             basementLooksLikeWrapper
           );
         } else {
@@ -526,11 +529,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (basementWetDampDryWrapper) {
           console.log("Setting basementWetDampDryWrapper to block");
-          basementWetDampDryWrapper.style.display = "block";
+          basementWetDampDryWrapper.style.setProperty("display", "block", "important");
           updateRequiredFields(basementWetDampDryWrapper, true);
           console.log(
             "After set:",
             basementWetDampDryWrapper.style.display,
+            window.getComputedStyle(basementWetDampDryWrapper).display,
             basementWetDampDryWrapper
           );
         } else {
@@ -539,10 +543,12 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         // Neither selected: hide both fields and remove required
         if (basementLooksLikeWrapper) {
+          basementLooksLikeWrapper.style.removeProperty("display");
           basementLooksLikeWrapper.style.display = "none";
           updateRequiredFields(basementLooksLikeWrapper, false);
         }
         if (basementWetDampDryWrapper) {
+          basementWetDampDryWrapper.style.removeProperty("display");
           basementWetDampDryWrapper.style.display = "none";
           updateRequiredFields(basementWetDampDryWrapper, false);
         }
@@ -564,19 +570,19 @@ document.addEventListener("DOMContentLoaded", function () {
       // Only update if radioYes is checked (to show fields)
       if (radioYes && radioYes.checked) {
         let reapplied = false;
-        if (
-          basementLooksLikeWrapper &&
-          basementLooksLikeWrapper.style.display === "none"
-        ) {
-          basementLooksLikeWrapper.style.display = "block";
-          reapplied = true;
+        if (basementLooksLikeWrapper) {
+          const computedDisplay = window.getComputedStyle(basementLooksLikeWrapper).display;
+          if (computedDisplay === "none") {
+            basementLooksLikeWrapper.style.setProperty("display", "block", "important");
+            reapplied = true;
+          }
         }
-        if (
-          basementWetDampDryWrapper &&
-          basementWetDampDryWrapper.style.display === "none"
-        ) {
-          basementWetDampDryWrapper.style.display = "block";
-          reapplied = true;
+        if (basementWetDampDryWrapper) {
+          const computedDisplay = window.getComputedStyle(basementWetDampDryWrapper).display;
+          if (computedDisplay === "none") {
+            basementWetDampDryWrapper.style.setProperty("display", "block", "important");
+            reapplied = true;
+          }
         }
         if (reapplied) {
           console.log("Basement: Re-applied visibility");
@@ -587,7 +593,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Set up interval to continuously check if fields are hidden when they should be visible
     setInterval(function () {
       ensureBasementVisible();
-    }, 100); // Check every 100ms
+    }, 50); // Check every 50ms for faster response
 
     // Listen for any changes in the basement fields themselves
     if (basementLooksLikeWrapper) {
@@ -1994,6 +2000,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (noChecked) {
         // "No" selected: hide fleas-field and remove required
         if (fleasField) {
+          fleasField.style.removeProperty("display");
           fleasField.style.display = "none";
           updateRequiredFields(fleasField, false);
         }
@@ -2001,7 +2008,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // "Yes" selected: show fleas-field and make it required
         console.log("Showing fleas field...");
         if (fleasField) {
-          fleasField.style.display = "block";
+          fleasField.style.setProperty("display", "block", "important");
           updateRequiredFields(fleasField, true);
           console.log("Fleas field display set to:", fleasField.style.display, fleasField);
         } else {
@@ -2010,6 +2017,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         // Neither selected: hide fleas-field and remove required
         if (fleasField) {
+          fleasField.style.removeProperty("display");
           fleasField.style.display = "none";
           updateRequiredFields(fleasField, false);
         }
@@ -2030,9 +2038,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function ensureFleasVisible() {
       // Only update if radioYes is checked (to show field)
       if (radioYes && radioYes.checked) {
-        if (fleasField && fleasField.style.display === "none") {
+        const computedDisplay = window.getComputedStyle(fleasField).display;
+        if (fleasField && computedDisplay === "none") {
           console.log("Fleas: Re-applying visibility");
-          fleasField.style.display = "block";
+          fleasField.style.setProperty("display", "block", "important");
         }
       }
     }
@@ -2040,7 +2049,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Set up interval to continuously check if field is hidden when it should be visible
     setInterval(function () {
       ensureFleasVisible();
-    }, 100); // Check every 100ms
+    }, 50); // Check every 50ms for faster response
 
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
