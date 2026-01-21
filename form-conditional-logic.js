@@ -1,17 +1,5 @@
 // Form Conditional Logic
 document.addEventListener("DOMContentLoaded", function () {
-  // Inject CSS for basement visibility classes
-  const style = document.createElement("style");
-  style.textContent = `
-    .basement-hidden {
-      display: none !important;
-    }
-    .basement-visible {
-      display: block !important;
-    }
-  `;
-  document.head.appendChild(style);
-
   // Helper function to style radio buttons when selected
   function setupRadioButtonStyles(radioNo, radioYes) {
     // Check if these radios belong to the protected groups (by parent container ID)
@@ -446,14 +434,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (radioNo) radioNo.setAttribute("required", "required");
     if (radioYes) radioYes.setAttribute("required", "required");
 
-    // Hide both wrappers by default using our custom class
+    // Hide both wrappers by default
     if (basementLooksLikeWrapper) {
-      basementLooksLikeWrapper.classList.add("basement-hidden");
-      basementLooksLikeWrapper.style.removeProperty("display");
+      basementLooksLikeWrapper.style.display = "none";
     }
     if (basementWetDampDryWrapper) {
-      basementWetDampDryWrapper.classList.add("basement-hidden");
-      basementWetDampDryWrapper.style.removeProperty("display");
+      basementWetDampDryWrapper.style.display = "none";
     }
 
     // Helper function to validate basement fields when "yes" is selected
@@ -497,6 +483,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateBasementVisibility() {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
+      
+      console.log("Basement visibility update:", { noChecked, yesChecked });
 
       // Helper function to update required attributes for all form fields in a wrapper
       function updateRequiredFields(wrapper, isRequired) {
@@ -514,43 +502,48 @@ document.addEventListener("DOMContentLoaded", function () {
       if (noChecked) {
         // "No" selected: hide both fields and remove required
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.classList.add("basement-hidden");
-          basementLooksLikeWrapper.classList.remove("basement-visible");
-          basementLooksLikeWrapper.style.removeProperty("display");
+          basementLooksLikeWrapper.style.display = "none";
           updateRequiredFields(basementLooksLikeWrapper, false);
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.classList.add("basement-hidden");
-          basementWetDampDryWrapper.classList.remove("basement-visible");
-          basementWetDampDryWrapper.style.removeProperty("display");
+          basementWetDampDryWrapper.style.display = "none";
           updateRequiredFields(basementWetDampDryWrapper, false);
         }
       } else if (yesChecked) {
         // "Yes" selected: show both fields and make them required
+        console.log("Showing basement fields...");
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.classList.remove("basement-hidden");
-          basementLooksLikeWrapper.classList.add("basement-visible");
-          basementLooksLikeWrapper.style.removeProperty("display");
+          console.log("Setting basementLooksLikeWrapper to block");
+          basementLooksLikeWrapper.style.display = "block";
           updateRequiredFields(basementLooksLikeWrapper, true);
+          console.log(
+            "After set:",
+            basementLooksLikeWrapper.style.display,
+            basementLooksLikeWrapper
+          );
+        } else {
+          console.warn("basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.classList.remove("basement-hidden");
-          basementWetDampDryWrapper.classList.add("basement-visible");
-          basementWetDampDryWrapper.style.removeProperty("display");
+          console.log("Setting basementWetDampDryWrapper to block");
+          basementWetDampDryWrapper.style.display = "block";
           updateRequiredFields(basementWetDampDryWrapper, true);
+          console.log(
+            "After set:",
+            basementWetDampDryWrapper.style.display,
+            basementWetDampDryWrapper
+          );
+        } else {
+          console.warn("basementWetDampDryWrapper not found!");
         }
       } else {
         // Neither selected: hide both fields and remove required
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.classList.add("basement-hidden");
-          basementLooksLikeWrapper.classList.remove("basement-visible");
-          basementLooksLikeWrapper.style.removeProperty("display");
+          basementLooksLikeWrapper.style.display = "none";
           updateRequiredFields(basementLooksLikeWrapper, false);
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.classList.add("basement-hidden");
-          basementWetDampDryWrapper.classList.remove("basement-visible");
-          basementWetDampDryWrapper.style.removeProperty("display");
+          basementWetDampDryWrapper.style.display = "none";
           updateRequiredFields(basementWetDampDryWrapper, false);
         }
       }
@@ -567,41 +560,69 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Re-apply basement visibility when any form change occurs (to handle Formly updates)
-    // Use a debounced approach to avoid excessive calls
-    let debounceTimer;
-    function debouncedBasementUpdate() {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(function () {
-        // Only update if radioYes is checked (to show fields)
-        if (radioYes && radioYes.checked) {
-          let reapplied = false;
-          if (basementLooksLikeWrapper && !basementLooksLikeWrapper.classList.contains("basement-visible")) {
-            basementLooksLikeWrapper.classList.remove("basement-hidden");
-            basementLooksLikeWrapper.classList.add("basement-visible");
-            basementLooksLikeWrapper.style.removeProperty("display");
-            reapplied = true;
-          }
-          if (basementWetDampDryWrapper && !basementWetDampDryWrapper.classList.contains("basement-visible")) {
-            basementWetDampDryWrapper.classList.remove("basement-hidden");
-            basementWetDampDryWrapper.classList.add("basement-visible");
-            basementWetDampDryWrapper.style.removeProperty("display");
-            reapplied = true;
-          }
-          if (reapplied) {
-            console.log("Basement: Re-applied visibility");
-          }
+    function ensureBasementVisible() {
+      // Only update if radioYes is checked (to show fields)
+      if (radioYes && radioYes.checked) {
+        let reapplied = false;
+        if (
+          basementLooksLikeWrapper &&
+          basementLooksLikeWrapper.style.display === "none"
+        ) {
+          basementLooksLikeWrapper.style.display = "block";
+          reapplied = true;
         }
-      }, 100); // Wait 100ms after last change before updating
+        if (
+          basementWetDampDryWrapper &&
+          basementWetDampDryWrapper.style.display === "none"
+        ) {
+          basementWetDampDryWrapper.style.display = "block";
+          reapplied = true;
+        }
+        if (reapplied) {
+          console.log("Basement: Re-applied visibility");
+        }
+      }
     }
+
+    // Set up interval to continuously check if fields are hidden when they should be visible
+    setInterval(function () {
+      ensureBasementVisible();
+    }, 100); // Check every 100ms
 
     // Listen for any changes in the basement fields themselves
     if (basementLooksLikeWrapper) {
-      basementLooksLikeWrapper.addEventListener("change", debouncedBasementUpdate, true);
-      basementLooksLikeWrapper.addEventListener("input", debouncedBasementUpdate, true);
+      basementLooksLikeWrapper.addEventListener(
+        "change",
+        ensureBasementVisible,
+        true
+      );
+      basementLooksLikeWrapper.addEventListener(
+        "input",
+        ensureBasementVisible,
+        true
+      );
+      basementLooksLikeWrapper.addEventListener(
+        "click",
+        ensureBasementVisible,
+        true
+      );
     }
     if (basementWetDampDryWrapper) {
-      basementWetDampDryWrapper.addEventListener("change", debouncedBasementUpdate, true);
-      basementWetDampDryWrapper.addEventListener("input", debouncedBasementUpdate, true);
+      basementWetDampDryWrapper.addEventListener(
+        "change",
+        ensureBasementVisible,
+        true
+      );
+      basementWetDampDryWrapper.addEventListener(
+        "input",
+        ensureBasementVisible,
+        true
+      );
+      basementWetDampDryWrapper.addEventListener(
+        "click",
+        ensureBasementVisible,
+        true
+      );
     }
 
     // Setup radio button styles
@@ -1968,6 +1989,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const noChecked = radioNo && radioNo.checked;
       const yesChecked = radioYes && radioYes.checked;
 
+      console.log("Fleas visibility update:", { noChecked, yesChecked });
+
       if (noChecked) {
         // "No" selected: hide fleas-field and remove required
         if (fleasField) {
@@ -1976,9 +1999,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       } else if (yesChecked) {
         // "Yes" selected: show fleas-field and make it required
+        console.log("Showing fleas field...");
         if (fleasField) {
           fleasField.style.display = "block";
           updateRequiredFields(fleasField, true);
+          console.log("Fleas field display set to:", fleasField.style.display, fleasField);
+        } else {
+          console.warn("fleasField not found!");
         }
       } else {
         // Neither selected: hide fleas-field and remove required
@@ -1998,6 +2025,22 @@ document.addEventListener("DOMContentLoaded", function () {
       radioYes.addEventListener("click", updateFleasVisibility);
       radioYes.addEventListener("change", updateFleasVisibility);
     }
+
+    // Re-apply fleas visibility when any form change occurs (to handle Formly updates)
+    function ensureFleasVisible() {
+      // Only update if radioYes is checked (to show field)
+      if (radioYes && radioYes.checked) {
+        if (fleasField && fleasField.style.display === "none") {
+          console.log("Fleas: Re-applying visibility");
+          fleasField.style.display = "block";
+        }
+      }
+    }
+
+    // Set up interval to continuously check if field is hidden when it should be visible
+    setInterval(function () {
+      ensureFleasVisible();
+    }, 100); // Check every 100ms
 
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
