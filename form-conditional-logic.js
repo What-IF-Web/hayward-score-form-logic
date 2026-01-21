@@ -513,14 +513,14 @@ document.addEventListener("DOMContentLoaded", function () {
         // "No" selected: hide both fields and remove required
         console.log("Hiding basement fields (No selected)");
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.style.setProperty("display", "none", "important");
+          basementLooksLikeWrapper.style.display = "none";
           updateRequiredFields(basementLooksLikeWrapper, false);
           console.log("✓ basementLooksLikeWrapper hidden");
         } else {
           console.warn("✗ basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.style.setProperty("display", "none", "important");
+          basementWetDampDryWrapper.style.display = "none";
           updateRequiredFields(basementWetDampDryWrapper, false);
           console.log("✓ basementWetDampDryWrapper hidden");
         } else {
@@ -530,54 +530,16 @@ document.addEventListener("DOMContentLoaded", function () {
         // "Yes" selected: show both fields and make them required
         console.log("Showing basement fields (Yes selected)");
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.style.setProperty("display", "block", "important");
+          basementLooksLikeWrapper.style.display = "block";
           updateRequiredFields(basementLooksLikeWrapper, true);
-          
-          // Check if parent is hidden
-          let parent = basementLooksLikeWrapper.parentElement;
-          console.log("Parent element:", parent);
-          console.log("Parent display:", window.getComputedStyle(parent).display);
-          console.log("Parent visibility:", window.getComputedStyle(parent).visibility);
-          
-          // Show all parent elements up the chain
-          let currentElement = basementLooksLikeWrapper;
-          while (currentElement.parentElement) {
-            currentElement = currentElement.parentElement;
-            const computedStyle = window.getComputedStyle(currentElement);
-            if (computedStyle.display === "none") {
-              console.log("Found hidden parent:", currentElement);
-              currentElement.style.setProperty("display", "block", "important");
-            }
-            // Stop at body or form
-            if (currentElement.tagName === "BODY" || currentElement.tagName === "FORM") {
-              break;
-            }
-          }
-          
-          console.log("✓ basementLooksLikeWrapper shown", basementLooksLikeWrapper);
+          console.log("✓ basementLooksLikeWrapper shown");
         } else {
           console.warn("✗ basementLooksLikeWrapper not found!");
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.style.setProperty("display", "block", "important");
+          basementWetDampDryWrapper.style.display = "block";
           updateRequiredFields(basementWetDampDryWrapper, true);
-          
-          // Show all parent elements up the chain
-          let currentElement = basementWetDampDryWrapper;
-          while (currentElement.parentElement) {
-            currentElement = currentElement.parentElement;
-            const computedStyle = window.getComputedStyle(currentElement);
-            if (computedStyle.display === "none") {
-              console.log("Found hidden parent:", currentElement);
-              currentElement.style.setProperty("display", "block", "important");
-            }
-            // Stop at body or form
-            if (currentElement.tagName === "BODY" || currentElement.tagName === "FORM") {
-              break;
-            }
-          }
-          
-          console.log("✓ basementWetDampDryWrapper shown", basementWetDampDryWrapper);
+          console.log("✓ basementWetDampDryWrapper shown");
         } else {
           console.warn("✗ basementWetDampDryWrapper not found!");
         }
@@ -585,11 +547,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Neither selected: hide both fields and remove required
         console.log("Hiding basement fields (Neither selected)");
         if (basementLooksLikeWrapper) {
-          basementLooksLikeWrapper.style.setProperty("display", "none", "important");
+          basementLooksLikeWrapper.style.display = "none";
           updateRequiredFields(basementLooksLikeWrapper, false);
         }
         if (basementWetDampDryWrapper) {
-          basementWetDampDryWrapper.style.setProperty("display", "none", "important");
+          basementWetDampDryWrapper.style.display = "none";
           updateRequiredFields(basementWetDampDryWrapper, false);
         }
       }
@@ -607,60 +569,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Setup radio button styles
     setupRadioButtonStyles(radioNo, radioYes);
-
-    // Prevent other scripts from hiding these elements when "yes" is selected
-    // Use MutationObserver to watch for style changes and re-show if needed
-    if (basementLooksLikeWrapper && basementWetDampDryWrapper) {
-      const observer = new MutationObserver(function (mutations) {
-        // Only intervene if "yes" is selected
-        if (radioYes && radioYes.checked) {
-          mutations.forEach(function (mutation) {
-            if (mutation.type === "attributes" && mutation.attributeName === "style") {
-              const target = mutation.target;
-              
-              // Check if this is one of our basement wrappers
-              if (target === basementLooksLikeWrapper || target === basementWetDampDryWrapper) {
-                const computedStyle = window.getComputedStyle(target);
-                
-                // If something tried to hide it, show it again
-                if (computedStyle.display === "none") {
-                  console.log("⚠️ Something tried to hide", target.id, "- re-showing it");
-                  target.style.setProperty("display", "block", "important");
-                }
-              }
-              
-              // Also check parent elements
-              if (target.contains(basementLooksLikeWrapper) || target.contains(basementWetDampDryWrapper)) {
-                const computedStyle = window.getComputedStyle(target);
-                
-                if (computedStyle.display === "none") {
-                  console.log("⚠️ Something tried to hide parent", target, "- re-showing it");
-                  target.style.setProperty("display", "block", "important");
-                }
-              }
-            }
-          });
-        }
-      });
-
-      // Observe both wrappers and their parents
-      const config = { attributes: true, attributeFilter: ["style"], subtree: false };
-      observer.observe(basementLooksLikeWrapper, config);
-      observer.observe(basementWetDampDryWrapper, config);
-      
-      // Also observe parent elements
-      let parent = basementLooksLikeWrapper.parentElement;
-      while (parent && parent.tagName !== "BODY" && parent.tagName !== "FORM") {
-        observer.observe(parent, config);
-        parent = parent.parentElement;
-      }
-      
-      parent = basementWetDampDryWrapper.parentElement;
-      while (parent && parent.tagName !== "BODY" && parent.tagName !== "FORM") {
-        observer.observe(parent, config);
-        parent = parent.parentElement;
-      }
-    }
 
     // Listen for changes in basement fields to validate in real-time when "yes" is selected
     if (basementLooksLikeWrapper) {
