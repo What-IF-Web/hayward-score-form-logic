@@ -2288,6 +2288,66 @@ document.addEventListener("DOMContentLoaded", function () {
       );
       updateSymptomsDuringOtherRequired();
     }
+
+    // Additional health symptoms - Not Applicable logic
+    const additionalHealthSymptomsNACheckbox = document.getElementById(
+      "additional-health-symptoms-not-applicable"
+    );
+
+    if (additionalHealthSymptomsNACheckbox) {
+      function updateAdditionalHealthSymptomsNASiblings() {
+        const isChecked = additionalHealthSymptomsNACheckbox.checked;
+
+        // Find the current wrapper
+        const currentWrapper = additionalHealthSymptomsNACheckbox.closest(
+          ".score-form_checkbox-wrapper"
+        );
+        if (!currentWrapper || !currentWrapper.parentElement) return;
+
+        // Find the parent container
+        const parentContainer = currentWrapper.parentElement;
+
+        // Find all sibling checkbox wrappers (excluding the current one)
+        const siblings = Array.from(parentContainer.children).filter(
+          (child) =>
+            child !== currentWrapper &&
+            child.classList.contains("score-form_checkbox-wrapper")
+        );
+
+        siblings.forEach((sibling) => {
+          if (isChecked) {
+            // Uncheck all checkboxes within this sibling
+            const checkboxes = sibling.querySelectorAll(
+              'input[type="checkbox"]'
+            );
+            checkboxes.forEach((checkbox) => {
+              if (checkbox.checked) {
+                checkbox.checked = false;
+                // Trigger change event in case there's custom form logic
+                checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+                checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+              }
+            });
+            sibling.classList.add("pointer-events-none");
+          } else {
+            sibling.classList.remove("pointer-events-none");
+          }
+        });
+      }
+
+      // Listen for clicks/changes on the checkbox
+      additionalHealthSymptomsNACheckbox.addEventListener(
+        "click",
+        updateAdditionalHealthSymptomsNASiblings
+      );
+      additionalHealthSymptomsNACheckbox.addEventListener(
+        "change",
+        updateAdditionalHealthSymptomsNASiblings
+      );
+
+      // Run once immediately (in case it was pre-selected on page load)
+      updateAdditionalHealthSymptomsNASiblings();
+    }
   })();
 
   // ============================================
